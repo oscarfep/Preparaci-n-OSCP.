@@ -4,9 +4,9 @@
 #### Penetration Testing with Kali Linux (PWK) course and Offensive Security Certified Professional (OSCP) Cheat Sheet
 
 ## Índice y Estructura Principal
-- [Buffer Overflow Windows](#Buffer-Overflow-Windows)
+- [Buffer Overflow Windows (25 puntos)](#Buffer-Overflow-Windows-(25-puntos-))
 
-Buffer Overflow Windows
+Buffer Overflow Windows (25 puntos)
 ===============================================================================================================================
 A continuación, se listan los pasos a seguir para la correcta explotación de Buffer Overflow en Linux (32 bits). Para la examinación, no se requieren de conocimientos avanzados de exploiting en BoF (bypassing ASLR, etc.), basta con practicar con servicios básicos y llevar esa misma metodología al examen.
 
@@ -62,3 +62,7 @@ De esta forma, a través de una lista, vamos almacenando en la variable **buffer
 Esto es:
 
 **[1 caracter "A", 100 caracteres "A", 300 caracteres "A", 500 caracteres "A", 700 caracteres "A", ...]**
+
+Mientras tanto, desde _Immunity Debugger_, estando previamente sincronizados con el proceso, deberemos de utilizarlo como debugger para ver en qué momento se produce una violación de segmento.
+
+Cuando esto ocurra, deberíamos ver como el registro **EIP** toma el valor (**41414141**), correspondiente al caracter "A" en hexadecimal
