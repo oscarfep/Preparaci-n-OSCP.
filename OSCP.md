@@ -57,3 +57,4 @@ for strings in buffer:
     sys.exit(0)
 
 ```
+De esta forma
