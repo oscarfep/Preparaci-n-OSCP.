@@ -10,5 +10,9 @@ Buffer Overflow Windows
 ===============================================================================================================================
 A continuación, se listan los pasos a seguir para la correcta explotación de Buffer Overflow en Linux (32 bits). Para la examinación, no se requieren de conocimientos avanzados de exploiting en BoF (bypassing ASLR, etc.), basta con practicar con servicios básicos y llevar esa misma metodología al examen.
 
-Servicios con los que practicar:
+Servicios/Máquinas con los que practicar:
 
+-   SLMail 5.5 
+-   Minishare 1.4.1
+-   Máquina Brainpan de VulnHub
+-   Los 2 binarios personalizados compartidos en la máquina Windows personal del laboratorio
