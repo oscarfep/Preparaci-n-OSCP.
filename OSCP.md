@@ -61,4 +61,4 @@ De esta forma, a través de una lista, vamos almacenando en la variable **buffer
 
 Esto es:
 
-[1 caracter "A", 200 caracteres "A", 400 caracteres "A", 600 caracteres "A", ...]
+**[1 caracter "A", 100 caracteres "A", 300 caracteres "A", 500 caracteres "A", 700 caracteres "A", ...]**
