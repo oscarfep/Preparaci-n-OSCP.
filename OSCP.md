@@ -19,7 +19,7 @@ Servicios/Máquinas con los que practicar:
 
 Generalmente, la metodología a seguir es la siguiente:
 
-    -   Fuzzing
+-   Fuzzing
 
 Para esta fase, es necesario en primer lugar identificar el campo en el que se produce el buffer overflow. Para un caso práctico, suponiendo por ejemplo que un servicio sobre un Host 192.168.1.45 corre bajo el puerto 4000 y que tras la conexión vía TELNET desde nuestra máquina, se nos solicita un campo USER a introducir, podemos elaborar el siguiente script en python con el objetivo de determinar si se produce un desbordamiento de búffer:
 
