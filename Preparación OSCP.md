@@ -1071,19 +1071,19 @@ Sobre este gestor de contenidos, la idea es verificar en primer lugar si a trav�
 En caso de no poder visualizar la versión, nos aprovechamos de la herramienta **wpscan** para a través de la siguiente sintaxis obtener el versionado del gestor:
 
 ```bash
-wpscan -u "http://192.168.1.x"
+$~ wpscan -u "http://192.168.1.x"
 ```
 
 En caso de que la web principal del gestor de contenido se encuentre en otra ruta personalizada, por ejemplo **/directorio-wordpress/**, deberemos especificarlo a través del parámetro **--wp-content-dir** para la correcta enumeración desde **wpscan**:
 
 ```bash
-wpscan -u "http://192.168.1.x" --wp-content-dir "directorio-wordpress"
+$~ wpscan -u "http://192.168.1.x" --wp-content-dir "directorio-wordpress"
 ```
 
 En ocasiones, podremos enumerar los usuarios existentes sobre el gestor, empleando para ello la siguiente sintaxis:
 
 ```bash
-wpscan -u "http://192.168.1.x" --enumerate u
+$~ wpscan -u "http://192.168.1.x" --enumerate u
 ```
 
 En caso de que el gestor de contenidos cuente con un plugin que bloquee la enumeración de usuarios, podemos hacer uso de la utilidad **stop_user_enumeration_bypass.rb** de _wpscan_ (/usr/share/wpscan/stop_user_enumeration_bypass.rb). La sintaxis sería la siguiente:
@@ -1103,6 +1103,8 @@ Una forma de bypassear posibles bloqueos es jugar con el parámetro **--random-a
 ```bash
 $~ wpscan -u "http://192.168.1.x" --username usuario -w /usr/share/wordlists/rockyou.txt --random-agent
 ```
+
+La herramienta **wpscan** es capaz de detectar los plugins instalados sobre el gestor, los cuales también pueden abrir un posible vector de ataque que permita la ejecución de comandos en remoto y variados. Sin embargo, por prevención siempre me gusta fuzzear los plugins haciendo uso del siguiente [recurso](https://github.com/danielmiessler/SecLists/blob/master/Discovery/Web-Content/CMS/wp-plugins.fuzz.txt) de SecList.
 
 ### Pentesting Linux
 
