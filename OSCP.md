@@ -5,6 +5,7 @@
 
 ## Índice y Estructura Principal
 - [Antecedentes](#Antecedentes)
+    * [¿Es difícil la certificación?](#¿es-difícil-la-certificación?)
 - [Buffer Overflow Windows (25 puntos)](#buffer-overflow-windows)
      * [Fuzzing](#fuzzing)
      * [Calculando el Offset (Tamaño del Búffer)](#calculando-el-offset)
