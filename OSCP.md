@@ -846,3 +846,7 @@ De esta forma, estaremos para cada una de las líneas del payload principal comp
 Sinceramente no he llegado a profundizar mucho sobre esta herramienta, pero dado que forma parte de una de las herramientas de automatización que admiten en el examen y a veces devuelve maravillas... detallo su uso:
 
 `nikto -h http://192.168.1.X`
+
+### Pentesting Linux
+
+### Pentesting Windows
