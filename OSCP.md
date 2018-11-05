@@ -206,7 +206,7 @@ except:
 
 El caracter "C" lo meto como Padding para hacer relleno hasta llegar a los 900 (para trabajar con cifras redondas).
 
-Tras la ejecución del script, desde el **Immunity Debugger** veremos que una vez se produce la violación de segmento, el registro **EIP** toma el valor **42424242**, lo que en otras palabras se resumen en **"B"*4**. Llegados a este punto, es hora de encontrar el lugar en el que se situará nuestro Shellcode.
+Tras la ejecución del script, desde el **Immunity Debugger** veremos que una vez se produce la violación de segmento, el registro **EIP** toma el valor **42424242**, equivalente a _"B"*4_. Llegados a este punto, es hora de encontrar el lugar en el que situar nuestro Shellcode.
 
 
 
