@@ -20,7 +20,7 @@ Antecedentes
 ===============================================================================================================================
 Antes que nada me gustaría comentar un poco mi experiencia a la hora de abordar el curso, pues tal vez le sirva de inspiración a aquel que pretenda sacarse la certificación.
 
-* ¿Es difícil la certificación?
+#### ¿Es difícil la certificación?
 
 Buffer Overflow Windows
 ===============================================================================================================================
