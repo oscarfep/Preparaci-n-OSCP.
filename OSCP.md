@@ -802,7 +802,7 @@ wfuzz -c --hc=404 -z file,/usr/share/wordlists/dirbuster/directory-list-2.3-medi
 
 En caso de querer recorrer un rango numérico, por ejemplo para un caso práctico donde vemos que contamos con un servicio web desde el cual podemos hacer consultas a otro servicio web, algo que podemos hacer es aprovechar dicha funcionalidad para enumerar puertos internos que corran sobre el sistema desde el cual estamos aplicando las consultas.
 
-Esta parte me recuerda sobre todo a una máquina de HackTheBox, donde figuraba ciertos servicios HTTP corriendo que no eran accesibles desde fuera de la máquina. Con el objetivo de determinar estos puertos, podemos atender a los códigos de estado de la lado de la respuesta del servidor, ocultando por ejemplo el código de estado 400:
+Esta parte me recuerda sobre todo a una máquina de HackTheBox, donde figuraba ciertos servicios HTTP corriendo que no eran accesibles desde fuera de la máquina. Con el objetivo de determinar estos puertos, podemos atender a los códigos de estado del lado de la respuesta del servidor, ocultando por ejemplo el código de estado 404:
 
 ```bash
 wfuzz -c --hc=404 -z range,1-65535 http://192.168.1.X:8080/request_to=http://127.0.0.1:FUZZ
@@ -816,7 +816,7 @@ De manera alternativa, también podríamos haber aplicado lo siguiente:
 wfuzz -c --sc=200 -z range,1-65535 http://192.168.1.X:8080/request_to=http://127.0.0.1:FUZZ
 ```
 
-Para mostrar peticiones que devuelven un 200 cómo código de estado. Al igual que el código de estado se pueden jugar con más parámetros de filtro, como los caracteres, el número total de líneas, etc.
+Para mostrar peticiones que devuelvan un 200 cómo código de estado. Al igual que el código de estado se pueden jugar con más parámetros de filtro, como los caracteres, el número total de líneas, etc.
 
 **Importante:** A la hora de obtener un **Forbidden** en el código de estado de la respuesta del lado del servidor, recomiendo no tirar la toalla... pues a pesar de figurarnos dicha respuesta, podemos seguir enumerando directorios y archivos dentro de dicho directorio, donde tras dar con recursos válidos vemos que estos son visibles desde la web.
 
