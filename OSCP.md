@@ -6,7 +6,11 @@
 ## Índice y Estructura Principal
 - [Buffer Overflow Windows (25 puntos)](#buffer-overflow-windows)
      * [Fuzzing](#fuzzing)
-     * [Calculando el Offset](#calculando-el-offset)
+     * [Calculando el Offset (Tamaño del Búffer)](#calculando-el-offset)
+     * [Controlando el registro EIP](#controlando-el-registro-eip)
+     * [Situando y Asignando Espacio al Shellcode](#situando-y-asignando-espacio-al-shellcode)
+     * [Detectando los Badchars](#detectando-los-badchars)
+     * [Generando el Shellcode](#generando-el-shellcode)
 
 Buffer Overflow Windows
 ===============================================================================================================================
@@ -170,7 +174,7 @@ $~ /usr/share/metasploit-framework/tools/exploit/pattern_offset.rb -q 9Bb0
 [*] Exact match at offset 809
 ```
 
--   Controlando el registro EIP
+#### Controlando el registro EIP
 
 Conociendo ya el offset, podemos tomar el control del registro EIP. Dado que el registro **EIP** apunta a la siguiente dirección a ejecutar (pues dirige el flujo del programa), poder sobrescribir su valor es crucial para conseguir una ejecución alternativa del servicio a nivel de sistema (lo veremos más adelante).
 
@@ -210,7 +214,7 @@ El caracter "C" lo meto como Padding para hacer relleno hasta llegar a los 900 (
 
 Tras la ejecución del script, desde el **Immunity Debugger** veremos que una vez se produce la violación de segmento, el registro **EIP** toma el valor **42424242**, equivalente a _"B"*4_. Llegados a este punto, es hora de encontrar el lugar en el que situar nuestro Shellcode.
 
--   Situando y Asignando Espacio al Shellcode
+#### Situando y Asignando Espacio al Shellcode
 
 A la hora de hacer Padding con el caracter "C" tras sobrescribir previamente el registro **EIP**, podremos ver desde el **Immunity Debugger** como el registro **ESP** coincide con nuestro relleno. Llegados a este punto, para el caso que estamos tratando se podría decir que nuestro shellcode tendría que tener un total de 87 bytes, cosa que escapa de la realidad, pues en la mayoría de las veces para entablar una conexión reversa se generan un total de 351 bytes aproximadamente desde **msfvenom**.
 
@@ -251,7 +255,7 @@ except:
 ```
 En este caso ampliamos de forma considerable nuestro relleno, donde tras sobrescribir el registro **EIP**, contamos con un total de 487 bytes de espacio donde los caracteres "C" serán situados. En caso de ver desde **Immunity Debugger** que todo figura como lo esperado, podremos quedarnos tranquilos, pues tenemos espacio suficiente para depositar nuestro Shellcode sobre el registro **ESP**.
 
--   Detectando los Badchars
+#### Detectando los Badchars
 
 Esta será la única complicación del examen, y cuando digo complicación la sitúo entre comillas gestualmente hablando. 
 
@@ -331,7 +335,7 @@ Generalmente, los caracteres **\x0a** y **\x0d** suelen ser badchars, pero puede
 
 Suponiendo que hemos detectado que los badchars para este caso son **\x00\x0a\x0d**, lo único que nos queda ya es generar nuestro Shellcode. 
 
--   Generando el Shellcode
+#### Generando el Shellcode
 
 El shellcode que se generará a continuación, lo que nos hará será entablar una conexión TCP reversa contra el equipo. Para ello, seguimos la siguiente sintaxis:
 
