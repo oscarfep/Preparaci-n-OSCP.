@@ -1064,6 +1064,21 @@ Donde veremos que la herrmamienta directamente nos proporcionará la Cookie de s
 
 Lo único que tenemos que hacer ahora, es desde **Burpsuite**, interceptar una autenticación con nuestro usuario para posteriormente modificar la Cookie a la proporcionada por **PadBuster**. Lo que conseguiremos con esto es acceder como el usuario **admin** al servicio web, burlando el panel de autenticación sin ser necesario conocer la contraseña de dicho usuario.
 
+#### WordPress
+
+Sobre este gestor de contenidos, la idea es verificar en primer lugar si a través del recurso _README.html_ podemos visualizar la versión del CMS. De esta forma, posteriormente desde **Searchsploit** podemos buscar vulnerabilidades para dicha versión.
+
+En caso de no poder visualizar la versión, nos aprovechamos de la herramienta **wpscan** para a través de la siguiente sintaxis obtener el versionado del gestor:
+
+```bash
+wpscan -u "http://192.168.1.x"
+```
+
+En caso de que la web principal del gestor de contenido se encuentre en otra ruta personalizada, por ejemplo **/directorio-wordpress/**, deberemos especificarlo a través del parámetro **--wp-content-dir** para la correcta enumeración desde **wpscan**:
+
+```bash
+wpscan -u "http://192.168.1.x" --wp-content-dir "directorio-wordpress"
+```
 
 ### Pentesting Linux
 
