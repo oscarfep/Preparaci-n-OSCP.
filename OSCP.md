@@ -22,7 +22,8 @@
        * [Wfuzz](#Wfuzz)
        * [Nikto](#Nikto)
      * [Pentesting Web](#pentesting-web)
-       * [LFI (Local File Inclusion)](#lfi)     
+       * [LFI (Local File Inclusion)](#lfi)
+       * [LFI to RCE](#lfi to rce)
        * [RFI (Remote File Inclusion)](#rfi)     
        * [SQLI (SQL Inyection)](#sqli)     
        * [Shellshock](#shellshock)
@@ -862,6 +863,39 @@ De esta forma, estaremos para cada una de las líneas del payload principal comp
 Sinceramente no he llegado a profundizar mucho sobre esta herramienta, pero dado que forma parte de una de las herramientas de automatización que admiten en el examen y a veces devuelve maravillas... detallo su uso:
 
 `nikto -h http://192.168.1.X`
+
+### Pentesting Web
+
+#### LFI
+
+Esta vulnerabilidad nos permite visualizar recursos del sistema efectuando para ello un **Directory Path Transversal**.
+
+A modo de ejemplo, presento a continuación un script en PHP con dicha vulnerabilidad:
+
+```php
+<?php
+    $file = $_REQUEST['file'];
+    echo include($file);
+?>
+```
+
+Suponiendo que el fichero se llama _file.php_, si desde la URL efectuamos la siguiente búsqueda:
+
+`http://localhost/file.php?file=/etc/passwd`
+
+Veremos cómo se nos lista el fichero passwd del equipo Linux local. Habrán ocasiones en las que tengamos que recorrer un par de directorios hacia atrás para visualizar el recurso:
+
+`http://localhost/file.php?file=../../../../../etc/passwd`
+
+Así como incorporar un **%00** para el bypassing de restricciones implementadas:
+
+`http://localhost/file.php?file=../../../../../etc/passwd%00`
+
+Por [aquí](https://github.com/swisskyrepo/PayloadsAllTheThings/tree/master/File%20Inclusion%20-%20Path%20Traversal) os dejo un buen recurso para el uso de Wrappers y otras técnicas de bypassing.
+
+#### LFI to RCE
+
+#### RFI
 
 ### Pentesting Linux
 
