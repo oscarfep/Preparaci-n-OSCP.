@@ -922,7 +922,7 @@ Llegados a este punto, si desde la URL aprovechando el LFI apuntamos a dicho rec
 
 Para el caso del recurso _access.log_ pasa algo similar, sólo que en cuanto a la implementación técnica se realizarn otras operaciones.
 
-Siempre suelo emplear Burpsuite como intermediario, pero también se puede hacer desde curl modificando el **User-Agent**. Lo que necesitamos hacer es realizar una consulta a la página web cambiando el User-Agent por un código PHP. De esta forma, tras visualizar el recurso _access.log_ de Apache, veremos como el código PHP es interpretado en el User-Agent de la consulta, pudiendo posteriormente ejecutar comandos en remoto de la misma forma que sucedía con el recurso _access.log_.
+Siempre suelo emplear Burpsuite como intermediario, pero también se puede hacer desde curl modificando el **User-Agent**. Lo que necesitamos hacer es realizar una consulta a la página web cambiando el User-Agent por un código PHP. De esta forma, tras visualizar el recurso _access.log_ de Apache, veremos como el código PHP es interpretado en el User-Agent de la petición en la respuesta del lado del servidor, pudiendo posteriormente ejecutar comandos en remoto de la misma forma que sucedía con el recurso _auth.log_.
 
 #### RFI
 
