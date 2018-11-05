@@ -12,7 +12,7 @@
      * [Detectando los Badchars](#detectando-los-badchars)
      * [Generando el Shellcode](#generando-el-shellcode)
      * [Mejorando el Exploit](#mejorando-el-exploit)
-     * [Reduciendo el Size / Acceso por Powershell](#Reduciendo-el-size-/-acceso-por-powershell)
+     * [Reduciendo el Size / Acceso por Powershell](#reduciendo-el-size-/-acceso-por-powershell)
 
 Buffer Overflow Windows
 ===============================================================================================================================
