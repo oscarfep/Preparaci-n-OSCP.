@@ -29,9 +29,6 @@
        * [Shellshock](#shellshock)
        * [Padding Oracle Attack](#padding-oracle-attack)   
        * [WordPress](#wordpress)
-       * [Joomla](#joomla)
-       * [Drupal](#drupal)
-       * [PFSense](#pfsense)
        * [File Upload Bypass](#file-upload-bypass)
        * [Fuerza Bruta en Formularios](#fuerza-bruta-en-formularios)
        * [Enumeración de Usuarios en Paneles de Autenticación](#login-user-enumeration)
@@ -1108,6 +1105,12 @@ La herramienta **wpscan** es capaz de detectar los plugins instalados sobre el g
 
 En caso de no obtener o poder enumerar usuarios válidos de autenticación, estos gestores de contenido suelen exponer el usuario propietario de los artículos o entradas que figuren expuestos sobre la página principal. De esta forma, podemos llegar a extraer usuarios válidos de autenticación simplemente visualizando quién es el autor de las entradas publicadas.
 
+Teniendo un usuario válido de autenticación, a la hora de aplicar la fuerza bruta, antes de lanzar diccionarios tradicionales como el **rockyou.txt**, suelo hacer uso de la herramienta **cewl** para generar mi propio diccionario personalizado en base a la web con la que estoy tratando. Esto se consigue con la siguiente sintaxis:
+
+```bash
+cewl -w diccionario http://192.168.1.x
+```
+
 Así mismo, una vez se logra acceder al gestor de contenidos, la intrusión al sistema es la parte más sencilla. Simplemente en la sección de Apariencia, en la pestaña Editor nos vamos al script **404.php** configurado para llevar a cabo una modificación, subiendo nuestro propio código PHP malicioso que permita entablarnos una conexión reversa contra el sistema.
 
 Para apuntar a dicho script tenemos 3 vías:
@@ -1115,6 +1118,10 @@ Para apuntar a dicho script tenemos 3 vías:
 * http://192.168.1.x/?p=404.php
 * http://192.168.1.x/recursoinexistente (Para causar un error que haga que se cargue el script 404.php)
 * http://192.168.1.x/404.php
+
+#### File Upload Bypass
+
+
 
 ### Pentesting Linux
 
