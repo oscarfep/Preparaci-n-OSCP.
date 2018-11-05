@@ -171,6 +171,8 @@ except:
 ```
 Siempre para asegurar es mejor mandarle los 200 caracteres siguientes de nuestro reporte. Tras la ejecución de esta variante, **Immunity Debugger** directamente nos debería reportar la violación de segmento con el valor **41414141** en el registro **EIP**, lo cual hace que ya tengamos una aproximación de tamaño del buffer permitido.
 
+Para que te quedes tranquilo, en el examen te entregarán un script en Python a modo de PoC donde se aplica un desbordamiento de búffer sobre el servicio. Contando con esto, es simplemente ir haciendo los pasos que se enumeran a continuación.
+
 #### Calculando el Offset
 
 Dado que el valor 414141 para el EIP no es algo descriptivo que nos permita hacernos la idea de qué tamaño tiene el buffer permitido, lo que hacemos es aprovecharnos de las utilidades **pattern_create** y **pattern_offset** de Metasploit.
