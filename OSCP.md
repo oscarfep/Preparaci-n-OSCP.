@@ -20,6 +20,9 @@
      * [General](#general)
        * [Port Scanning](#port-scanning)
        * [Wfuzz](#Wfuzz)
+       * [Nikto](#Nikto)
+     * [Pentesting Linux](#pentesting-linux)
+     * [Pentesting Windows](#pentesting-windows)
           
 Antecedentes
 ===============================================================================================================================
@@ -838,4 +841,8 @@ Posteriormente, hacemos uso de Wfuzz siguiendo la siguiente sintaxis:
 
 De esta forma, estaremos para cada una de las líneas del payload principal comprobando las extensiones especificadas sobre el segundo payload.
 
+#### Nikto
 
+Sinceramente no he llegado a profundizar mucho sobre esta herramienta, pero dado que forma parte de una de las herramientas de automatización que admiten en el examen y a veces devuelve maravillas... detallo su uso:
+
+`nikto -h http://192.168.1.X`
