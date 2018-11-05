@@ -762,3 +762,21 @@ nmap -p20000-30000 --open -T5 -v ipHost -n -oG range20000-30000
                         .
                         .
 ```
+
+En caso de figurar un servicio HTTP corriendo bajo un puerto, podemos aprovecharnos del script **http-enum.nse** de nmap para enumerar directorios y archivos del servicio web (Cuenta con un diccionario pequeño pero nos puede servir para tener una visual rápida sobre los recursos alojados):
+
+```bash
+nmap --script=http-enum.nse -p80,443,8080 ipHost -oN webScan
+```
+
+* Visualización de categorías para los scripts de nmap
+
+```bash
+grep -r categories /usr/share/nmap/scripts/*.nse | grep -oP '".*?"' | sort -u
+```
+
+Estas categorías son todas las que nmap posee, pudiendo por ejemplo para un servicio FTP o SMB aplicar las siguientes categorías:
+
+```bash
+nmap -p21,445 --script="vuln and safe" ipHost -oN vulnSafeScan
+```
