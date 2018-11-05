@@ -11,6 +11,7 @@
      * [Situando y Asignando Espacio al Shellcode](#situando-y-asignando-espacio-al-shellcode)
      * [Detectando los Badchars](#detectando-los-badchars)
      * [Generando el Shellcode](#generando-el-shellcode)
+     * [Salto al ESP](#salto-al-esp)
      * [Mejorando el Exploit](#mejorando-el-exploit)
      * [Reduciendo el Size y Acceso por Powershell](#reduciendo-el-size-y-acceso-por-powershell)
 
@@ -437,6 +438,10 @@ La razón por la cual se han insertado los **NOP-sled** (\x90) antes de nuestro 
 Ya teniendo todo esto hecho, lo único que queda es ejecutar el script teniendo previamente una sesión vía Netcat en escucha. 
 
 Tras su ejecución, ganaremos acceso al sistema, con la desventaja de que una vez matada la sesión, en caso de volver a ejecutar el script... no ganaremos más veces sesión al sistema. Arreglaremos esto en el siguiente punto.
+
+#### Salto al ESP
+
+
 
 #### Mejorando el Exploit
 
