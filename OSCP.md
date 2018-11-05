@@ -16,6 +16,9 @@
      * [Mejorando el Exploit](#mejorando-el-exploit)
      * [Reduciendo el Size y Acceso por Powershell](#reduciendo-el-size-y-acceso-por-powershell)
 - [Buffer Overflow Linux (No cae en el examen)](#buffer-overflow-linux)
+- [Pentesting](#Pentesting)
+     * [General](#General)
+     - [Service Enumeration](#service+enumeration)
      
 Antecedentes
 ===============================================================================================================================
@@ -716,3 +719,10 @@ Inmediatamente tras ejecutar el script, veremos cómo se recibe un GET desde nue
 
 Buffer Overflow Linux
 ===============================================================================================================================
+
+Pentesting
+===============================================================================================================================
+
+### General
+
+#### Service Enumeration
