@@ -22,7 +22,7 @@ Servicios/Máquinas con los que practicar:
 Generalmente, la metodología a seguir es la que se describe a continuación.
 
 #### Fuzzing
-===============================================================================================================================
+    ---------------------------------------------------------------------------------------------------------------------------
      
 Para esta fase, es necesario en primer lugar identificar el campo en el que se produce el buffer overflow. Para un caso práctico, suponiendo por ejemplo que un servicio sobre un Host 192.168.1.45 corre bajo el puerto 4000 y que tras la conexión vía TELNET desde nuestra máquina, se nos solicita un campo USER a introducir, podemos elaborar el siguiente script en python con el objetivo de determinar si se produce un desbordamiento de búffer:
 
@@ -103,7 +103,7 @@ except:
 Siempre para asegurar es mejor mandarle los 200 caracteres siguientes de nuestro reporte. Tras la ejecución de esta variante, **Immunity Debugger** directamente nos debería reportar la violación de segmento con el valor **41414141** en el registro **EIP**, lo cual hace que ya tengamos una aproximación de tamaño del buffer permitido.
 
 #### Calculando el Offset
-===============================================================================================================================
+    ---------------------------------------------------------------------------------------------------------------------------
 
 Dado que el valor 414141 para el EIP no es algo descriptivo que nos permita hacernos la idea de qué tamaño tiene el buffer permitido, lo que hacemos es aprovecharnos de las utilidades **pattern_create** y **pattern_offset** de Metasploit.
 
