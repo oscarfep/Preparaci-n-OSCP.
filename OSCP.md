@@ -18,7 +18,7 @@
 - [Buffer Overflow Linux (No cae en el examen)](#buffer-overflow-linux)
 - [Pentesting](#pentesting)
      * [General](#general)
-       * [Service Enumeration](#service+enumeration)
+       * [Port Scanning](#port-scanning)
      
 Antecedentes
 ===============================================================================================================================
@@ -727,6 +727,6 @@ En este punto, se detallan técnicas de Pentesting a abordar sobre las máquinas
 
 ### General
 
+Bajo este apartado se describirán técnicas de enumeración a realizar sobre los Hosts independientemente del sistema operativo / servicio con el que se trate.
 
-
-#### Service Enumeration
+#### Port Scanning
