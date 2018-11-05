@@ -1106,6 +1106,16 @@ $~ wpscan -u "http://192.168.1.x" --username usuario -w /usr/share/wordlists/roc
 
 La herramienta **wpscan** es capaz de detectar los plugins instalados sobre el gestor, los cuales también pueden abrir un posible vector de ataque que permita la ejecución de comandos en remoto y variados. Sin embargo, por prevención siempre me gusta fuzzear los plugins haciendo uso del siguiente [recurso](https://github.com/danielmiessler/SecLists/blob/master/Discovery/Web-Content/CMS/wp-plugins.fuzz.txt) de SecList.
 
+En caso de no obtener o poder enumerar usuarios válidos de autenticación, estos gestores de contenido suelen exponer el usuario propietario de los artículos o entradas que figuren expuestos sobre la página principal. De esta forma, podemos llegar a extraer usuarios válidos de autenticación simplemente visualizando quién es el autor de las entradas publicadas.
+
+Así mismo, una vez se logra acceder al gestor de contenidos, la intrusión al sistema es la parte más sencilla. Simplemente en la sección de Apariencia, en la pestaña Editor nos vamos al script **404.php** configurado para llevar a cabo una modificación, subiendo nuestro propio código PHP malicioso que permita entablarnos una conexión reversa contra el sistema.
+
+Para apuntar a dicho script tenemos 2 vías:
+
+* http://192.168.1.x/?p=404.php
+* http://192.168.1.x/recursoinexistente
+* http://192.168.1.x/404.php
+
 ### Pentesting Linux
 
 ### Pentesting Windows
