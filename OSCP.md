@@ -780,3 +780,13 @@ Estas categorías son todas las que nmap posee, pudiendo por ejemplo para un ser
 ```bash
 nmap -p21,445 --script="vuln and safe" ipHost -oN vulnSafeScan
 ```
+
+En cuanto a los **Low Hanging Fruit**, puertos interesantes a buscar para nuestros escaneos iniciales pueden ser los siguientes (Hay muchos más, pero corresponden a servicios que nos pueden garantizar la ejecución de comandos en remoto sobre los sistemas):
+
+```bash
+nmap -p21,1433 192.168.1.0/24 --open -T5 -v -n -oN LHF
+```
+
+Sobre el servicio **FTP** resulta interesante comprobar que podamos subir archivos. En caso de contar con un IIS, si vemos que somos capaces de alojar un fichero asp/aspx y apuntar al mismo desde el servicio web, podremos entablar una conexión TCP reversa.
+
+Sobre el servicio **ms-sql-s**, una de las pruebas que suelo utilizar de cabeza es la de realizar una autenticación vía **sqsh** contra el servicio proporcionando las credenciales **sa** de usuario sin contraseña. Puede llegar a pasar que el servicio no se encuentre corriendo sobre el puerto 1433, en ese caso podemos hacer uso de la herramienta [mssql.py](https://github.com/SecureAuthCorp/impacket/blob/master/examples/mssqlclient.py)
