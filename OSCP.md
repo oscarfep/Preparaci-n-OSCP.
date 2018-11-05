@@ -5,8 +5,8 @@
 
 ## Índice y Estructura Principal
 - [Buffer Overflow Windows (25 puntos)](#Buffer-Overflow-Windows)
-- [Fuzzing](#Fuzzing)
-- [Calculando el Offset (Tamaño del Búffer)](#Calculando+el+Offset)
+-       [Fuzzing](#Fuzzing)
+-       [Calculando el Offset (Tamaño del Búffer)](#Calculando+el+Offset)
 
 Buffer Overflow Windows
 ===============================================================================================================================
@@ -21,9 +21,8 @@ Servicios/Máquinas con los que practicar:
 
 Generalmente, la metodología a seguir es la que se describe a continuación.
 
--    Fuzzing
-        --------------------------------------------------------------------------------------------------------------------------
-
+#### Fuzzing
+     
 Para esta fase, es necesario en primer lugar identificar el campo en el que se produce el buffer overflow. Para un caso práctico, suponiendo por ejemplo que un servicio sobre un Host 192.168.1.45 corre bajo el puerto 4000 y que tras la conexión vía TELNET desde nuestra máquina, se nos solicita un campo USER a introducir, podemos elaborar el siguiente script en python con el objetivo de determinar si se produce un desbordamiento de búffer:
 
 ```python
