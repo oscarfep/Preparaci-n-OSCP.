@@ -730,3 +730,35 @@ En este punto, se detallan técnicas de Pentesting a abordar sobre las máquinas
 Bajo este apartado se describirán técnicas de enumeración a realizar sobre los Hosts independientemente del sistema operativo / servicio con el que se trate.
 
 #### Port Scanning
+
+Cada uno tiene su forma de hacer la enumeración de puertos/servicios corriendo bajo un sistema. Yo generalmente suelo seguir estos pasos.
+
+* Escaneo inicial de puertos abiertos sobre el sistema
+
+```bash
+nmap -p- --open -T5 -v -oG allPorts ipHost -n
+```
+* Enumeración del servicio y versionado para los puertos descubiertos sobre el sistema
+
+```bash
+nmap -p$(cat allPorts | grep -oP '\d{2,5}/open' | awk '{print $1}' FS="/" | xargs | tr ' ' ',') -sC -sV ipHost -oN targeted
+```
+
+La razón de hacer esto es que me parece mucho más ágil el poder tener una visual de los puertos abiertos de un primer tirón para el escaneo inicial, así en lo que posteriormente lanzo el profundo de enumeración de servicios con los scripts básicos de enumeración, puedo ir enumerando por mi cuenta los puertos que corren servicios conocidos (HTTP, HTTPS, FTP, ms-sql-s, etc.).
+
+* En caso de contar con un escaneo inicial lento, suelo aplicar la siguiente variante
+
+```bash
+nmap -A -T4 -v ipHost -oN misc
+```
+
+Este escaneo no engloba todos los puertos, y probablemente nos estemos saltando algunos interesantes que escapen de este escaneo. En tal caso podemos ir englobando rangos de búsqueda a fin de determinar los puertos que están abiertos (Pues lanzando el -p- cuando se demora mucho tiempo nmap suele detener el escaneo haciéndolo incompleto):
+
+```bash
+nmap -p1-10000 --open -T5 -v ipHost -n -oG range1-10000
+nmap -p10000-20000 --open -T5 -v ipHost -n -oG range10000-20000
+nmap -p20000-30000 --open -T5 -v ipHost -n -oG range20000-30000
+                        .
+                        .
+                        .
+```
