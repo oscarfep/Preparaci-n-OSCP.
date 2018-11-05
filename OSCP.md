@@ -23,7 +23,7 @@
        * [Nikto](#Nikto)
      * [Pentesting Web](#pentesting-web)
        * [LFI (Local File Inclusion)](#lfi)
-       * [LFI to RCE](#lfi to rce)
+       * [LFI to RCE](#lfi-to-rce)
        * [RFI (Remote File Inclusion)](#rfi)     
        * [SQLI (SQL Inyection)](#sqli)     
        * [Shellshock](#shellshock)
