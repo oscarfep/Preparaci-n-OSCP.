@@ -22,6 +22,35 @@ Antes que nada me gustaría comentar un poco mi experiencia a la hora de abordar
 
 #### ¿Es difícil la certificación?
 
+Diría que la respuesta es relativa, siempre va a depender de la soltura que tengas con máquinas de tipo _CTF/Challenge_. 
+
+A mi por ejemplo la plataforma **HackTheBox** me ha servido de mucho para coger todo el fondo que tengo a día de hoy, así como **VulnHub** u **OverTheWire**. De hecho, lo que más me sorprendió a la hora de ir haciendo las máquinas del laboratorio fue la gran similitud con las máquinas de HackTheBox. Hablando en términos comparativos, os puedo decir que efectivamente corresponden a las de nivel medio de HTB, tal y como llegué a leer en su momento en algunos artículos de gente que había pasado con éxito la certificación.
+
+Para que te quedes tranquilo, si juegas mucho con máquinas de tipo CTF y te entrenas día a día con retos desafiantes que te hagan pensar, no tienes de qué preocuparte.
+
+#### ¿Qué plan me pillo?
+
+En mi caso me llegué a pillar el plan de 3 meses, lo que se resume en unos 1.100 euros practicamente. 
+
+Os puedo decir que en 1 mes ya tenía casi todas las máquinas hechas menos 4 de ellas que me siguieron quedando pendientes y no llegué a hacer (Eran las más Hard y vi que escapaban demasiado de la metodología del examen).
+
+El segundo mes lo utilicé para seguir con HackTheBox así como para repasar las máquinas hechas y probar vías alternativas de resolver las mismas.
+
+En base a cómo lo he vivido yo, os recomendaría más bien 2 meses de laboratorio, sobre todo por lo que me comentaba un gran compañero **Julio Ureña**, de que uno tiende a relajarse cuando tiene mucho tiempo por delante.
+
+#### ¿Qué bases tuve antes de comenzar con la certificación?
+
+A nivel de Pentesting, en VulnHub tenía 30 máquinas, en OverTheWire 6 de los retos principales y en HackTheBox 55 máquinas con permisos de administrador en cada una de ellas.
+
+A nivel de Sistemas, con muy buenas bases de Linux Avanzado, programación en Bash Avanzado y ligero de Python. Sí que es cierto que la certificación me hizo meterme un poco más a fondo con la programación en Python, de ahí me motivé de hecho para hacer la herramienta **spoofMe** para el Spoofing de llamadas y mensajería instantánea.
+
+A su vez a esto le sumo las auditorías reales de empresa que hago como Pentester en EnigmaSec, donde el hecho de practicar también en entornos reales me hace ver las cosas desde otra perspectiva.
+
+Por último, a nivel de Búffer Overflow, no sabía hacer nada... entré con la mente en blanco a la certificación. Sin embargo, el 4 días ya sabía hacer todos los ejercicios del laboratorio en base a la guía y a los vídeos de apoyo con los que cuentas en el material que te dan.
+
+
+
+
 Buffer Overflow Windows
 ===============================================================================================================================
 A continuación, se listan los pasos a seguir para la correcta explotación de Buffer Overflow en Linux (32 bits). Para la examinación, no se requieren de conocimientos avanzados de exploiting en BoF (bypassing ASLR, etc.), basta con practicar con servicios básicos y llevar esa misma metodología al examen.
