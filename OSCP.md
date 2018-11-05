@@ -901,6 +901,29 @@ Existen varias formas de conseguir ejecutar comandos en remoto a través de un *
 * Mail PHP Execution
 * SSH Access via id_rsa Access Key
 
+La primera de ellas [**Log Poisoning**], consiste en verificar si las rutas _/var/log/auth.log_ y _/var/log/apache2/access.log_ son visibles desde el **LFI**.
+
+En caso de serlo para la ruta _/var/log/auth.log_, podemos llevar a cabo técnicas de autenticación que nos permitan obtener ejecución de comandos en remoto. Esta ruta almacena las autenticaciones establecidas sobre el sistema, entre ellas además de las normales de sesión, las que van por SSH.
+
+Esto en otras palabras se traduce en que por cada intento fallido de conexión por SSH hacia el sistema, se generará un reporte visible en el recurso _/var/log/auth.log_. La idea en este punto es aprovechar la visualización del recurso para forzar la autenticación de un usuario no convencional, donde incrustramos un código PHP que nos permite posteriormente desde el LFI ejecutar comandos sobre el sistema.
+
+Ejemplo:
+
+`ssh "<?php system('whoami'); ?>"@192.168.1.X`
+
+Tras introducir una contraseña incorrecta para el usuario inexistente, se generará un reporte en el recurso _auth.log_ como el siguiente:
+
+```bash
+Nov  5 11:53:46 parrot sshd[13626]: Failed password for invalid user <?php echo system('whoami'); ?> from ::1 port 39988 ssh2
+Nov  5 11:53:48 parrot sshd[13626]: Connection closed by invalid user <?php echo system('whoami'); ?> ::1 port 39988 [preauth]
+```
+
+Llegados a este punto, si desde la URL aprovechando el LFI apuntamos a dicho recurso, veremos cómo figurará un usuario '***www-data***' para el campo _whoami_ definido en el script php incrustrado a través del usuario de autenticación.
+
+Para el caso del recurso _access.log_ pasa algo similar, sólo que en cuanto a la implementación técnica se realizarn otras operaciones.
+
+Siempre suelo emplear Burpsuite como intermediario, pero también se puede hacer desde curl modificando el **User-Agent**. Lo que necesitamos hacer es realizar una consulta a la página web cambiando el User-Agent por un código PHP. De esta forma, tras visualizar el recurso _access.log_ de Apache, veremos como el código PHP es interpretado en el User-Agent de la consulta, pudiendo posteriormente ejecutar comandos en remoto de la misma forma que sucedía con el recurso _access.log_.
+
 #### RFI
 
 ### Pentesting Linux
