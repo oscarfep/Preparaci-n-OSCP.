@@ -468,7 +468,7 @@ Sabiendo que a nivel de OPCode, un '**jmp ESP**' figura como **FFE4**, podemos a
 
 Suponiendo que se trata de una dll el módulo candidato que hemos encontrado. De manera inmediata, se nos datarán un listado de resultados, donde de entre ellos... deberemos seleccionar aquel cuya dirección de memoria no posea badchars.
 
-Haciendo doble-click en la misma, podremos ver desde la interfaz principal de **Immunity Debugger** como dicha dirección equivale a un jmp ESP. A modo de ejemplo, suponiendo que la dirección es 0x12131415, se deberían de aplicar al script los siguientes cambios:
+Haciendo doble-click en la misma, podremos ver desde la interfaz principal de **Immunity Debugger** como dicha dirección equivale a un jmp ESP. A modo de ejemplo, suponiendo que la dirección es **0x12131415**, se deberían de aplicar al script los siguientes cambios:
 
 ```python
 #!/usr/bin/python
@@ -590,6 +590,8 @@ except:
   sys.exit(0)
 
 ```
+
+Podemos establecer **BreakPoints** desde Immunity Debugger en dicha dirección (pulsando **F2** para ello sobre la dirección), a fin de corroborar que se produce una detención en la ejecución del programa tras el registro **EIP** pasar por la dirección **0x12131415**. En caso de ser así, esto quiere decir que todo ha sido configurado correctamente, donde de pulsar la tecla **F8** una vez alcanzado el breakpoint, vemos que la siguiente instrucción a realizar corresponde al primer **NOP-sled** del registro **ESP**.
 
 Ya con todo esto hecho, tras la ejecución del exploit teniendo una sesión de escucha previa con netcat en el puerto definido... ganaremos acceso al sistema, con la desventaja de que una vez matada la sesión, en caso de volver a ejecutar el script... no ganaremos más veces acceso al sistema, pues el servicio corrompe. Arreglaremos esto en el siguiente punto.
 
