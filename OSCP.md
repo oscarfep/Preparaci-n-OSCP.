@@ -16,8 +16,8 @@
      * [Mejorando el Exploit](#mejorando-el-exploit)
      * [Reduciendo el Size y Acceso por Powershell](#reduciendo-el-size-y-acceso-por-powershell)
 - [Buffer Overflow Linux (No cae en el examen)](#buffer-overflow-linux)
-- [Pentesting](#Pentesting)
-     * [General](#General)
+- [Pentesting](#pentesting)
+     * [General](#general)
        * [Service Enumeration](#service+enumeration)
      
 Antecedentes
@@ -723,6 +723,10 @@ Buffer Overflow Linux
 Pentesting
 ===============================================================================================================================
 
+En este punto, se detallan técnicas de Pentesting a abordar sobre las máquinas Windows/Linux que se nos presenten.
+
 ### General
+
+
 
 #### Service Enumeration
