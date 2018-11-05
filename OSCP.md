@@ -19,7 +19,8 @@
 - [Pentesting](#pentesting)
      * [General](#general)
        * [Port Scanning](#port-scanning)
-     
+       * [Wfuzz](#Wfuzz)
+          
 Antecedentes
 ===============================================================================================================================
 Antes que nada me gustaría comentar un poco mi experiencia a la hora de abordar el curso, pues tal vez le sirva de inspiración para aquel que pretenda sacarse la certificación.
@@ -790,3 +791,51 @@ nmap -p21,1433 192.168.1.0/24 --open -T5 -v -n -oN LHF
 Sobre el servicio **FTP** resulta interesante comprobar que podamos subir archivos. En caso de contar con un IIS, si vemos que somos capaces de alojar un fichero asp/aspx y apuntar al mismo desde el servicio web, podremos entablar una conexión TCP reversa.
 
 Sobre el servicio **ms-sql-s**, una de las pruebas que suelo utilizar de cabeza es la de realizar una autenticación vía **sqsh** contra el servicio proporcionando las credenciales **sa** de usuario sin contraseña. Puede llegar a pasar que el servicio no se encuentre corriendo sobre el puerto 1433, en ese caso podemos hacer uso de la herramienta [mssql.py](https://github.com/SecureAuthCorp/impacket/blob/master/examples/mssqlclient.py)
+
+#### Wfuzz
+
+Aunque también se puede hacer uso de **Dirbuster**, siempre he sido más partidiario de lidiar con **Wfuzz**. La sintaxis general para la búsqueda de directorios que empleo es la siguiente:
+
+```bash
+wfuzz -c --hc=404 -z file,/usr/share/wordlists/dirbuster/directory-list-2.3-medium.txt http://192.168.1.X/FUZZ
+```
+
+En caso de querer recorrer un rango numérico, por ejemplo para un caso práctico donde vemos que contamos con un servicio web desde el cual podemos hacer consultas a otro servicio web, algo que podemos hacer es aprovechar dicha funcionalidad para enumerar puertos internos que corran sobre el sistema desde el cual estamos aplicando las consultas.
+
+Esta parte me recuerda sobre todo a una máquina de HackTheBox, donde figuraba ciertos servicios HTTP corriendo que no eran accesibles desde fuera de la máquina. Con el objetivo de determinar estos puertos, podemos atender a los códigos de estado de la lado de la respuesta del servidor, ocultando por ejemplo el código de estado 400:
+
+```bash
+wfuzz -c --hc=404 -z range,1-65535 http://192.168.1.X:8080/request_to=http://127.0.0.1:FUZZ
+```
+
+De esta forma, se nos mostrará únicamente resultados donde se devuelva un código de estado diferente al 404.
+
+De manera alternativa, también podríamos haber aplicado lo siguiente:
+
+```bash
+wfuzz -c --sc=200 -z range,1-65535 http://192.168.1.X:8080/request_to=http://127.0.0.1:FUZZ
+```
+
+Para mostrar peticiones que devuelven un 200 cómo código de estado. Al igual que el código de estado se pueden jugar con más parámetros de filtro, como los caracteres, el número total de líneas, etc.
+
+**Importante:** A la hora de obtener un **Forbidden** en el código de estado de la respuesta del lado del servidor, recomiendo no tirar la toalla... pues a pesar de figurarnos dicha respuesta, podemos seguir enumerando directorios y archivos dentro de dicho directorio, donde tras dar con recursos válidos vemos que estos son visibles desde la web.
+
+Para tener un caso práctico, supongamos que tenemos un directorio **/design** que nos devuelve un Forbidden. Algo que podemos hacer es configurar una enumeración de doble Payload desde wfuzz a fin de descubrir recursos existentes bajo dicho directorio.
+
+Para ello, nos creamos un fichero _extensions.txt_ con el siguiente contenido:
+
+```bash
+php
+txt
+html
+xml
+cgi
+```
+
+Posteriormente, hacemos uso de Wfuzz siguiendo la siguiente sintaxis:
+
+`wfuzz -c --hc=404 -z file,/usr/share/wordlists/dirbuster/directory-list-2.3-medium.txt -z file,extensions http://192.168.1.X/design/FUZZ.FUZ2Z`
+
+De esta forma, estaremos para cada una de las líneas del payload principal comprobando las extensiones especificadas sobre el segundo payload
+
+
