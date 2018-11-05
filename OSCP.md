@@ -449,4 +449,4 @@ De esta forma, variamos la función de salida a un modo hilo... haciendo que lo 
 
 Tras su ejecución, se podrá comprobar como independientemente del número de veces que se ejecute el exploit, ganaremos siempre acceso al sistema.
 
-#### Reducciendo el Size / Acceso por Powershell
+#### Reduciendo el Size / Acceso por Powershell
