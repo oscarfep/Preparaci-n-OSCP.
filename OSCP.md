@@ -12,7 +12,7 @@
      * [Detectando los Badchars](#detectando-los-badchars)
      * [Generando el Shellcode](#generando-el-shellcode)
      * [Mejorando el Exploit](#mejorando-el-exploit)
-     * [Reducción del Size y Acceso por Powershell](#reducción-de-size-y-acceso-por-powershell)
+     * [Reduciendo el Size / Acceso por Powershell](#Reduciendo-el-size-/-acceso-por-powershell)
 
 Buffer Overflow Windows
 ===============================================================================================================================
@@ -449,4 +449,4 @@ De esta forma, variamos la función de salida a un modo hilo... haciendo que lo 
 
 Tras su ejecución, se podrá comprobar como independientemente del número de veces que se ejecute el exploit, ganaremos siempre acceso al sistema.
 
-#### Reducción del Size y Acceso por Powershell
+#### Reducciendo el Size / Acceso por Powershell
