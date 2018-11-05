@@ -11,6 +11,8 @@
      * [Situando y Asignando Espacio al Shellcode](#situando-y-asignando-espacio-al-shellcode)
      * [Detectando los Badchars](#detectando-los-badchars)
      * [Generando el Shellcode](#generando-el-shellcode)
+     * [Mejorando el Exploit](#mejorando-el-exploit)
+     * [Reducción de Tamaño + Acceso por Powershell](#reducción-de-tamaño-+-acceso-por-powershell)
 
 Buffer Overflow Windows
 ===============================================================================================================================
@@ -436,7 +438,7 @@ Ya teniendo todo esto hecho, lo único que queda es ejecutar el script teniendo 
 
 Tras su ejecución, ganaremos acceso al sistema, con la desventaja de que una vez matada la sesión, en caso de volver a ejecutar el script... no ganaremos más veces sesión al sistema. Arreglaremos esto en el siguiente punto.
 
--   Mejorando el Exploit
+#### Mejorando el Exploit
 
 De forma opcional, en caso de querer tras la ejecución del exploit poder continuamente acceder al sistema sin que el servicio corrompa, lo único que tenemos que hacer como variante al generar nuestro shellcode es lo siguiente:
 
@@ -447,4 +449,4 @@ De esta forma, variamos la función de salida a un modo hilo... haciendo que lo 
 
 Tras su ejecución, se podrá comprobar como independientemente del número de veces que se ejecute el exploit, ganaremos siempre acceso al sistema.
 
--   Reducción de Tamaño + Acceso por Powershell
+#### Reducción de Tamaño + Acceso por Powershell
