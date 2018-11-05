@@ -15,6 +15,7 @@
      * [Salto al ESP (Mona / Immunity Debugger)](#salto-al-esp)
      * [Mejorando el Exploit](#mejorando-el-exploit)
      * [Reduciendo el Size y Acceso por Powershell](#reduciendo-el-size-y-acceso-por-powershell)
+- [Buffer Overflow Linux (No cae en el examen)](#buffer-overflow-linux)
      
 Antecedentes
 ===============================================================================================================================
@@ -710,3 +711,6 @@ unsigned char buf[] =
 Como vemos, en este caso en hemos pasado de 351 bytes a 299 bytes. Lo que se debe hacer para acceder al sistema en este caso es simplemente compartir un servidor vía Python en el puerto 8000 (para que desde la máquina se interprete el fichero PS.ps1 [Le hemos cambiado el nombre para reducir los bytes]), y dejar una sesión de escucha vía Netcat por el puerto 443.
 
 Inmediatamente tras ejecutar el script, veremos cómo se recibe un GET desde nuestro servidor web vía Python y cómo en cuestión de segundos ganamos acceso al sistema vía Powershell.
+
+Buffer Overflow Linux
+===============================================================================================================================
