@@ -445,6 +445,32 @@ Llegando casi al final, para redirigir el flujo del programa y conseguir una eje
 
 Para ello, no es tan simple como especificar en _Little Endian_ la dirección del registro **ESP**, pues no funcionará. Lo que tendremos que hacer es lograr que el registro EIP apunte hacia una dirección de la memoria con permisos de ejecución y **ASLR** desactivado donde se aplique una instrucción de tipo '**jmp ESP**'. De esta forma, conseguiremos tras apuntar a dicha dirección, que la siguiente instrucción a realizar corresponda a los **NOP's** iniciales del registro **ESP** hasta llegar a nuestro **Shellcode**.
 
+Para ello, lo que tendremos que hacer una vez sincronizados al proceso desde **Immunity Debugger**, es aplicar el siguiente comando en la línea de comandos interactiva de la herramienta:
+
+`!mona modules`
+
+Una vez hecho, se nos listarán un puñado de módulos, de entre los cuales deberemos buscar cuáles no poseen mecanismos de protección y tienen el ASLR desactivado. Para la examinación del OSCP, siempre habrá uno que reúna dichas condiciones.
+
+Tras encontrar el módulo, desde las pestañas superiores en **Immunity Debugger** (las letras iniciales), una de ellas nos permite visualizar si el campo _.text_ del módulo en la memoria tiene permisos de ejecución, en caso de ser así, el módulo seleccionado es un candidato perfecto.
+
+La idea una vez teniendo el módulo candidato, es ver en qué porción de la memoria se está aplicando un salto al registro ESP. Para realizar esta búsqueda, analizamos el equivalente OPCode de la instrucción haciendo uso para ello de la utilidad **nasm_shell.rb** de Metasploit:
+
+```bash
+$~ /usr/share/metasploit-framework/tools/exploit/nasm_shell.rb
+
+nasm > jmp esp
+00000000  FFE4              jmp esp
+nasm >
+
+```
+
+Sabiendo que a nivel de OPCode, un 'jmp ESP' figura como FFE4, podemos a continuación desde Mona en la línea de comandos interactiva de *Immunity Debugger* realizar la siguiente consulta en la sección de módulos:
+
+`find -s "\xff\xe4" -m modulo.dll`
+
+Suponiendo que se trata de una dll el módulo candidato que hemos encontrado. De manera inmediata, se nos datarán un listado de resultados, donde de entre ellos... deberemos seleccionar aquel cuya dirección de memoria no posea badchars.
+
+
 
 
 #### Mejorando el Exploit
