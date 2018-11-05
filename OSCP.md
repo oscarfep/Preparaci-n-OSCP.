@@ -1026,6 +1026,45 @@ Si todo sale bien y es vulnerable a la explotación de dicha vulnerabilidad, deb
 
 **Advertencia**: En caso de que **/bin/bash** no funcione, se recomienda probar alternativas, pues hay ocasiones en las que la ruta absoluta del binario no es la que hemos especificado, por lo que se requerirá de una ligera enumeración manual o un simple modo alternativo de conexión
 
+#### Padding Oracle Attack
+
+Esta vulnerabilidad la he llegado a probar en 2 entornos. Uno de ellos es en la máquina **Padding Oracle** de _VulnHub_ y otra de ellas es la máquina **Lazy** de _HackTheBox_. Ambas máquinas se resuelven de la misma forma en cuanto a explotación de vulnerabilidad respecta, pudiendo tomar 2 vías de explotación.
+
+La **primera vía de explotación** consiste en a través del panel de registro, crear un nuevo usuario donde intuyendo que existe un usuario **admin** definamos un nuevo usuario **admin=**. De esta forma, creando el usuario lo que conseguiremos es crear una instancia de dicho usuario con las mismas propiedades, viendo todo su contenido a posteriori como si se tratara del usuario **admin**. 
+
+La **segunda vía de explotación** consiste en crear en primer lugar un nuevo usuario. Una vez creado, llevamos a cabo una autenticación como dicho usuario, pillando la Cookie de sesión desde la pestaña **Network** de la propia inspección de elemento o desde **Burpsuite**.
+
+A continuación, utilizamos la herramienta **padbuster** para llevar a cabo el ataque de oráculo de relleno. Seguimos la siguiente sintaxis:
+
+```bash
+$~ padbuster http://192.168.1.x/login.php D8GjDDheDK%2F%2B7vMT7B7ceSyl3BuPZ9km 8 --cookies auth=D8GjDDheDK%2F%2B7vMT7B7ceSyl3BuPZ9km --encoding 0
+```
+
+Donde **D8GjDDheDK%2F%2B7vMT7B7ceSyl3BuPZ9km** es la Cookie de sesión y **8** el número de bloques. A pesar de no saber la cifra con exactitud, podemos montarnos un simple bucle **for i in $(seq 1 100)** a fin de determinar el número de bloques, pues en caso de no ser correcto no se podrá aplicar la inyección.
+
+La herramienta tiene cierta similitud al **sqlmap** para inyecciones SQL, sólo que aquí las inyecciones las aplica sobre ciertas condiciones de error que son mostradas una vez el número de bloques proporcionado es correcto.
+
+Lo que obtendremos una vez todo el proceso se realice correctamente es un Output como el siguiente desde la herramienta:
+
+```bash
+[+] Decrypted value (ASCII): user=s4vitar
+[+] Decrypted value (HEX): 757365723d733476697461720808080808080808
+[+] Decrypted value (Base64): dXNlcj1zNHZpdGFyCg==
+```
+
+Con esto entre manos, lo que podemos hacer es generar desde **Padbuster** la Cookie de sesión válida para el usuario **admin** en base a la autenticación válida del usuario cuya Cookie hemos capturado.
+
+Para ello, desde **Padbuster** aplicamos la siguiente sintaxis:
+
+```bash
+$~ padbuster http://192.168.1.x/login.php D8GjDDheDK%2F%2B7vMT7B7ceSyl3BuPZ9km 8 --cookies auth=D8GjDDheDK%2F%2B7vMT7B7ceSyl3BuPZ9km --encoding 0 --plaintext user=admin
+```
+
+Donde veremos que la herrmamienta directamente nos proporcionará la Cookie de sesión para el usuario administrador.
+
+Lo único que tenemos que hacer ahora, es desde **Burpsuite**, interceptar una autenticación con nuestro usuario para posteriormente modificar la Cookie a la proporcionada por **PadBuster**. Lo que conseguiremos con esto es acceder como el usuario **admin** al servicio web, burlando el panel de autenticación sin ser necesario conocer la contraseña de dicho usuario.
+
+
 ### Pentesting Linux
 
 ### Pentesting Windows
