@@ -4,8 +4,8 @@
 #### Penetration Testing with Kali Linux (PWK) course and Offensive Security Certified Professional (OSCP) Cheat Sheet
 
 ## Índice y Estructura Principal
-- [Buffer Overflow Windows (25 puntos)](#Buffer-Overflow-Windows)
-     * [Fuzzing](#Fuzzing)
+- [Buffer Overflow Windows (25 puntos)](#buffer-overflow-windows)
+     * [Fuzzing](#fuzzing)
      * [Calculando el Offset](#calculando-el-offset)
 
 Buffer Overflow Windows
