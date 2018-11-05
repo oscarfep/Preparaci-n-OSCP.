@@ -60,15 +60,21 @@ He de decir que también es un gran puñado de motivación lo que hace que esté
 
 En primer lugar hacerte una cuenta de **HackTheBox**, incluso te diría de pagarte la cuenta VIP para tener acceso a las máquinas retiradas. Tienes a tu disposición canales en Youtube como el de **ippsec**, que te explica paso a paso todas las máquinas retiradas con técnicas bastante chulas tanto de explotación en Windows como en Linux.
 
-Te recomiendo practicar en este tipo de entornos todo lo que puedas, pues son los que te harán ver una vez comiences con el laboratorio que hay bastante similitud y que no es tan costoso. Para las máquinas de laboratorio, te darás cuenta de que los entornos están un poco "deprecated", en el sentido de que son máquinas algo antiguas con arquitectura de 32 bits. A la hora de abordar estas máquinas, mi consejo es que no trates de explotarlas haciendo uso de exploits modernos, pues están pensadas para que practiques distintas vías de explotación con técnicas no tan actuales, lo que hace que ganes más fondo.
+Te recomiendo practicar en este tipo de entornos todo lo que puedas, pues son los que te harán ver una vez comiences con el laboratorio que hay bastante similitud y que no es tan costoso. Para las máquinas del laboratorio, te darás cuenta de que los entornos están un poco "deprecated", en el sentido de que son máquinas algo antiguas con arquitectura de 32 bits. A la hora de abordar estas máquinas, mi consejo es que no trates de explotarlas haciendo uso de exploits modernos, pues están pensadas para que practiques distintas vías de explotación con técnicas no tan actuales, lo que hace que ganes más fondo.
 
 #### ¿Qué es lo más duro de la certificación?
 
-La gestión del tiempo. Mi recomendación y por lo que he escuchado de los demás y coincido, es empezar con el Búffer Overflow. Teniendo cierta soltura no te debería de llevar más de 1 hora.
+La gestión del tiempo. Mi recomendación y por lo que he escuchado de los demás y coincido, es empezar con el Búffer Overflow a la hora de abordar el examen. Teniendo cierta soltura no te debería de llevar más de 1 hora.
 
 Una vez hecho, ya cuentas con 25 puntos del examen. El siguiente paso es saltar a la máquina de 10 puntos, suele ser una explotación rápida y directa como administrador del sistema. Con estos 35 puntos bajo la manga, lo más recomendable es dedicarle un buen tiempo a la otra máquina de 25 puntos, pues en caso de sacarla, estarías a 60 puntos y con conseguir el User de alguno de los otros 2 sistemas de 20 puntos ya estarías aprobado (Intenta aspirar a más y hazlas todas :P).
 
-En cuanto al laboratorio, es justamente el entorno deprecated lo que hace un poco tediosa la compilación y ejecución de exploits, pues en la mayoría de las veces te dará unas petadas importantes de compilación. Pero no te frustres, siempre con un poco de café y buena actitud se saca.
+En cuanto al laboratorio, es justamente el entorno deprecated lo que hace un poco tediosa la compilación y ejecución de exploits, pues en la mayoría de las veces te dará una petada de las importantes. Pero no te frustres, siempre con un poco de café y buena actitud se saca.
+
+#### ¿Cuáles son los siguientes pasos?
+
+Como siempre, uno nunca debe dejar de hacer lo que le gusta... y aún me queda un puñado de cosas por aprender. Será cuestión de seguir aprendiendo lo que hará que aparezca una respuesta a esta pregunta.
+
+Sin más, ¡os dejo con toda la preparación del curso!
 
 
 Buffer Overflow Windows
