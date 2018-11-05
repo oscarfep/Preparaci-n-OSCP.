@@ -11,7 +11,7 @@
      * [Situando y Asignando Espacio al Shellcode](#situando-y-asignando-espacio-al-shellcode)
      * [Detectando los Badchars](#detectando-los-badchars)
      * [Generando el Shellcode](#generando-el-shellcode)
-     * [Salto al ESP](#salto-al-esp)
+     * [Salto al ESP (Mona / Immunity Debugger)](#salto-al-esp)
      * [Mejorando el Exploit](#mejorando-el-exploit)
      * [Reduciendo el Size y Acceso por Powershell](#reduciendo-el-size-y-acceso-por-powershell)
 
@@ -440,6 +440,10 @@ Ya teniendo todo esto hecho, lo único que queda es ejecutar el script teniendo 
 Tras su ejecución, ganaremos acceso al sistema, con la desventaja de que una vez matada la sesión, en caso de volver a ejecutar el script... no ganaremos más veces sesión al sistema. Arreglaremos esto en el siguiente punto.
 
 #### Salto al ESP
+
+Llegando casi al final, para redirigir el flujo del programa y conseguir una ejecución exitosa de nuestro Shellcode, dado que nuestro Shellcode se sitúa en el registro **ESP** por un lado y dado que tenemos el control del registro **EIP** por otro... la idea es hacer que el registro **EIP** apunte hacia el registro **ESP**.
+
+Para ello, no es tan simple como especificar en _Little Endian_ la dirección del registro **ESP**, pues no funcionará. Lo que tendremos que hacer es lograr que el registro EIP apunte hacia una dirección de la memoria con permisos de ejecución y **ASLR** desactivado donde se aplique una instrucción de tipo '**jmp ESP**'. De esta forma, conseguiremos tras apuntar a dicha dirección, que la siguiente instrucción a realizar corresponda a los **NOP's** iniciales del registro **ESP** hasta llegar a nuestro **Shellcode**.
 
 
 
