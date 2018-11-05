@@ -895,6 +895,12 @@ Por [aquí](https://github.com/swisskyrepo/PayloadsAllTheThings/tree/master/File
 
 #### LFI to RCE
 
+Existen varias formas de conseguir ejecutar comandos en remoto a través de un **Local File Inclusion**, así como de acceder al sistema a través de la visualización de ciertos recursos. Para este caso, explicaré 3 técnicas a modo de ejemplo.
+
+* Log Poisoning (access.log & auth.log)
+* Mail PHP Execution
+* SSH Access via id_rsa Access Key
+
 #### RFI
 
 ### Pentesting Linux
