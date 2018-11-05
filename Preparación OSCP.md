@@ -1110,10 +1110,10 @@ En caso de no obtener o poder enumerar usuarios válidos de autenticación, esto
 
 Así mismo, una vez se logra acceder al gestor de contenidos, la intrusión al sistema es la parte más sencilla. Simplemente en la sección de Apariencia, en la pestaña Editor nos vamos al script **404.php** configurado para llevar a cabo una modificación, subiendo nuestro propio código PHP malicioso que permita entablarnos una conexión reversa contra el sistema.
 
-Para apuntar a dicho script tenemos 2 vías:
+Para apuntar a dicho script tenemos 3 vías:
 
 * http://192.168.1.x/?p=404.php
-* http://192.168.1.x/recursoinexistente
+* http://192.168.1.x/recursoinexistente (Para causar un error que haga que se cargue el script 404.php)
 * http://192.168.1.x/404.php
 
 ### Pentesting Linux
