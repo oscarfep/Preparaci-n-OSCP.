@@ -1005,7 +1005,7 @@ Password: admin' or 1=1-- -
 
 Para casos donde podamos llevar a cabo un nuevo registro de usuario, otra vía es crear un usuario con nombre **admin' or 1=1-- -** y password **admin' or 1=1-- -**, de esta forma tras posteriormente realizar la autenticación como usuario válido, tendremos acceso a todos los datos de los usuarios en la base de datos principal.
 
-
+Para técnicas de bypassing consultar el siguiente [enlace](https://www.owasp.org/index.php/SQL_Injection_Bypassing_WAF)
 
 ### Pentesting Linux
 
