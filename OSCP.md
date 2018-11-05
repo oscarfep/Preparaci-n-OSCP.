@@ -6,7 +6,7 @@
 ## Índice y Estructura Principal
 - [Buffer Overflow Windows (25 puntos)](#Buffer-Overflow-Windows)
      * [Fuzzing](#Fuzzing)
-     * [Calculando el Offset](#Calculando-el-Offset)
+     * [Calculando el Offset](#calculando-el-offset)
 
 Buffer Overflow Windows
 ===============================================================================================================================
