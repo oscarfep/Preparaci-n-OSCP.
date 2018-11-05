@@ -42,13 +42,33 @@ En base a cómo lo he vivido yo, os recomendaría más bien 2 meses de laborator
 
 A nivel de Pentesting, en VulnHub tenía 30 máquinas, en OverTheWire 6 de los retos principales y en HackTheBox 55 máquinas con permisos de administrador en cada una de ellas.
 
-A nivel de Sistemas, con muy buenas bases de Linux Avanzado, programación en Bash Avanzado y ligero de Python. Sí que es cierto que la certificación me hizo meterme un poco más a fondo con la programación en Python, de ahí me motivé de hecho para hacer la herramienta **spoofMe** para el Spoofing de llamadas y mensajería instantánea.
+A nivel de Sistemas y programación, con muy buenas bases de Linux Avanzado, programación en Bash Avanzado y ligero tanto de Windows como de Python. Sí que es cierto que la certificación me hizo meterme más a fondo con Windows, así como con la programación en Python, de ahí me motivé de hecho para hacer la herramienta **spoofMe** para el Spoofing de llamadas y mensajería instantánea. 
 
 A su vez a esto le sumo las auditorías reales de empresa que hago como Pentester en EnigmaSec, donde el hecho de practicar también en entornos reales me hace ver las cosas desde otra perspectiva.
 
-Por último, a nivel de Búffer Overflow, no sabía hacer nada... entré con la mente en blanco a la certificación. Sin embargo, el 4 días ya sabía hacer todos los ejercicios del laboratorio en base a la guía y a los vídeos de apoyo con los que cuentas en el material que te dan.
+Por último, a nivel de Búffer Overflow, no sabía hacer nada... entré con la mente en blanco a la certificación. Sin embargo, en 4 días ya sabía hacer todos los ejercicios del laboratorio en base a la guía y a los vídeos de apoyo con los que cuentas en el material que te dan.
 
+#### ¿Qué horarios de estudio seguías?
 
+Esto tal vez ha sido lo más mortal, desafiante, doloroso pero a su vez fructífero. Estuve aplicando **Uberman** durante los 3 meses de preparación, una técnica de sueño polifásico que hace que con tan sólo dormir 3 horas seguidas aplicando posteriormente descansos de 20 minutos a intervalos regulares de tiempo puedas estar activo y despierto (Que no falten los que me conocen de cerca y me llamaban loco).
+
+Decidí aplicarlo porque básicamente el día se pasaba muy rápido, cuando uno está trabajando tiene prioridades y debe anteponer las tareas y proyectos frente a lo demás. Para poder dedicarle tiempo de estudio al laboratorio, estuve sobre todo el primer mes aplicando a fondo la técnica, estudiando y practicando aproximadamente desde las 7 de la tarde hasta las 5 de la mañana.
+
+He de decir que también es un gran puñado de motivación lo que hace que estés dispuesto a hacer esto, en caso contrario ni lo habría intentado. Aún así no lo recomiendo hacer, pues es perjudicial para la salud, pero dependerá de cada cual como pretenda organizarse sus horas de estudio.
+
+#### ¿Qué pasos me recomiendas para abordar con éxito la certificación?
+
+En primer lugar hacerte una cuenta de **HackTheBox**, incluso te diría de pagarte la cuenta VIP para tener acceso a las máquinas retiradas. Tienes a tu disposición canales en Youtube como el de **ippsec**, que te explica paso a paso todas las máquinas retiradas con técnicas bastante chulas tanto de explotación en Windows como en Linux.
+
+Te recomiendo practicar en este tipo de entornos todo lo que puedas,pues son los que te harán ver una vez comiences con el laboratorio que hay bastante similitud y que no es tan costoso. Para las máquinas de laboratorio, te darás cuenta de que los entornos están un poco "deprecated", en el sentido de que son máquinas algo antiguas con arquitectura de 32 bits. A la hora de abordar estas máquinas, mi consejo es que no trates de explotarlas haciendo uso de exploits modernos, pues están pensadas para que practiques distintas vías de explotación con técnicas no tan actuales, lo que hace que ganes más fondo.
+
+#### ¿Qué es lo más duro de la certificación?
+
+La gestión del tiempo. Mi recomendación y por lo que he escuchado de los demás y coincido, es empezar con el Búffer Overflow. Teniendo cierta soltura no te debería de llevar más de 1 hora.
+
+Una vez hecho, ya cuentas con 25 puntos del examen. El siguiente paso es saltar a la máquina de 10 puntos, suele ser una explotación rápida y directa como administrador del sistema. Con estos 35 puntos bajo la manga, lo más recomendable es dedicarle un buen tiempo a la otra máquina de 25 puntos, pues en caso de sacarla, estarías a 60 puntos y con conseguir el User de alguno de los otros 2 sistemas de 20 puntos ya estarías aprobado (Intenta aspirar a más y hazlas todas :P).
+
+En cuanto al laboratorio, es justamente el entorno deprecated lo que hace un poco tediosa la compilación y ejecución de exploits, pues en la mayoría de las veces te dará unas petadas importantes de compilación. Pero no te frustres, siempre con un poco de café y buena actitud se saca.
 
 
 Buffer Overflow Windows
