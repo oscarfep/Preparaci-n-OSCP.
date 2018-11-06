@@ -1154,7 +1154,7 @@ while true; do
 done
 ```
 
-Tras su ejecución, tendremos una visual de los comandos que se están aplicando a nivel de sistema, incluidos los llevados a cabo por el usuario root del equipo.
+Tras su ejecución, tendremos una visual de toods los comandos que se están aplicando a nivel de sistema, incluidos los llevados a cabo por el usuario root del equipo, incluyendo rutas y subprocesos.
 
 ### Pentesting Windows
 
