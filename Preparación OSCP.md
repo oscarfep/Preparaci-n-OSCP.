@@ -739,6 +739,13 @@ Inmediatamente tras ejecutar el script, veremos cómo se recibe un GET desde nue
 Buffer Overflow Linux
 ===============================================================================================================================
 
+Hasta donde yo se, nunca ha caído un _Buffer Overflow_ de Linux, pero por si las moscas, detallo el procedimiento usando como ejemplo el aplicativo **Crossfire**.
+
+#### Fuzzing
+
+
+
+
 Pentesting
 ===============================================================================================================================
 
