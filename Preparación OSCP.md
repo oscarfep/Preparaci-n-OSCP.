@@ -37,6 +37,7 @@
        * [NoTCPShell](#notcpshell)
        * [Burpsuite](#burpsuite)     
      * [Pentesting Linux](#pentesting-linux)
+        * [Monitorizado de Procesos a Tiempo Real](#process-monitoring)
      * [Pentesting Windows](#pentesting-windows)
         * [Transferencia de Archivos](#transferencia-de-archivos)
         * [Evasión de Antivirus con Malware Genético](#av-evasion-genetic-malware)
@@ -1134,6 +1135,26 @@ Para apuntar a dicho script tenemos 3 vías:
 
 
 ### Pentesting Linux
+
+#### Process Monitoring
+
+A la hora de escalar privilegios, es una buena idea montarse un script **procmon.sh** para la monitorización de procesos y comandos aplicados a nivel de sistema en tiempo real.
+
+Para ello, tan sólo tendremos que crear un script sobre el sistema como el siguiente:
+
+```bash
+#!/bin/bash
+
+old_process=$(ps -eo command)
+
+while true; do
+	new_process=$(ps -eo command)
+	diff <(echo "$old_process") <(echo "$new_process") | grep "[\>\<]" | grep -v "procmon.sh" | grep -v "command"
+	old_process=$new_process
+done
+```
+
+Tras su ejecución, tendremos una visual de los comandos que se están aplicando a nivel de sistema, incluidos los llevados a cabo por el usuario root del equipo.
 
 ### Pentesting Windows
 
