@@ -1581,3 +1581,8 @@ En cuestión de unos segundos, veremos como se recibe un **GET** del lado de nue
 
 Aunque las máquinas Windows del examen suelen ser de 32 bits, como más vale prevenir que curar detallo una técnica para migrar de un proceso de 32 bits a uno de 64 bits. Cabe decir que este procedimiento es importante de cara a la correcta enumeración del sistema, pues en caso de figurar en un proceso que no corra bajo la arquitectura de la máquina, tanto **Sherlock**, como **PowerUp.ps1** como incluso el propio **suggester** de Metasploit, darán montón de falsos positivos.
 
+Nunca está de más tampoco saber con qué tipo de sistema operativo estamos tratando, así como si estamos en un proceso de 64 bits o de 32 bits, para la posterior migración. Podemos hacerlo via **Powershell**, obteniendo **True** o **False** dependiendo de si es cierto o no a través de las siguientes consultas:
+
+`[Environment]::Is64BitOperatingSystem`
+`[Environment]::Is64BitProcess`
+
