@@ -1164,6 +1164,8 @@ Tras su ejecución, tendremos una visual de toods los comandos que se están apl
 
 ### Pentesting Windows
 
+A pesar de implementar y poner en práctica otras técnicas que no describo en los siguiente puntos, enumero a continuación las que para mi son más importantes y las que considero que uno debe de tener bien claras para el correcto manejo sobre los equipos Windows como atacante, así como de cara al examen.
+
 #### Transferencia de Archivos
 
 Tenemos distintas formas de transferir archivos desde la máquina Windows que hayamos comprometido. Para la primera de ellas, nos aprovechamos de **certutil**, compartiendo para ello un servidor en Python sobre nuestro equipo en los recursos que queramos compartir y aplicando el siguiente comando desde la máquina Windows:
