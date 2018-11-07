@@ -50,6 +50,7 @@
         * [Powershell Reverse Shell](#powershell-reverse-shell)
         * [Migración manual a proceso a 64 bits](#manual-migration-process)
         * [RCE Filter Evasion Microsoft SQL](#rce-filter-evasion-microsoft-sql)
+        * [Conexión al Servicio Microsoft SQL con mssqclient.py de Impacket](#mssqlclient-impacket)
 
           
 Antecedentes
@@ -1696,3 +1697,13 @@ nt authority\ system
 ```
 
 Y ya lograremos ejecutar comandos sobre el sistema.
+
+#### mssqlclient Impacket
+
+El recurso lo podemos obtener [aquí](https://github.com/SecureAuthCorp/impacket/blob/master/examples/mssqlclient.py), y su uso es similar al de **psexec**. En mi caso, lo uso cuando han cambiado el puerto por defecto:
+
+```bash
+python mssqlclient.py WORKGROUP/Administrator:password@192.168.1X -port 46758
+```
+
+Posteriormente, las consultas se hacen igual a las descritas en el anterior punto.
