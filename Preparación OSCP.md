@@ -31,6 +31,7 @@
        * [Enumeración SNMP](#snmp-enumeration)
        * [Reverse Shell](#reverse-shell)
        * [Spawning a TTY Shell](#spawning-a-tty-shell)
+       * [Compilado de Exploits para Windows](#compilado-de-exploits-para-windows)
      * [Pentesting Web](#pentesting-web)
        * [LFI (Local File Inclusion)](#lfi)
        * [LFI to RCE](#lfi-to-rce)
@@ -1485,6 +1486,20 @@ Aunque en el apartado de **Tratamiento de la TTY** en la sección de Pentesting 
 * :set shell=/bin/bash:shell (Desde vi)
 * !sh (Desde nmap)
 * find /etc/passwd -exec /bin/bash \;
+
+#### Compilado de Exploits para Windows
+
+Desde Linux, a la hora de compilar algunos de los exploits que figuren en **Searchsploit** (generalmente en C), aplicaremos el siguiente comando:
+
+```bash
+i686-w64-mingw32-gcc exploit.c -o exploit
+```
+
+Para máquinas Windows de 32 bits, aplicamos el siguiente comando:
+
+```bash
+i686-w64-mingw32-gcc 40564.c -o 40564 -lws2_32
+```
 
 ### Pentesting Web
 
