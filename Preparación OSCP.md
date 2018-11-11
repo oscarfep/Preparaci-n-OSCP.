@@ -28,6 +28,7 @@
        * [Port Scanning](#port-scanning)
        * [Wfuzz](#Wfuzz)
        * [Nikto](#Nikto)
+       * [Enumeración SNMP](#snmp-enumeration)
      * [Pentesting Web](#pentesting-web)
        * [LFI (Local File Inclusion)](#lfi)
        * [LFI to RCE](#lfi-to-rce)
@@ -1333,6 +1334,65 @@ De esta forma, estaremos para cada una de las líneas del payload principal comp
 Sinceramente no he llegado a profundizar mucho sobre esta herramienta, pero dado que forma parte de una de las herramientas de automatización que admiten en el examen y a veces devuelve maravillas... detallo su uso:
 
 `nikto -h http://192.168.1.X`
+
+#### SNMP Enumeration
+
+Aunque se trata de un servicio que corre bajo un puerto por **UDP**, parece inofensivo pero la enumeración sobre dicho servicio nos puede permitir enumerar más de la cuenta a nivel de sistema para saber qué software corren, así como rutas, usuarios del sistema, puertos internos abiertos TCP/UDP, etc.
+
+Para detectar si el servicio está operativo:
+
+```bash
+nmap -p161 -sU --open -T5 -v -n 192.168.1.X
+```
+
+En caso de estar abierto, lo primero será averiguar la _Community String_. Generalmente suele ser **public**, pero por si acaso, nos montamos un ligero diccionario:
+
+```bash
+┌─[s4vitar@parrot]─[~/Desktop]
+└──╼ $echo -e "public\nprivate\nmanager" > community.txt
+┌─[s4vitar@parrot]─[~/Desktop]
+└──╼ $cat community.txt 
+public
+private
+manager
+```
+
+Una vez creado, utilizamos **onesixtyone** para bruteforcear la Community String del servicio:
+
+```bash
+onesixtyone -c community.txt -i ficheroIPS.txt
+Scanning 2 hosts, 3 communities
+10.11.1.X [public] Linux example 2.4.18-3 #1 Thu Apr 18 07:37:53 EDT 2002 i686
+10.11.1.Y [public] Linux example 2.4.20-8 #1 Thu Mar 13 17:54:28 EST 2003 i686
+```
+
+Con esto, tras ver que la Community String es **public**, consideramos los siguientes valores MIB:
+
+```bash
+1.3.6.1.2.1.25.1.6.0 System Processes
+1.3.6.1.2.1.25.4.2.1.2 Running Programs
+1.3.6.1.2.1.25.4.2.1.4 Processes Path
+1.3.6.1.2.1.25.2.3.1.4 Storage Units
+1.3.6.1.2.1.25.6.3.1.2 Software Name
+1.3.6.1.4.1.77.1.2.25 User Accounts
+1.3.6.1.2.1.6.13.1.3 TCP Local Ports
+```
+
+Hay muchos más... pero a modo de ejemplo son los más significativos. Suponiendo que quisiéramos saber qué procesos corre el sistema, aplicaríamos el siguiente comando desde **snmpwalk**:
+
+```bash
+$~ snmpwalk -c public -v1 10.11.1.X 1.3.6.1.2.1.25.1.6.0
+```
+
+Inmediatamente, obtendremos una lista de los procesos que corren bajo el sistema.
+
+En caso de querer aplicar un análisis exhaustivo sin especificación de valor **MIB**, aplicamos el siguiente comando:
+
+```bash
+$~ snmpwalk -c public -v1 10.11.1.X
+```
+
+Y seguidamente, se nos listará montón de información relevante de la máquina. Aunque parezca tontería, hay ocasiones en las que gracias a ver la versión de un servicio en concreto a través del **SNMP**, he podido explotar una vulnerabilidad que jamás habría podido encontrar desde fuera, por lo que lo considero un servicio fundamental a enumerar.
 
 ### Pentesting Web
 
