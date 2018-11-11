@@ -50,6 +50,7 @@
      * [Pentesting Linux](#pentesting-linux)
         * [Tratamiento de la TTY](#tratamiento-de-la-tty)
         * [Monitorizado de Procesos a Tiempo Real](#process-monitoring)
+        * [Escaping Restricted Shell](#escaping-restricted-shell)
      * [Pentesting Windows](#pentesting-windows)
         * [Transferencia de Archivos](#transferencia-de-archivos)
         * [Evasión de Antivirus con Malware Genético](#av-evasion-genetic-malware)
