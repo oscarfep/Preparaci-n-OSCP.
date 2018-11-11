@@ -705,6 +705,19 @@ De esta forma, variamos la función de salida a un modo hilo... haciendo que lo 
 
 Tras su ejecución, se podrá comprobar como independientemente del número de veces que se ejecute el exploit, ganaremos siempre acceso al sistema.
 
+En caso de querer mejorar un pelín más nuestro script, contamos con otra vía de tratar los 16 **NOPs** que hemos insertado al principio del registro **ESP**. Se suele considerar más óptimo insertar al principio del registro **ESP** el siguiente Opcode en vez de los **NOPs**, seguidamente continuando con el Shellcode:
+
+```bash
+┌─[root@parrot]─[/var/www/html]
+└──╼ #/usr/share/metasploit-framework/tools/exploit/nasm_shell.rb 
+nasm > sub esp,0x10
+00000000  83EC10            sub esp,byte +0x10
+```
+
+Insertamos al principio del registro **ESP** el Opcode "**\x83\xEC\x10**", continuando con el Shellcode. Se considera más óptimo, pues dicha instrucción arrastra el **ESP** lo suficientemente lejos como para que se decodifique el Payload sin ser estropeado, similar al uso intencionado de los NOPs solo que evitando tener que insertar **NOPs** hasta que validemos manualmente que rule (calculando offsets). 
+
+Lo bueno de esta técnica a su vez es que siempre funciona (¿Habrá que tener en cuenta los badchars?, habrá que investigar).
+
 #### Reduciendo el Size y Acceso por Powershell
 
 En caso de que nuestro **Size** en el **ESP** antes de que el servicio crashee de otra forma no llegue a los 351 bytes, podemos utilizar un pequeño truco que obtuve haciendo pruebas para reducir el tamaño de nuestro Shellcode.
