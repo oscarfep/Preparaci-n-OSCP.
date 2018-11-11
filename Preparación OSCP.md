@@ -51,7 +51,8 @@
         * [Migración manual a proceso a 64 bits](#manual-migration-process)
         * [RCE Filter Evasion Microsoft SQL](#rce-filter-evasion-microsoft-sql)
         * [Conexión al Servicio Microsoft SQL con mssqclient.py de Impacket](#mssqlclient-impacket)
-        * [Reconocimiento del Sistema](#reconocimiento-del-sistema
+        * [Reconocimiento del Sistema](#reconocimiento-del-sistema)
+        * []
 
           
 Antecedentes
@@ -1767,4 +1768,29 @@ Sobre el sistema Windows comprometido, a fin de escalar privilegios podemos llev
  dir "C:\Users\Public\"
  timeout 1
  echo REPORT COMPLETE!
+```
+
+A su vez, podemos hacer del recurso [wmic-info](https://github.com/ankh2054/windows-pentest/blob/master/wmic-info) a fin de obtener información acerca del sistema.
+
+Otra opción, es utilizar [icacls.bat](https://github.com/ankh2054/windows-pentest/blob/master/icacls.bat), para la enumeración de permisos débiles a nivel de sistema.
+
+Una buena herramienta a utilizar para la enumeración de permisos débiles asignados sobre archivos que son ejecutados a través de tareas en intervalos regulares de tiempo es [schcheck.bat](https://github.com/ankh2054/windows-pentest/blob/master/schcheck.bat)
+
+A continuación, se detallan algunos usos de *accesschk.exe*, ideal para identificar el nivel de acceso que un usuario o grupo particular tiene a archivos, directories o claves de registro.
+
+```bash
+
+accesschk "power users" c:\windows\system32
+accesschk users -cw *
+accesschk.exe -uwcqv "Authenticated Users" *
+accesschk.exe -uwcqv adam.dale *
+accesschk.exe -ucqv NetLogon
+accesschk.exe -uwdqs Users c:\
+accesschk.exe -uwdqs "Authenticated Users" c:
+accesschk.exe -uwqs Users c:\*.*
+accesschk.exe -uwqs "Authenticated Users" c:\*.*
+accesschk -kns austin\mruss hklm\software
+accesschk -k hklm\software
+accesschk -e -s c:\users\mark
+accesschk -wuo everyone \basednamedobjects
 ```
