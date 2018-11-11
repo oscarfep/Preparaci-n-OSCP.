@@ -45,6 +45,7 @@
        * [Bypass File Upload Filtering](#bypass-file-upload-filtering)
        * [XML External Entity Injection](#xml-external-entity-injection)
        * [X-Jenkins Remote Code Execution](#x-jenkins)
+       * [PHP-CGI Exploitation](#php-cgi-exploitation)
      * [Pentesting Linux](#pentesting-linux)
         * [Tratamiento de la TTY](#tratamiento-de-la-tty)
         * [Monitorizado de Procesos a Tiempo Real](#process-monitoring)
@@ -2144,6 +2145,32 @@ proxy:x:13:13:proxy:/bin:/usr/sbin/nologin
 www-data:x:33:33:www-data:/var/www:/usr/sbin/nologin
 backup:x:34:34:backup:/var/backups:/usr/sbin/nologin
 ```
+
+#### PHP CGI Exploitation
+
+A continuación, se detalla una vulnerabilidad presente en algunos **php-cgi** desactualizados, los cuales nos permiten entre otras cosas lograr la ejecución remota de comandos.
+
+La pregunta a hacerse es, ¿cómo comprobamos si en caso de que exista, posee una versión vulnerable?. Dado que uno de los parámetros con los que cuenta el binario es el **-s**, el cual nos permite ver el Source de aquello que le pasemos, una de las trazas que suelo hacer para corroborar si es o no es vulnerable es hacer una consulta sobre el recurso **/?-s**.
+
+Si lo que vemos es el código fuente en vez del contenido de la página en formato legible, esto quiere decir, en pocas palabras, que es probable que podamos hacer **RCE** (Remote Code Execution). Recapitulando, hemos sido capaces de ver el Source de la propia web a través del parámetro pasado, pero no sirve de mucho si lo que pretendemos hacer es dar un enfoque intrusivo a la máquina que sustenta este servidor web.
+
+Sin embargo, existe otro parámetro interesante del php-cgi del cual nos podemos aprovechar, el parámetro **-d**. Este parámetro nos permite definir las entradas **INI** de la configuración de archivos. Algo a tener en cuenta, en caso de pretender lograr ejecución remota de código, es tratar de enviar código PHP al servidor y que sea capaz de interpretarlo. 
+
+Para ello, lo que hacemos es utilizar el _wrapper_ **php://input**, con el fin de incrustar el código definido en el cuerpo de la solicitud.
+
+Necesitamos 2 cosas para ello, por un lado, necesitamos que se lea el código php de nuestra solicitud. Lo que buscamos es una opción PHP que diga al propio PHP que lea de un archivo y lo apunte a **php://input**. Afortunadamente, PHP cuenta con la opción **auto_prepend_file** desde la versión 4.2.3. Lo bueno de esta opción, es que el contenido del archivo se incluye antes que cualquier otro archivo, o en otras palabras, se incluye antes de ejecutar cualquier otro código, por lo que garantizamos que ningún otro código afecte a nuestra explotación.
+
+Por otro lado, si queremos usar **php://input**, debemos permitir que la url lo incluya, pero esto no supone ningún problema, dado que podemos redefinir las entradas INI. Esto puede activarse fácilmente usando **-d allow_url_include=1**.
+
+Suponiendo que quisiéramos ejecutar en remoto el comando _whoami_, lo que hacemos es montarnos un simple script PHP de antemano el cual enviamos posteriormente vía POST a la web con todo lo que hemos comentado. De la siguiente forma:
+
+```bash
+$~ echo "<?php system('whoami');die(); ?>" | POST "http://192.168.1.X/?-d+allow_url_include%3d1+-d+auto_prepend_file%3dphp://input"
+
+www-data
+```
+
+Para entablar una reverse shell, ya simplemente dependerá de la metodología que una quiera emplear.
 
 ### Pentesting Linux
 
