@@ -19,7 +19,7 @@
      * [Calculando el Offset (Linux)](#calculando-el-offset-en-linux)
      * [Register Enumeration](#register-enumeration)
      * [JMP ESP Opcode](#jmp-esp-opcode)
-     * [JMP ESP From ESP](#jmp-eax-from-esp)
+     * [JMP EAX From ESP](#jmp-eax-from-esp)
      * [Msfvenom Linux Payload](#msfvenom-linux-payload)
      * [Ganando Acceso al Sistema](#ganando-acceso-al-sistema)
      
