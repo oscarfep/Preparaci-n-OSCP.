@@ -52,7 +52,7 @@
         * [RCE Filter Evasion Microsoft SQL](#rce-filter-evasion-microsoft-sql)
         * [Conexión al Servicio Microsoft SQL con mssqclient.py de Impacket](#mssqlclient-impacket)
         * [Reconocimiento del Sistema](#reconocimiento-del-sistema)
-        * []
+        * [Kernel Exploits Windows](#kernel-exploits-windows)
 
           
 Antecedentes
@@ -1794,3 +1794,11 @@ accesschk -k hklm\software
 accesschk -e -s c:\users\mark
 accesschk -wuo everyone \basednamedobjects
 ```
+
+#### Kernel Exploits Windows
+
+A continuación, se enumeran distintos exploits de Kernel interesantes a usar que en más de una ocasión han funcionado en las máquinas del lab:
+
+* [MS14-070](https://github.com/SecWiki/windows-kernel-exploits/tree/master/MS14-070)
+* [MS09-012](https://github.com/SecWiki/windows-kernel-exploits/tree/master/MS09-012)
+* [MS11-046](https://github.com/SecWiki/windows-kernel-exploits/tree/master/MS11-046)
