@@ -1797,7 +1797,7 @@ accesschk -wuo everyone \basednamedobjects
 
 #### Kernel Exploits Windows
 
-A continuación, se enumeran distintos exploits de Kernel interesantes a usar que en más de una ocasión han funcionado en las máquinas del lab:
+A continuación, se enumeran distintos exploits de Kernel interesantes a usar que en más de una ocasión han funcionado en las máquinas del lab. Así mismo es recomendable llevarlos siempre bajo la manga:
 
 * [MS14-070](https://github.com/SecWiki/windows-kernel-exploits/tree/master/MS14-070)
 * [MS09-012](https://github.com/SecWiki/windows-kernel-exploits/tree/master/MS09-012)
