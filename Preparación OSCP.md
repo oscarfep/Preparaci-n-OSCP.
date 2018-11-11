@@ -66,7 +66,7 @@ Antes que nada me gustaría comentar un poco mi experiencia a la hora de abordar
 
 Diría que la respuesta es relativa, siempre va a depender de la soltura que tengas con máquinas de tipo _CTF/Challenge_. 
 
-A mi por ejemplo la plataforma **HackTheBox** me ha servido de mucho para coger todo el fondo que tengo a día de hoy, así como **VulnHub** u **OverTheWire**. De hecho, lo que más me sorprendió a la hora de ir haciendo las máquinas del laboratorio fue la gran similitud con las máquinas de HackTheBox. Hablando en términos comparativos, os puedo decir que efectivamente corresponden a las de nivel medio de HTB, tal y como llegué a leer en su momento en algunos artículos de gente que había pasado con éxito la certificación.
+A mi por ejemplo la plataforma **HackTheBox** me ha servido de mucho para coger todo el fondo que tengo a día de hoy, así como **VulnHub** u **OverTheWire**. De hecho, lo que más me sorprendió a la hora de ir haciendo las máquinas del laboratorio fue la gran similitud con las máquinas de HackTheBox. Hablando en términos comparativos, os puedo decir que efectivamente corresponden a las de nivel medio (tirando a bajo) de HTB, tal y como llegué a leer en su momento en algunos artículos de gente que había pasado con éxito la certificación.
 
 Para que te quedes tranquilo, si juegas mucho con máquinas de tipo CTF y te entrenas día a día con retos desafiantes que te hagan pensar, no tienes de qué preocuparte.
 
