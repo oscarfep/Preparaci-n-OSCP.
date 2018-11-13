@@ -1523,7 +1523,7 @@ Aunque orientado principalmente a HTTP y HTTPS, soporta también otros protocolo
 
 Squid proporciona un servicio de proxy que soporta peticiones HTTP, HTTPS y FTP a equipos que necesiten acceder a internet y a su vez provee la funcionalidad de caché especializado en el cual almacena de forma local las páginas consultadas recientemente por los usuarios.
 
-Tan interesante resulta la utilidad que hasta **Metasploit** cuenta con su propio módulo de enumeración enumeración de SQUID (**auxiliary/scanner/http/squid_pivot_scanning**), desde donde podemos descubrir nuevos puertos que figuren abiertos.
+Tan interesante resulta la utilidad que hasta **Metasploit** cuenta con su propio módulo de enumeración de SQUID (**auxiliary/scanner/http/squid_pivot_scanning**), desde donde podemos descubrir nuevos puertos que figuren abiertos.
 
 Podemos configurar un escaneo desde **nikto** para que aproveche dicho Squid proxy, esto hace que en caso de contar con un servicio web por el puerto 80 podamos obtener cierta información relevante sobre el mismo:
 
