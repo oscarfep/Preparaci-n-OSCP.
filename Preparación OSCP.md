@@ -2585,7 +2585,13 @@ testuser@parrot:/home$
 
 Aunque en el examen no caerán temas de Pivoting, nunca viene mal tener este concepto claro para saltar a otras redes (de cara a la máquinas del laboratorio para saltar a los distintos segmentos).
 
-Yo en verdad no suelo ser muy partidario de esta herramienta
+Yo en verdad no suelo ser muy partidario de esta herramienta, lo que suelo hacer en su defecto es aplicar un '_Dynamic Port Forwarding_', de este modo sobre el sistema:
+
+```bash
+ssh -D 1080 usuario@host
+```
+
+Y diréis, ah... pero hay que conocer la password. Obviamente... si comprometes un equipo, será a fondo.
 
 ### Pentesting Windows
 
