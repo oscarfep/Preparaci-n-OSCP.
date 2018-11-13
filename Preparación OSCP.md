@@ -2627,11 +2627,11 @@ Dicho esto, explico el uso de **Shuttle**. Supongamos que acabamos de compromete
 sshuttle -vr pepe@192.168.1.X:22000 10.2.15.1/24 -x 192.168.1.X
 ```
 
-Donde el parámetro '_-x_' es opcional, donde podemos especificar la propia IP del sistema para descartarla posteriormente del rango de conectividad. (Una tontería, pero bueno)
+Donde el parámetro '_-x_' es opcional, por el cual especificamos la propia IP del sistema para descartarla posteriormente del rango de conectividad. (Una tontería, pero bueno)
 
 # Port Knocking
 
-
+Que no falte mencionar esta famosa practica para ocultar puertos.
 
 ### Pentesting Windows
 
