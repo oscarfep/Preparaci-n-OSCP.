@@ -2621,7 +2621,13 @@ Tendremos que añadir los parámetros '-T5 -Pn' generalmente, lo mismo para esca
 $~ proxychains nmap -p21,80,443 -Pn -T5 -sC -sV
 ```
 
-Dicho esto, explico el uso de **Shuttle**. 
+Dicho esto, explico el uso de **Shuttle**. Supongamos que acabamos de comprometer el sistema **192.168.1.X**, tenemos las credenciales del usuario **pepe** para conexión por SSH y descubrimos que desde dicho sistema tenemos conectividad con un nuevo segmento **10.2.15.0/24**. Una vez teniendo **shuttle** en nuestro sistema, lo único que tendremos que hacer es lo siguiente:
+
+```bash
+sshuttle -vr pepe@192.168.1.X:22000 10.2.15.1/24 -x 192.168.1.X
+```
+
+Donde el parámetro '_-x_' es opcional, donde podemos especificar la propia IP del sistema para descartarla posteriormente del rango de conectividad. (Una tontería, pero bueno)
 
 # Port Knocking
 
