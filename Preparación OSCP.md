@@ -52,6 +52,7 @@
         * [Tratamiento de la TTY](#tratamiento-de-la-tty)
         * [Monitorizado de Procesos a Tiempo Real](#process-monitoring)
         * [Escaping Restricted Shell](#escaping-restricted-shell)
+        * [Pivoting con Shuttle](#pivoting-con-shuttle)
      * [Pentesting Windows](#pentesting-windows)
         * [Transferencia de Archivos](#transferencia-de-archivos)
         * [Evasión de Antivirus con Malware Genético](#av-evasion-genetic-malware)
@@ -2579,6 +2580,10 @@ declare -x USERNAME="root"
 declare -x XAUTHORITY="/home/s4vitar/.Xauthority"
 testuser@parrot:/home$ 
 ```
+
+#### Pivoting con Shuttle
+
+
 
 ### Pentesting Windows
 
