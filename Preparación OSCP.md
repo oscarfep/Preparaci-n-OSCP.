@@ -2591,7 +2591,41 @@ Yo en verdad no suelo ser muy partidario de esta herramienta, lo que suelo hacer
 ssh -D 1080 usuario@host
 ```
 
-Y diréis, ah... pero hay que conocer la password. Obviamente... si comprometes un equipo, será a fondo.
+Y diréis, ah... pero hay que conocer la password. Obviamente... si comprometes un equipo, será a fondo, lo mismo sucederá con **Shuttle**.
+
+Una vez hecha la conexión, tendremos que aplicar la siguiente configuración desde el fichero '_/etc/proxychains.conf_':
+
+```bash
+[ProxyList]
+# add proxy here ...
+# meanwile
+# defaults set to "tor"
+socks4  127.0.0.1 1080
+```
+
+De esta forma, conseguimos que a la hora de aplicar la siguiente sintaxis sobre un Host al que no deberíamos tener conectividad:
+
+```bash
+$~ proxychains ssh root@ipOtroSegmento
+```
+
+Tengamos alcance y nos resuelva el servicio. Para los escaneos con **nmap** sucede lo mismo, solo que hay que añadir una ligera variación en cuanto a parámetros respecta:
+
+```bash
+$~ proxychains nmap -p21,80,443 -r -v --open -T5 -v -Pn -T5 -n -oG openPorts
+```
+
+Tendremos que añadir los parámetros '-T5 -Pn' generalmente, lo mismo para escanear a fondo dichos puertos:
+
+```bash
+$~ proxychains nmap -p21,80,443 -Pn -T5 -sC -sV
+```
+
+Dicho esto, explico el uso de **Shuttle**. 
+
+# Port Knocking
+
+
 
 ### Pentesting Windows
 
