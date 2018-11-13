@@ -1531,7 +1531,9 @@ Podemos configurar un escaneo desde **nikto** para que aproveche dicho Squid pro
 $~ nikto -h direccionIP -useproxy http://direccionIP:puerto
 ```
 
-Algo interesante es aprovechar la configuración de Firefox para desde la pestaña '_Network_', añadir un nuevo '_Manual proxy configuration_', el cual como campo **HTTP Proxy** disponga la IP del equipo y como puerto el que figure como servicio **Squid Proxy**.
+Algo interesante es aprovechar la configuración de Firefox para desde la pestaña '_Network_', añadir un nuevo '_Manual proxy configuration_', el cual como campo **HTTP Proxy** disponga la IP del equipo y como puerto el que figure como servicio **Squid Proxy**. Una vez hecho, con acceder directamente a la IP, si esta cuenta con un servicio web por el puerto convencional la veremos directamente desde el navegador.
+
+
 
 ### Pentesting Web
 
