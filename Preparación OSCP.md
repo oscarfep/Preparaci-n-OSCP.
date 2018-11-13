@@ -2583,7 +2583,9 @@ testuser@parrot:/home$
 
 #### Pivoting con Shuttle
 
+Aunque en el examen no caerán temas de Pivoting, nunca viene mal tener este concepto claro para saltar a otras redes (de cara a la máquinas del laboratorio para saltar a los distintos segmentos).
 
+Yo en verdad no suelo ser muy 
 
 ### Pentesting Windows
 
