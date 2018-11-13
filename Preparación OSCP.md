@@ -32,6 +32,7 @@
        * [Reverse Shell](#reverse-shell)
        * [Spawning a TTY Shell](#spawning-a-tty-shell)
        * [Compilado de Exploits para Windows](#compilado-de-exploits-para-windows)
+       * [Squid Proxy](#squid-proxy)
      * [Pentesting Web](#pentesting-web)
        * [LFI (Local File Inclusion)](#lfi)
        * [LFI to RCE](#lfi-to-rce)
@@ -1501,6 +1502,36 @@ Para máquinas Windows de 32 bits, aplicamos el siguiente comando:
 ```bash
 i686-w64-mingw32-gcc 40564.c -o 40564 -lws2_32
 ```
+
+#### Squid Proxy
+
+Alguna que otra máquina me he encontrado con esta novedad (tampoco es tan moderno su uso). Una buena máquina para practicar el concepto es la máquina **SickOS 1.1** de VulnHub.
+
+La idea es la siguiente, presento el reporte de un escaneo a modo de ejemplo:
+
+```bash
+TCP: 22     SSH  OpenSSH 5.9p1 Debian 5ubuntu1.1 (Ubuntu Linux; protocol 2.0)
+
+TCP: 3128   HTTP-Proxy  Squid http proxy 3.1.19
+```
+
+Como vemos, sólo figuran esos 2 puertos, sin embargo... el uso del _Squid_ nos puede servir para descubrir un par de puertos más. **Squid** no es más que un servidor _proxy_ para web con caché. 
+
+Aunque orientado principalmente a HTTP y HTTPS, soporta también otros protocolos como FTP e incluso Gopher. De entre algunas de las funcionalidades que esta utilidad tiene, destaca:
+
+**Proxy con caché de HTTP, FTP, y otros protocolos de internet**
+
+Squid proporciona un servicio de proxy que soporta peticiones HTTP, HTTPS y FTP a equipos que necesiten acceder a internet y a su vez provee la funcionalidad de caché especializado en el cual almacena de forma local las páginas consultadas recientemente por los usuarios.
+
+Tan interesante resulta la utilidad que hasta **Metasploit** cuenta con su propio módulo de enumeración enumeración de SQUID (**auxiliary/scanner/http/squid_pivot_scanning**), desde donde podemos descubrir nuevos puertos que figuren abiertos.
+
+Podemos configurar un escaneo desde **nikto** para que aproveche dicho Squid proxy, esto hace que en caso de contar con un servicio web por el puerto 80 podamos obtener cierta información relevante sobre el mismo:
+
+```bash
+$~ nikto -h direccionIP -useproxy http://direccionIP:puerto
+```
+
+Algo interesante es aprovechar la configuración de Firefox para desde la pestaña '_Network_', añadir un nuevo '_Manual proxy configuration_', el cual como campo **HTTP Proxy** disponga la IP del equipo y como puerto el que figure como servicio **Squid Proxy**.
 
 ### Pentesting Web
 
