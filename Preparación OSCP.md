@@ -1533,7 +1533,11 @@ $~ nikto -h direccionIP -useproxy http://direccionIP:puerto
 
 Algo interesante es aprovechar la configuración de Firefox para desde la pestaña '_Network_', añadir un nuevo '_Manual proxy configuration_', el cual como campo **HTTP Proxy** disponga la IP del equipo y como puerto el que figure como servicio **Squid Proxy**. Una vez hecho, con acceder directamente a la IP, si esta cuenta con un servicio web por el puerto convencional la veremos directamente desde el navegador.
 
+Las consultas las podemos realizar también desde **curl**, empleando para ello una sintaxis como la que se define a continuación:
 
+```bash
+$~ curl --proxy ip:puerto http://ip/cgi-bin/status # A modo de ejemplo
+```
 
 ### Pentesting Web
 
