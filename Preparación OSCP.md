@@ -1641,7 +1641,13 @@ known_hosts
 /var/log/apache2/access_log 
 /var/log/apache/access.log 
 /var/log/apache2/access.log
+/var/log/apache/error.log
+/var/log/apache/access.log
+/var/log/httpd/error_log
 /var/log/access_log
+/var/log/mail
+/var/log/sshd.log
+/var/log/vsftpd.log
 .bash_history
 .mysql_history
 .my.cnf
