@@ -1731,12 +1731,6 @@ Siempre suelo emplear Burpsuite como intermediario, pero también se puede hacer
 
 Otra de las técnicas para conseguir la ejecución de comandos a través de un **LFI** es por medio de archivos **proc**. Podemos encontrar la metodología paso a paso en el [siguiente recurso](https://www.exploit-db.com/papers/12992/).
 
-#### LFI to RCE via PROC
-
-#### LFI to RCE via ENVIRON
-
-#### RFI
-
 Esta vulnerabilidad tiene cierta similitud que el LFI, sólo que la inclusión de archivos se produce de manera remota, permitiéndonos desde la URL vulnerable de un servicio web apuntar hacia servicios locales de nuestro equipo que estemos compartiendo.
 
 Un buen ejemplo para practicar es la máquina **TartarSauce** de HackTheBox, donde el servicio web contaba con un plugin Gwolle vulnerable a RFI. Desde el servicio web, realizábamos la siguiente consulta desde la URL:
