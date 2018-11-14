@@ -1704,7 +1704,7 @@ windows\repair\SAM
 Existen varias formas de conseguir ejecutar comandos en remoto a través de un **Local File Inclusion**, así como de acceder al sistema a través de la visualización de ciertos recursos. Para este caso, explicaré 2 técnicas a modo de ejemplo:
 
 * Log Poisoning (access.log & auth.log)
-* Mail PHP Execution
+* Mail PHP Execution FIXME: Redactar este punto
 
 La primera de ellas [**Log Poisoning**], consiste en verificar si las rutas _/var/log/auth.log_ y _/var/log/apache2/access.log_ son visibles desde el **LFI**.
 
