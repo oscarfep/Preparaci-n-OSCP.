@@ -67,7 +67,7 @@
         * [Conexión al Servicio Microsoft SQL con mssqclient.py de Impacket](#mssqlclient-impacket)
         * [Reconocimiento del Sistema](#reconocimiento-del-sistema)
         * [Kernel Exploits Windows](#kernel-exploits-windows)
-        * [Privilege Escalation Enumeration](#privilege-escalation-enumeration)
+        * [Privilege Escalation Enumeration](#privilege-escalation-enumerations)
 
           
 Antecedentes
@@ -3228,7 +3228,7 @@ A continuación, se enumeran distintos exploits de Kernel interesantes a usar qu
 * [MS09-012](https://github.com/SecWiki/windows-kernel-exploits/tree/master/MS09-012)
 * [MS11-046](https://github.com/SecWiki/windows-kernel-exploits/tree/master/MS11-046)
 
-#### Privilege Escalation Enumeration
+#### Privilege Escalation Enumerations
 
 A continuación, se detalla una enumeración básica del sistema.
 
