@@ -36,12 +36,6 @@
      * [Pentesting Web](#pentesting-web)
        * [LFI (Local File Inclusion)](#lfi)
        * [LFI to RCE](#lfi-to-rce)
-       * [LFI to RCE via /proc/*/fd](#lfi-to-rce-via-proc)
-       * [LFI to RCE via /proc/self/environ](#lfi-to-rce-via-environ)
-       * [LFI to RCE via upload](#lfi-to-rce-via-upload)
-       * [LFI to RCE via upload (race)](#lfi-to-rce-via-upload-race)
-       * [LFI to RCE via phpinfo()](#lfi-to-rce-via-phpinfo)
-       * [LFI to RCE via PHP sessions](#lfi-to-rce-via-php-sessions)
        * [RFI (Remote File Inclusion)](#rfi)  
        * [LFI RFI using Wrappers](#lfi-rfi-using-wrappers) 
        * [SQLI (SQL Inyection)](#sqli)     
@@ -1736,6 +1730,10 @@ Para el caso del recurso _access.log_ pasa algo similar, sólo que en cuanto a l
 Siempre suelo emplear Burpsuite como intermediario, pero también se puede hacer desde curl modificando el **User-Agent**. Lo que necesitamos hacer es realizar una consulta a la página web cambiando el User-Agent por un código PHP. De esta forma, tras visualizar el recurso _access.log_ de Apache, veremos como el código PHP es interpretado en el User-Agent de la petición en la respuesta del lado del servidor, pudiendo posteriormente ejecutar comandos en remoto de la misma forma que sucedía con el recurso _auth.log_.
 
 Otra de las técnicas para conseguir la ejecución de comandos a través de un **LFI** es por medio de archivos **proc**. Podemos encontrar la metodología paso a paso en el [siguiente recurso](https://www.exploit-db.com/papers/12992/).
+
+#### LFI to RCE via PROC
+
+#### LFI to RCE via ENVIRON
 
 #### RFI
 
