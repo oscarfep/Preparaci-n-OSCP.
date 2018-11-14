@@ -2631,7 +2631,21 @@ Donde el parámetro '_-x_' es opcional, por el cual especificamos la propia IP d
 
 # Port Knocking
 
-Que no falte mencionar esta famosa practica para ocultar puertos.
+Que no falte mencionar esta famosa practica para ocultar puertos. Para que sea entendible la utilidad sin entrar mucho a nivel técnico, digamos que tenemos un VPS por el cual accedemos normalmente por el puerto 22 hacia el servicio SSH. ¿Qué sucede?, que el servicio queda público de cara hacia fuera. Una práctica para proteger estos servicios es configurar una serie de puertos (generalmente 3), para de golpearlos hacer visible temporalmente estos servicios.
+
+Me explico, supongamos que tras un escaneo inicial, vemos que el puerto 22 para el servicio SSH figura como '_closed_'. Sin embargo, por X razones, sabemos que de aplicar un **Port Knocking** sobre los puertos 4264 4563 5798, el puerto 22 se abre temporalmente permitiendo conexiones entrantes al servicio.
+
+**¿Cómo hacemos para golpear dichos puertos y realizar la conexión?**
+
+Los hay quienes se montan un script infumable, realmente no hace falta:
+
+```bash
+$~ nmap -p4264,4563,5798 -r -T5 -PN && ssh usuario@ip
+```
+
+Con hacer esto, se habilitaría temporalmente el servicio SSH sobre el puerto 22, visualizando la conexión asociada así como la autenticación para validar el usuario.
+
+Como **nmap** a veces es muy suyo y no sigue el orden fijado de puertos a escanear, asignamos el parámetro '_-n_' para que el **Port Knocking** haga efecto, pues en caso de golpearlos en el orden incorrecto simplemente no sucederá nada.
 
 ### Pentesting Windows
 
