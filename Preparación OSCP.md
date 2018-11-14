@@ -67,7 +67,7 @@
         * [Conexión al Servicio Microsoft SQL con mssqclient.py de Impacket](#mssqlclient-impacket)
         * [Reconocimiento del Sistema](#reconocimiento-del-sistema)
         * [Kernel Exploits Windows](#kernel-exploits-windows)
-        * [Privilege Escalation Enumeration](#privilege-escalation-enumerations)
+        * [Privilege Escalation Enumerations](#privilege-escalation-enumerations)
 
           
 Antecedentes
