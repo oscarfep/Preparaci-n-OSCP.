@@ -1861,9 +1861,9 @@ $phar->setMetadata($object);
 $phar->stopBuffering();
 ```
 
-Si llegados a este punto, cualquier operación es realizada en nuestro archivo Phar existente haciendo uso del wrapper **phar://**, entonces la metadata serializada es deserializada y por tanto interpretada.
+Si llegados a este punto, cualquier operación es realizada en nuestro archivo Phar existente haciendo uso del wrapper **phar://**, entonces los metadatos serializados son deserializados y por tanto interpretados.
 
-Si esta aplicación contase con una clase llamada **AnyClass** y posee el método mágico __destruct() o __wakeup() definidos, entonces estos serán invocados automáticamente.
+Si esta aplicación contase con una clase llamada **AnyClass** y tuviese los métodos mágicos **__destruct()** o **__wakeup()** definidos, entonces estos serían invocados automáticamente:
 
 ```bash
 class AnyClass {
