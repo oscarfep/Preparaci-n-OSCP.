@@ -1865,7 +1865,7 @@ Si llegados a este punto, cualquier operación es realizada en nuestro archivo P
 
 Si esta aplicación contase con una clase llamada **AnyClass** y posee el método mágico __destruct() o __wakeup() definidos, entonces estos serán invocados automáticamente.
 
-```python
+```bash
 class AnyClass {
     function __destruct() {
         echo $this->data;
