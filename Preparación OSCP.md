@@ -1784,6 +1784,16 @@ User-Agent: <?=phpinfo(); ?>
 
 ##### Wrapper php://filter
 
+##### Wrapper zip://
+
+##### Wrapper data://
+
+##### Wrapper expect://
+
+##### Wrapper input://
+
+##### Wrapper phar://
+
 #### SQLI
 
 Ejemplo básico aplicado sobre servicio web falso http://www.paginaweb.com/contenidos.php?Id=3
