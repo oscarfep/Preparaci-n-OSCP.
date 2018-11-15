@@ -2394,6 +2394,8 @@ Para entablar una reverse shell, ya simplemente dependerá de la metodología qu
 
 #### Waf Bypassing
 
+##### WAF SQL Injection Bypass WAF Techniques
+
 
 
 ### Pentesting Linux
