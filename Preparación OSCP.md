@@ -51,6 +51,7 @@
        * [XML External Entity Injection](#xml-external-entity-injection)
        * [X-Jenkins Remote Code Execution](#x-jenkins)
        * [PHP-CGI Exploitation](#php-cgi-exploitation)
+       * [WAF Bypassing](#waf-bypassing)
      * [Pentesting Linux](#pentesting-linux)
         * [Tratamiento de la TTY](#tratamiento-de-la-tty)
         * [Monitorizado de Procesos a Tiempo Real](#process-monitoring)
@@ -2390,6 +2391,10 @@ www-data
 ```
 
 Para entablar una reverse shell, ya simplemente dependerá de la metodología que una quiera emplear.
+
+#### Waf Bypassing
+
+
 
 ### Pentesting Linux
 
