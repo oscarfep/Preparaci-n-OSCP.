@@ -1771,7 +1771,7 @@ Una vez hecho, podemos incluir el archivo PHP de la siguiente forma a través de
 login=1&user=admin&pass=password&lang=/../../../../../../../../../var/lib/php5/sess_i56kgbsq9rm8ndg3qbarhsbm27
 ```
 
-#### LFI to RCE via PHP Environ
+#### LFI to RCE via Environ
 
 Si por algún casual podemos visualizar el recurso **/proc/self/environ**, como si se tratara de un recurso log, enviaremos nuestro Payload en el User-Agent:
 
