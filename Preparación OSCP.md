@@ -1566,7 +1566,7 @@ uid=33(www-data) gid=33(www-data) groups=33(www-data)
 
 #### Metasploit Debugging
 
-Muchas han sido las veces que lanzando un exploit el cual aparentemente parece reunir todos los requisitos necesarios para una explotación exitosa desde Metasploit, no rula, peta o incluso no nos devuelve ningún tipo de _Verbose_. Para lidiar con esto, existe una pequeña utilidad externa la cual nos permite Debuggear el programa en tiempo de ejecución, permitiéndonos así saber qué valor están tomando todas las variables así como si se están recogiendo bien los valores que fijamos desde las opciones de configuración.
+Muchas han sido las veces que lanzando un exploit el cual aparentemente parece reunir todos los requisitos necesarios para una explotación exitosa desde Metasploit, no rula, peta o incluso no nos devuelve ningún tipo de _Verbose_. Para lidiar con esto, existe una pequeña utilidad externa la cual nos permite Debuggear el programa en tiempo de ejecución, permitiéndonos así saber qué valores están tomando todas las variables así como si se están recogiendo bien los valores que fijamos desde las opciones de configuración.
 
 Otra opción también recomendable y que trataremos en este punto consiste en configurar un Proxy desde Burpsuite, de manera que primero el Exploit pasa por el intermediario (útil para ver cómo viaja nuestra petición), y luego enruta al Host remoto.
 
