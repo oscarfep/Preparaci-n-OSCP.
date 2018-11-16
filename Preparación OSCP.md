@@ -33,6 +33,7 @@
        * [Spawning a TTY Shell](#spawning-a-tty-shell)
        * [Compilado de Exploits para Windows](#compilado-de-exploits-para-windows)
        * [Squid Proxy](#squid-proxy)
+       * [Metasploit Debugging](#metasploit-debugging)
      * [Pentesting Web](#pentesting-web)
        * [LFI (Local File Inclusion)](#lfi)
        * [RFI (Remote File Inclusion)](#lfi)
@@ -1562,6 +1563,10 @@ Obteniendo la siguiente respuesta del lado del servidor:
 uid=33(www-data) gid=33(www-data) groups=33(www-data)
 * Closing connection 0
 ```
+
+#### Metasploit Debugging
+
+
 
 ### Pentesting Web
 
