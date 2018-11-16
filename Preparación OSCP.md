@@ -1572,6 +1572,46 @@ Otra opción también recomendable y que trataremos en este punto consiste en co
 
 **1. Pry-ByeBug**
 
+Antes que nada, para evitar que nuestro Metasploit corrompa, creamos una instancia del recurso sobre el directorio **/opt**:
+
+```bash
+$~ cp -r /usr/share/metasploit-framework /opt/.
+```
+
+Una vez hecho, creamos el siguiente recurso en **~/.pryrc**:
+
+```bash
+if defined?(PryByebug)
+  Pry.commands.alias_command 'c', 'continue'
+  Pry.commands.alias_command 's', 'step'
+  Pry.commands.alias_command 'n', 'next'
+  Pry.commands.alias_command 'f', 'finish'
+end
+
+Pry::Commands.command /^$/, "repeat last command" do
+  _pry_.run_command Pry.history.to_a.last
+end
+```
+
+Nos resultará de utilidad para poder jugar con **Alias** en vez de escribir la instrucción entera. Aplicamos el siguiente comando para instalar **pry-byebug**:
+
+```bash
+$~ gem 'pry-byebug'
+```
+
+Una vez hecho, abrimos nuestro recurso **/opt/metasploit-framework/msfconsole** con nuestro editor preferido y añadimos como requerimiento el **pry-byebug** de la siguiente forma:
+
+```bash
+#
+# Standard Library
+#
+
+require 'pathname'
+require 'pry-byebug' # Nueva línea a insertar, las demás están por defecto.
+
+if ENV['METASPLOIT_FRAMEWORK_PROFILE'] == 'true'
+```
+
 **2. Burpsuite**
 
 ### Pentesting Web
