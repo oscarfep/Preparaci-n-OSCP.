@@ -1566,7 +1566,7 @@ uid=33(www-data) gid=33(www-data) groups=33(www-data)
 
 #### Metasploit Debugging
 
-
+Muchas han sido las veces que lanzando un exploit el cual aparentemente parece reunir todos los requisitos necesarios para una explotación exitosa desde Metasploit, no rula, peta o incluso no nos devuelve ningún tipo de _Verbose_. Para lidiar con esto, existe una pequeña utilidad externa la cual nos permite Debuggear el programa a tiempo de ejecución, permitiéndonos así saber qué valor están tomando todas las variables así como si se están recogiendo bien los valores que fijamos desde las opciones de configuración.
 
 ### Pentesting Web
 
