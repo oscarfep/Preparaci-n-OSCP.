@@ -2194,8 +2194,6 @@ s4vitar:100000:65536
 Cabe decir que el **Null Byte Injection** fue arreglado en PHP a partir de la versión **5.3.4**.
 
 
-
-
 #### RFI
 
 Esta vulnerabilidad tiene cierta similitud que el LFI, sólo que la inclusión de archivos se produce de manera remota, permitiéndonos desde la URL vulnerable de un servicio web apuntar hacia servicios locales de nuestro equipo que estemos compartiendo.
