@@ -1965,7 +1965,7 @@ Este exploit contaba con otras ligeras modificaciones a hacer, pero con esto ya 
 
 Otra opción para los menos valientes (aunque a veces también la aplico), es configurar un proxy desde Burpsuite. Para ello, simplemente en la pestaña de Proxies (**Options**), añadimos un nuevo Proxy, generalmente sobre un puerto aleatorio (puerto 4646 [Bind to Port] a modo de ejmplo). Este puerto, en la pestaña **Request Handling**, debe redireccionar al Host víctima así como al puerto real donde se encuentre el servicio configurado que queremos analizar.
 
-Lo que conseguimos con esto, es que de visualizar el recurso **http://localhost:4646**, nos cargue el mismo contenido que el del servicio web del Host víctima. La utilidad de este procedimiento, es que desde Metasploit a la hora de lanzar cualquier exploit, podemos configurar como IP nuestra IP local (127.0.0.1) así como el puerto 4646 para que todo el tráfico sea interceptado desde Burpsuite y posteriormente redireccionado al Host víctima. Esto nos permite analizar por ejemplo desde el **Repeater** cómo es la respuesta del lado del servidor.
+Lo que conseguimos con esto, es que de visualizar el recurso **http://localhost:4646**, nos cargue el mismo contenido que el del servicio web del Host víctima. La utilidad de este procedimiento, es que desde Metasploit a la hora de lanzar cualquier exploit, podemos configurar como IP nuestra IP local (127.0.0.1) así como el puerto 4646 para que todo el tráfico sea interceptado desde Burpsuite y posteriormente redireccionado al Host víctima. Esto nos permite analizar por ejemplo desde el **Repeater** cómo es la respuesta del lado del servidor una vez se envía el exploit al Host víctima.
 
 ### Pentesting Web
 
