@@ -2193,6 +2193,10 @@ s4vitar:100000:65536
 
 Cabe decir que el **Null Byte Injection** fue arreglado en PHP a partir de la versión **5.3.4**.
 
+**Filter Evasion**
+
+
+
 
 #### RFI
 
