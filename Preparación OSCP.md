@@ -2220,7 +2220,21 @@ s4vitar:100000:65536
 
 **Double encoding**
 
+Para continuar evitando filtro, se puede hacer uso de una doble codificación. Esto es, codificamos los datos por primera vez:
 
+```bash
+%2E%2E%2Fetc%2Fpasswd
+```
+
+Y ahora codificamos el **%**:
+
+```bash
+%252E%252E%252Fetc%252Fpasswd
+```
+
+**Path Truncation**
+
+Sobre la solicitud en la que pretendemos hacer **LFI**, añadimos mil veces **./** para el recurso **../../../../etc/passwd/././././././<...>/.php**. Una vez el nombre del archivo cuenta con más de 4.096 bytes, se elimina la parte más larga. De esta forma, nuestra petición se convierte en **../../../../etc/passwd**.
 
 #### RFI
 
