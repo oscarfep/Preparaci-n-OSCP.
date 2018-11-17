@@ -2218,6 +2218,9 @@ s4vitar:100000:65536
 ┌─[root@parrot]─[/var/www/html]
 ```
 
+**Double encoding**
+
+
 
 #### RFI
 
