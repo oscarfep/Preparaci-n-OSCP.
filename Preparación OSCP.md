@@ -36,7 +36,8 @@
        * [Metasploit Debugging](#metasploit-debugging)
      * [Pentesting Web](#pentesting-web)
        * [LFI (Local File Inclusion)](#lfi)
-       * [RFI (Remote File Inclusion)](#lfi)
+       * [LFI (Local File Inclusion) Code Examples](#lfi-code-examples)
+       * [RFI (Remote File Inclusion)](#rfi)
        * [LFI to RCE](#lfi-to-rce)
        * [LFI to RCE via PHP Sessions](#lfi-to-rce-via-php-sessions)
        * [LFI to RCE via /proc/self/environ](#lfi-to-rce-via-environ)
@@ -2104,6 +2105,15 @@ windows\repair\SAM
 %SYSTEMROOT%\System32\config\SYSTEM
 %SYSTEMROOT%\System32\config\RegBack\system
 ```
+
+#### LFI Code Examples
+
+A continuación, se detallan algunas vulnerabilidades de tipo **LFI** con el código del lado del servidor, para poder practicar en local dichas técnicas.
+
+##### Basic Includes
+
+
+
 
 #### RFI
 
