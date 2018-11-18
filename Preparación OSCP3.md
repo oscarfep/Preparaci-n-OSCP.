@@ -4,7 +4,7 @@
 #### Penetration Testing with Kali Linux (PWK) course and Offensive Security Certified Professional (OSCP) Cheat Sheet
 
 ## Índice y Estructura Principal
-- [Antecedentes - Experiencia Personal](#Antecedentes)
+
 - [Buffer Overflow Windows (25 puntos)](#buffer-overflow-windows)
      * [Fuzzing](#fuzzing)
      * [Calculando el Offset (Tamaño del Búffer)](#calculando-el-offset)
@@ -15,7 +15,7 @@
      * [Salto al ESP (Mona / Immunity Debugger)](#salto-al-esp)
      * [Mejorando el Exploit](#mejorando-el-exploit)
      * [Reduciendo el Size y Acceso por Powershell](#reduciendo-el-size-y-acceso-por-powershell)
-- [Buffer Overflow Linux (No cae en el examen)](#buffer-overflow-linux)
+- [Buffer Overflow Linux](#buffer-overflow-linux)
      * [Calculando el Offset (Linux)](#calculando-el-offset-en-linux)
      * [Register Enumeration](#register-enumeration)
      * [JMP ESP Opcode](#jmp-esp-opcode)
