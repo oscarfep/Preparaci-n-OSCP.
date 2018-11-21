@@ -15,7 +15,7 @@
      * [Salto al ESP (Mona / Immunity Debugger)](#salto-al-esp)
      * [Mejorando el Exploit](#mejorando-el-exploit)
      * [Reduciendo el Size y Acceso por Powershell](#reduciendo-el-size-y-acceso-por-powershell)
-- [Buffer Overflow Linux (No cae en el examen)](#buffer-overflow-linux)
+- [Buffer Overflow Linux](#buffer-overflow-linux)
      * [Calculando el Offset (Linux)](#calculando-el-offset-en-linux)
      * [Register Enumeration](#register-enumeration)
      * [JMP ESP Opcode](#jmp-esp-opcode)
@@ -789,7 +789,7 @@ Inmediatamente tras ejecutar el script, veremos cómo se recibe un GET desde nue
 Buffer Overflow Linux
 ===============================================================================================================================
 
-Hasta donde yo se, nunca ha caído un _Buffer Overflow_ de Linux, pero por si las moscas, detallo el procedimiento usando como ejemplo el aplicativo **Crossfire**.
+Hasta donde yo se, no es común que caiga un _Buffer Overflow_ de Linux, pero por si las moscas, detallo el procedimiento usando como ejemplo el aplicativo **Crossfire**.
 
 #### Fuzzing
 
