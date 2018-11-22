@@ -141,7 +141,7 @@ Sin más, ¡os dejo con toda la preparación del curso!
 
 Buffer Overflow Windows
 ===============================================================================================================================
-A continuación, se listan los pasos a seguir para la correcta explotación de Buffer Overflow en Windows (32 bits). Para la examinación, no se requieren de conocimientos avanzados de exploiting en BoF (bypassing ASLR, etc.), basta con practicar con servicios básicos y llevar esa misma metodología al examen.
+A continuación, se listan los pasos a seguir para la correcta explotación del Buffer Overflow en Windows (32 bits). Para la examinación, no se requieren de conocimientos avanzados de exploiting en BoF (bypassing ASLR, etc.), basta con practicar con servicios básicos y llevar esa misma metodología al examen.
 
 Servicios/Máquinas con los que practicar:
 
