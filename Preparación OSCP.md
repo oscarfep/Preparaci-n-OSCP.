@@ -3709,7 +3709,7 @@ En este caso, dado que a modo de ejemplo vamos a jugar únicamente con la variab
 
 ```
 
-**IMPORTANTE:** Es de vital importancia no confundirse en este punto, pues cabe decir que el cifrado se hace a través de las propias variables de entorno. Esto quiere decir, que tras la ejecución del binario en la máquina comprometido, esta se encargará de descifrar todo el ejecutable a través de las propias variables de entorno del sistema, lo que significa que en caso de haberlas introducido mal... la ejecución del binario no será funcional.
+**IMPORTANTE:** Es de vital importancia no confundirse en este punto, pues cabe decir que el cifrado se hace a través de las propias variables de entorno. Esto quiere decir, que tras la ejecución del binario en la máquina comprometida, este se encargará de descifrar todo el ejecutable a través de las propias variables de entorno del sistema, lo que significa que en caso de haberlas introducido mal... la ejecución del binario no será funcional.
 
 Una vez hecho, aplicamos el siguiente comando desde consola:
 
